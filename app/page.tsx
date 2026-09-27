@@ -7,6 +7,11 @@ import {
 } from "./engine";
 
 type ViewKey = "trainer" | "review" | "stats";
+type StackFilter = number | "Todos";
+
+function stackFor(filter: StackFilter) {
+  return filter === "Todos" ? STACKS[Math.floor(Math.random() * STACKS.length)] : filter;
+}
 
 function CardView({ card }: { card: Card }) {
   const red = card.suit === "♥" || card.suit === "♦";
@@ -39,7 +44,7 @@ function Matrix({ spot }: { spot: Spot }) {
 
 export default function Home() {
   const [view, setView] = useState<ViewKey>("trainer");
-  const [stack, setStack] = useState(25);
+  const [stack, setStack] = useState<StackFilter>("Todos");
   const [heroFilter, setHeroFilter] = useState<Position | "Todos">("Todos");
   const [scenarioFilter, setScenarioFilter] = useState<ScenarioKey | "Todos">("Todos");
   const [target, setTarget] = useState(20);
@@ -54,7 +59,7 @@ export default function Home() {
       const saved = localStorage.getItem("preflop-lab-history");
       if (saved) setHistory(JSON.parse(saved));
     } catch {}
-    setSpot(makeSpot(25, "Todos", "Todos"));
+    setSpot(makeSpot(stackFor("Todos"), "Todos", "Todos"));
     setLoaded(true);
   }, []);
 
@@ -80,7 +85,7 @@ export default function Home() {
   const next = useCallback(() => {
     setSelected(null);
     setShowMatrix(false);
-    setSpot(makeSpot(stack, scenarioFilter, heroFilter));
+    setSpot(makeSpot(stackFor(stack), scenarioFilter, heroFilter));
   }, [stack, scenarioFilter, heroFilter]);
 
   useEffect(() => {
@@ -99,9 +104,9 @@ export default function Home() {
     return [...POSITIONS.slice(index), ...POSITIONS.slice(0, index)];
   }, [spot.hero]);
 
-  const changeConfig = (newStack: number, newScenario: ScenarioKey | "Todos", newHero: Position | "Todos") => {
+  const changeConfig = (newStack: StackFilter, newScenario: ScenarioKey | "Todos", newHero: Position | "Todos") => {
     setStack(newStack); setScenarioFilter(newScenario); setHeroFilter(newHero);
-    setSelected(null); setShowMatrix(false); setSpot(makeSpot(newStack, newScenario, newHero));
+    setSelected(null); setShowMatrix(false); setSpot(makeSpot(stackFor(newStack), newScenario, newHero));
   };
 
   const leaks = (Object.keys(SCENARIOS) as ScenarioKey[]).map((key) => {
@@ -134,7 +139,9 @@ export default function Home() {
         <p className="muted">Decisões aleatórias na árvore completa. Um spot de cada vez.</p>
 
         <label className="field-label">STACK EFETIVO</label>
-        <div className="stack-pills">{STACKS.map((value) =>
+        <div className="stack-pills">
+          <button className={stack === "Todos" ? "selected" : ""} onClick={() => changeConfig("Todos", scenarioFilter, heroFilter)}>Todos</button>
+          {STACKS.map((value) =>
           <button key={value} className={stack === value ? "selected" : ""} onClick={() => changeConfig(value, scenarioFilter, heroFilter)}>
             {value}<small>bb</small>
           </button>
@@ -165,7 +172,7 @@ export default function Home() {
             <div><strong>{totalLoss ? `−${totalLoss}` : "—"}</strong><span>EV bb</span></div>
           </div>
         </div>
-        <div className="model-note"><span>β</span><p><strong>Estratégia-base V1</strong>Ranges calibrados para treino. Importe solves próprios para precisão certificada.</p></div>
+        <div className="model-note"><span>β</span><p><strong>Modo demonstrativo</strong>A estrutura está pronta, mas estes ranges ainda não são solves certificados. Não memorize como GTO perfeito.</p></div>
       </aside>
 
       <section className="table-stage">
@@ -293,7 +300,7 @@ export default function Home() {
           <div><strong>{SCENARIOS[row.key].label}</strong><small>{row.count} decisões</small></div>
           <span className="leak-track"><i style={{ width: `${row.score}%` }} /></span>
           <b>{row.count ? row.score : "—"}</b><small>{row.loss ? `−${row.loss} bb` : "0.00 bb"}</small>
-          <button onClick={() => { setScenarioFilter(row.key); setView("trainer"); setSpot(makeSpot(stack, row.key, heroFilter)); setSelected(null); }}>Treinar</button>
+          <button onClick={() => { setScenarioFilter(row.key); setView("trainer"); setSpot(makeSpot(stackFor(stack), row.key, heroFilter)); setSelected(null); }}>Treinar</button>
         </div>)}</div>
       </div>
     </section>}

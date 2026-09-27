@@ -29,7 +29,7 @@ button:focus-visible,select:focus-visible { outline:2px solid var(--acid); outli
 .control-panel h1 { margin:13px 0 7px; font-size:22px; letter-spacing:-.04em; }
 .muted { color:#77857d; font-size:12px; line-height:1.5; margin:0 0 27px; }
 .field-label { margin:22px 0 9px; }
-.stack-pills { display:grid; grid-template-columns:repeat(4,1fr); gap:5px; }
+.stack-pills { display:grid; grid-template-columns:repeat(3,1fr); gap:5px; }
 .stack-pills button,.target-row button { height:37px; border:1px solid #2b3932; background:#151e1a; color:#929f98; border-radius:6px; font:11px var(--font-geist-mono); cursor:pointer; }
 .stack-pills button small { font-size:7px; color:#657269; margin-left:1px; }
 .stack-pills button:hover,.target-row button:hover { border-color:#53665d; color:#e5ece8; }
@@ -170,7 +170,7 @@ button:focus-visible,select:focus-visible { outline:2px solid var(--acid); outli
   .stats-grid { grid-template-columns:1fr 1fr; } .hero-stat { grid-column:1/-1; } .card-title,.leak-table { min-width:680px; } .matrix { min-width:560px; }
 }
 @media(max-width:520px) {
-  .top-meta { display:none; } .stack-pills { grid-template-columns:repeat(8,1fr); } .stack-pills button { padding:0; height:33px; font-size:9px; } .stack-pills button small { display:none; }
+  .top-meta { display:none; } .stack-pills { grid-template-columns:repeat(3,1fr); } .stack-pills button { padding:0; height:33px; font-size:9px; } .stack-pills button small { display:none; }
   .poker-table-wrap { height:350px; transform:scale(.76); width:116%; margin-left:-8%; } .poker-table { width:82%; }
   .seat-copy { display:none; } .seat.hero .seat-copy { display:flex; position:absolute; left:42px; }
   .action-buttons { grid-template-columns:repeat(2,1fr); } .spot-heading p { display:none; }
