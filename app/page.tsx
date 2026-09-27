@@ -2,7 +2,7 @@
 
 import { type CSSProperties, useCallback, useEffect, useMemo, useState } from "react";
 import {
-  ACTIONS, grade, INITIAL_SPOT, makeSpot, POSITIONS, RANKS, round, SCENARIOS, STACKS, strategy,
+  ACTIONS, grade, INITIAL_SPOT, makeSpot, POSITIONS, RANKS, round, SCENARIOS, scenarioIsCompatible, STACKS, strategy,
   type ActionKey, type Card, type HandRecord, type Position, type ScenarioKey, type Spot,
 } from "./engine";
 
@@ -139,8 +139,9 @@ export default function Home() {
   }, [spot.hero]);
 
   const changeConfig = (newStack: StackFilter, newScenario: ScenarioKey | "Todos", newHero: Position | "Todos") => {
-    setStack(newStack); setScenarioFilter(newScenario); setHeroFilter(newHero);
-    setSelected(null); setShowMatrix(false); setSpot(makeSpot(stackFor(newStack), newScenario, newHero));
+    const compatibleScenario = newScenario !== "Todos" && !scenarioIsCompatible(newScenario, newHero) ? "Todos" : newScenario;
+    setStack(newStack); setScenarioFilter(compatibleScenario); setHeroFilter(newHero);
+    setSelected(null); setShowMatrix(false); setSpot(makeSpot(stackFor(newStack), compatibleScenario, newHero));
   };
 
   const leaks = (Object.keys(SCENARIOS) as ScenarioKey[]).map((key) => {
@@ -189,7 +190,7 @@ export default function Home() {
         <label className="field-label" htmlFor="spot">TIPO DE SPOT</label>
         <select id="spot" value={scenarioFilter} onChange={(event) => changeConfig(stack, event.target.value as ScenarioKey | "Todos", heroFilter)}>
           <option value="Todos">Todos os spots</option>
-          {(Object.keys(SCENARIOS) as ScenarioKey[]).map((key) => <option key={key} value={key}>{SCENARIOS[key].label}</option>)}
+          {(Object.keys(SCENARIOS) as ScenarioKey[]).map((key) => <option key={key} value={key} disabled={!scenarioIsCompatible(key, heroFilter)}>{SCENARIOS[key].label}</option>)}
         </select>
 
         <label className="field-label">META DA SESSÃO</label>
@@ -271,13 +272,13 @@ export default function Home() {
           <div className="thought-list"><span>02</span><p><strong>Qual o stack?</strong>Stacks curtos favorecem jams.</p></div>
           <div className="thought-list"><span>03</span><p><strong>Qual sua classe?</strong>Valor, blocker ou realização de equidade.</p></div>
         </div> : answer && <div className={`feedback-card ${answer.loss <= .04 ? "correct" : answer.loss <= .12 ? "close" : "mistake"}`}>
-          <div className="feedback-kicker">{answer.loss <= .04 ? "LINHA APROVADA" : answer.loss <= .12 ? "QUASE LÁ" : "REVER ESTE SPOT"}</div>
+          <div className="feedback-kicker">BASE PROVISÓRIA · NÃO MEMORIZAR</div>
           <div className="feedback-score">
             <StatRing value={answer.score} />
-            <div><h3>{answer.loss <= .04 ? "Boa decisão." : answer.loss <= .12 ? "Imprecisão." : "EV deixado na mesa."}</h3><p>{ACTIONS[selected].label} aparece em <strong>{answer.frequency}%</strong> da estratégia.</p></div>
+            <div><h3>Comparação do protótipo.</h3><p>{ACTIONS[selected].label} aparece em <strong>{answer.frequency}%</strong> da base provisória.</p></div>
           </div>
-          <div className="ev-loss"><span>PERDA DE EV</span><strong>{answer.loss ? `−${answer.loss.toFixed(2)} bb` : "0.00 bb"}</strong></div>
-          <div className="strategy-bars"><span>ESTRATÉGIA DO MODELO</span>{[...spot.strategy].sort((a, b) => b.frequency - a.frequency).map((item) =>
+          <div className="ev-loss"><span>EV ESTIMADO · DEMO</span><strong>{answer.loss ? `−${answer.loss.toFixed(2)} bb` : "0.00 bb"}</strong></div>
+          <div className="strategy-bars"><span>ESTRATÉGIA PROVISÓRIA</span>{[...spot.strategy].sort((a, b) => b.frequency - a.frequency).map((item) =>
             <div className="strategy-row" key={item.action}>
               <div><i style={{ background: ACTIONS[item.action].color }} /><strong>{ACTIONS[item.action].label}</strong><b>{item.frequency}%</b></div>
               <span><i style={{ width: `${item.frequency}%`, background: ACTIONS[item.action].color }} /></span>

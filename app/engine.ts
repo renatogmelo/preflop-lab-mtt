@@ -103,24 +103,89 @@ export function strategy(hand: string, scenario: ScenarioKey, hero: Position, st
   }
   return normalize(items);
 }
+export function scenarioIsCompatible(scenario: ScenarioKey, hero: Position | "Todos") {
+  if (hero === "Todos") return true;
+  const index = POSITIONS.indexOf(hero);
+  if (scenario === "rfi") return hero !== "BB";
+  if (scenario === "vs-open" || scenario === "vs-jam") return index >= 1;
+  if (scenario === "vs-3bet") return hero !== "BB";
+  if (scenario === "bb-defense") return hero === "BB";
+  if (scenario === "bvb") return hero === "SB";
+  return index >= 2;
+}
+
+function postedBlind(position?: Position) {
+  return position === "SB" ? .5 : position === "BB" ? 1 : 0;
+}
+
 export function makeSpot(stack: number, scenarioFilter: ScenarioKey | "Todos", heroFilter: Position | "Todos"): Spot {
-  let scenario = scenarioFilter === "Todos" ? pick(Object.keys(SCENARIOS) as ScenarioKey[]) : scenarioFilter;
-  let hero: Position = heroFilter !== "Todos" ? heroFilter : scenario === "bb-defense" ? "BB" : scenario === "bvb" ? "SB" : scenario === "rfi" ? pick(POSITIONS.slice(0, 7)) : pick(POSITIONS.slice(2));
-  if (heroFilter !== "Todos" && hero === "BB" && scenario === "rfi") scenario = "bb-defense";
-  if (heroFilter !== "Todos" && hero !== "SB" && scenario === "bvb") scenario = "rfi";
-  const villain = scenario === "rfi" ? undefined : scenario === "bb-defense" ? pick(POSITIONS.slice(0, 6)) : scenario === "bvb" ? "BB" : pick(POSITIONS.slice(0, Math.max(1, POSITIONS.indexOf(hero))));
-  const cards = deal(), hand = notation(cards), size = stack <= 15 ? 2 : 2.1;
-  const history: string[] = []; let pot = 2.5;
-  if (scenario === "rfi" || scenario === "bvb") history.push(`Fold até ${hero}`);
-  if (scenario === "vs-open" || scenario === "bb-defense") { history.push(`${villain} raise ${size}bb`); pot += size; }
-  if (scenario === "vs-3bet") { history.push(`${hero} raise ${size}bb`, `${villain} 3-bet ${stack <= 25 ? 5.5 : 7}bb`); pot += stack <= 25 ? 7.5 : 9; }
-  if (scenario === "squeeze") { const caller = pick(POSITIONS.filter((p) => p !== hero && p !== villain && p !== "BB")); history.push(`${villain} raise ${size}bb`, `${caller} call ${size}bb`); pot += size * 2; }
-  if (scenario === "vs-jam") {
-    const posted = villain === "SB" ? .5 : villain === "BB" ? 1 : 0;
-    history.push(`${villain} all-in ${stack}bb`);
-    pot += stack - posted;
+  const allScenarios = Object.keys(SCENARIOS) as ScenarioKey[];
+  const validScenarios = allScenarios.filter((item) => scenarioIsCompatible(item, heroFilter));
+  let scenario = scenarioFilter === "Todos" ? pick(validScenarios) : scenarioFilter;
+  if (!scenarioIsCompatible(scenario, heroFilter)) scenario = heroFilter === "BB" ? "bb-defense" : "rfi";
+
+  let hero: Position;
+  if (heroFilter !== "Todos") hero = heroFilter;
+  else if (scenario === "bb-defense") hero = "BB";
+  else if (scenario === "bvb") hero = "SB";
+  else if (scenario === "rfi" || scenario === "vs-3bet") hero = pick(POSITIONS.slice(0, 7));
+  else if (scenario === "squeeze") hero = pick(POSITIONS.slice(2));
+  else hero = pick(POSITIONS.slice(1));
+
+  const heroIndex = POSITIONS.indexOf(hero);
+  let villain: Position | undefined;
+  let caller: Position | undefined;
+
+  if (scenario === "bvb") villain = "BB";
+  else if (scenario === "vs-3bet") villain = pick(POSITIONS.slice(heroIndex + 1));
+  else if (scenario === "squeeze") {
+    const positionsBeforeHero = POSITIONS.slice(0, heroIndex);
+    const openerIndex = Math.floor(Math.random() * (positionsBeforeHero.length - 1));
+    villain = positionsBeforeHero[openerIndex];
+    caller = pick(positionsBeforeHero.slice(openerIndex + 1));
+  } else if (scenario !== "rfi") {
+    villain = scenario === "bb-defense" ? pick(POSITIONS.slice(0, 6)) : pick(POSITIONS.slice(0, heroIndex));
   }
-  return { id: Math.random().toString(36).slice(2), cards, notation: hand, hero, villain, scenario, stack, history, pot: round(pot, 1), strategy: strategy(hand, scenario, hero, stack) };
+
+  const cards = deal();
+  const hand = notation(cards);
+  const openSize = stack <= 15 ? 2 : 2.1;
+  const threeBetSize = stack <= 25 ? 5.5 : 7;
+  const history: string[] = [];
+  let pot = 2.5;
+
+  if (scenario === "rfi" || scenario === "bvb") history.push(`Fold até ${hero}`);
+  if (scenario === "vs-open" || scenario === "bb-defense") {
+    history.push(`${villain} raise ${openSize}bb`);
+    pot += openSize - postedBlind(villain);
+  }
+  if (scenario === "vs-3bet") {
+    history.push(`Fold até ${hero}`, `${hero} raise ${openSize}bb`, `${villain} 3-bet ${threeBetSize}bb`);
+    pot += openSize - postedBlind(hero);
+    pot += threeBetSize - postedBlind(villain);
+  }
+  if (scenario === "squeeze") {
+    history.push(`${villain} raise ${openSize}bb`, `${caller} call ${openSize}bb`);
+    pot += openSize - postedBlind(villain);
+    pot += openSize - postedBlind(caller);
+  }
+  if (scenario === "vs-jam") {
+    history.push(`${villain} all-in ${stack}bb`);
+    pot += stack - postedBlind(villain);
+  }
+
+  return {
+    id: Math.random().toString(36).slice(2),
+    cards,
+    notation: hand,
+    hero,
+    villain,
+    scenario,
+    stack,
+    history,
+    pot: round(pot, 1),
+    strategy: strategy(hand, scenario, hero, stack),
+  };
 }
 export const INITIAL_SPOT: Spot = { id: "initial", cards: [{ rank: "A", suit: "♠" }, { rank: "J", suit: "♠" }], notation: "AJs", hero: "BTN", scenario: "rfi", stack: 25, history: ["Fold até BTN"], pot: 2.5, strategy: strategy("AJs", "rfi", "BTN", 25) };
 export function grade(items: StrategyAction[], selected: ActionKey) {
