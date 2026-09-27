@@ -42,6 +42,40 @@ function Matrix({ spot }: { spot: Spot }) {
   </div>;
 }
 
+function quickInsight(spot: Spot, action: ActionKey) {
+  const pair = spot.notation.length === 2;
+  const suited = spot.notation.endsWith("s");
+  const hasAce = spot.notation.includes("A");
+  const broadway = ["A", "K", "Q", "J", "T"].includes(spot.notation[0]) && ["A", "K", "Q", "J", "T"].includes(spot.notation[1]);
+  const texture = pair ? "O par retém equidade contra mãos não pareadas" : suited ? "O combo suited realiza melhor a equidade" : hasAce ? "O Ás funciona como blocker de mãos fortes" : broadway ? "As duas cartas altas reduzem problemas de dominância" : "O combo offsuit realiza pouca equidade";
+  const opener = spot.villain ?? "o range adversário";
+
+  if (spot.scenario === "vs-jam") {
+    const required = Math.round(spot.stack / (spot.pot + spot.stack) * 100);
+    return action === "fold"
+      ? `Contra o shove de ${spot.stack}bb de ${opener}, o call exige cerca de ${required}% de equidade. ${texture}, mas esta mão não alcança esse limiar contra o range de jam.`
+      : `O preço exige cerca de ${required}% de equidade contra o shove de ${spot.stack}bb. ${texture} e a mão conserva equidade suficiente para o call.`;
+  }
+  if (spot.scenario === "rfi") return action === "fold"
+    ? `${texture}, mas em ${spot.hero} ela fica abaixo do limite de abertura e sofre quando recebe ação. Fold protege a parte fraca do range.`
+    : `${texture}; em ${spot.hero}, posição e fold equity tornam a abertura lucrativa. A agressão também nega equidade aos blinds.`;
+  if (spot.scenario === "bb-defense") return action === "fold"
+    ? `Mesmo com o desconto do BB, ${texture.toLowerCase()} e não compensa a desvantagem posicional contra ${opener}.`
+    : `${texture}. O preço do BB permite continuar mais mãos, enquanto a linha escolhida equilibra realização de equidade e pressão sobre ${opener}.`;
+  if (spot.scenario === "vs-3bet") return action === "fold"
+    ? `A 3-bet comprime a realização de equidade: ${texture.toLowerCase()}, mas não o bastante para pagar o preço e jogar um pote inflado.`
+    : `${texture}. Contra a 3-bet, esta mão mantém força suficiente para continuar sem deixar o range de abertura excessivamente vulnerável.`;
+  if (spot.scenario === "squeeze") return action === "fold"
+    ? `Há dois ranges envolvidos e pior realização de equidade; ${texture.toLowerCase()}, mas não sustenta um pote multiway inflado.`
+    : `${texture}. O dinheiro morto aumenta o incentivo para continuar, e a linha agressiva captura fold equity contra dois ranges limitados.`;
+  if (spot.scenario === "bvb") return action === "fold"
+    ? `${texture}, mas ainda fica abaixo da defesa necessária nesta profundidade. Evitar o pior bloco offsuit reduz erros pós-flop.`
+    : `${texture}. Blind vs blind contém ranges largos, então esta mão ganha valor relativo e pode disputar os blinds com frequência maior.`;
+  return action === "fold"
+    ? `Contra a abertura de ${opener}, ${texture.toLowerCase()}, mas não supera dominância, posição e preço para continuar.`
+    : `${texture}. Contra ${opener}, blockers e força relativa sustentam esta continuação sem abrir um excesso de folds exploráveis.`;
+}
+
 export default function Home() {
   const [view, setView] = useState<ViewKey>("trainer");
   const [stack, setStack] = useState<StackFilter>("Todos");
@@ -194,7 +228,7 @@ export default function Home() {
               return <div className={`seat seat-${index} ${hero ? "hero" : ""} ${folded ? "folded" : ""}`} key={position}>
                 {villain && <span className="action-bubble">{spot.scenario === "vs-jam" ? "ALL-IN" : spot.scenario === "vs-3bet" ? "3-BET" : "RAISE"}</span>}
                 <div className="avatar">{hero ? "VOCÊ" : position === "BTN" ? "D" : position.slice(0, 2)}</div>
-                <div className="seat-copy"><strong>{position}</strong><span>{spot.stack}.0 bb</span></div>
+                <div className="seat-copy"><strong>{position}</strong><span>{villain && spot.scenario === "vs-jam" ? "0.0" : `${spot.stack}.0`} bb</span></div>
                 {hero && <div className="hole-cards"><CardView card={spot.cards[0]} /><CardView card={spot.cards[1]} /></div>}
               </div>;
             })}
@@ -249,14 +283,7 @@ export default function Home() {
               <span><i style={{ width: `${item.frequency}%`, background: ACTIONS[item.action].color }} /></span>
             </div>
           )}</div>
-          <div className="coach-copy"><span>POR QUÊ</span><p>{bestAction.action === "fold"
-            ? "A mão não realiza equidade suficiente nesta formação. Preserve fichas e evite continuar uma parte excessiva do range."
-            : bestAction.action === "call" || bestAction.action === "limp"
-              ? "A mão tem equidade para continuar, mas não quer inflar o pote. A linha passiva mantém mãos piores no range adversário."
-              : bestAction.action === "jam"
-                ? "Stack e fold equity tornam o all-in a linha de maior retorno. O shove também nega equidade às mãos marginais."
-                : "Força, blockers e fold equity sustentam a linha agressiva. Esta parte do range precisa construir o pote."
-          }</p></div>
+          <div className="coach-copy"><span>POR QUÊ</span><p>{quickInsight(spot, bestAction.action)}</p></div>
           <button className="next-button" onClick={next}>Próxima mão <span>ENTER ↵</span></button>
           <button className="mark-button" onClick={() => setHistory((items) => items.map((item) => item.id === spot.id ? { ...item, marked: !item.marked } : item))}>
             {history.find((item) => item.id === spot.id)?.marked ? "★ Mão marcada" : "☆ Marcar para revisar"}

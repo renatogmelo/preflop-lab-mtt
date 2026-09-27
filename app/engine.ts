@@ -115,7 +115,11 @@ export function makeSpot(stack: number, scenarioFilter: ScenarioKey | "Todos", h
   if (scenario === "vs-open" || scenario === "bb-defense") { history.push(`${villain} raise ${size}bb`); pot += size; }
   if (scenario === "vs-3bet") { history.push(`${hero} raise ${size}bb`, `${villain} 3-bet ${stack <= 25 ? 5.5 : 7}bb`); pot += stack <= 25 ? 7.5 : 9; }
   if (scenario === "squeeze") { const caller = pick(POSITIONS.filter((p) => p !== hero && p !== villain && p !== "BB")); history.push(`${villain} raise ${size}bb`, `${caller} call ${size}bb`); pot += size * 2; }
-  if (scenario === "vs-jam") { history.push(`${villain} all-in ${Math.min(stack, 15)}bb`); pot += Math.min(stack, 15); }
+  if (scenario === "vs-jam") {
+    const posted = villain === "SB" ? .5 : villain === "BB" ? 1 : 0;
+    history.push(`${villain} all-in ${stack}bb`);
+    pot += stack - posted;
+  }
   return { id: Math.random().toString(36).slice(2), cards, notation: hand, hero, villain, scenario, stack, history, pot: round(pot, 1), strategy: strategy(hand, scenario, hero, stack) };
 }
 export const INITIAL_SPOT: Spot = { id: "initial", cards: [{ rank: "A", suit: "♠" }, { rank: "J", suit: "♠" }], notation: "AJs", hero: "BTN", scenario: "rfi", stack: 25, history: ["Fold até BTN"], pot: 2.5, strategy: strategy("AJs", "rfi", "BTN", 25) };
