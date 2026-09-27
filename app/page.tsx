@@ -9,8 +9,10 @@ import {
 type ViewKey = "trainer" | "review" | "stats";
 type StackFilter = number | "Todos";
 
-function stackFor(filter: StackFilter) {
-  return filter === "Todos" ? STACKS[Math.floor(Math.random() * STACKS.length)] : filter;
+function stackFor(filter: StackFilter, scenario?: ScenarioKey | "Todos") {
+  if (filter !== "Todos") return filter;
+  const pool = scenario === "vs-jam" ? STACKS.filter((value) => value <= 25) : STACKS;
+  return pool[Math.floor(Math.random() * pool.length)];
 }
 
 function CardView({ card }: { card: Card }) {
@@ -31,7 +33,7 @@ function Matrix({ spot }: { spot: Spot }) {
   return <div className="matrix" aria-label="Matriz das 169 mãos iniciais">
     {ranks.flatMap((row, i) => ranks.map((col, j) => {
       const hand = i === j ? `${row}${col}` : i < j ? `${row}${col}s` : `${col}${row}o`;
-      const primary = [...strategy(hand, spot.scenario, spot.hero, spot.stack)].sort((a, b) => b.frequency - a.frequency)[0];
+      const primary = [...strategy(hand, spot.scenario, spot.hero, spot.stack, spot.villain, spot.caller)].sort((a, b) => b.frequency - a.frequency)[0];
       return <div
         key={`${i}-${j}`}
         className={`matrix-cell ${hand === spot.notation ? "current" : ""}`}
@@ -51,7 +53,9 @@ function quickInsight(spot: Spot, action: ActionKey) {
   const opener = spot.villain ?? "o range adversário";
 
   if (spot.scenario === "vs-jam") {
-    const required = Math.round(spot.stack / (spot.pot + spot.stack) * 100);
+    const posted = spot.hero === "BB" ? 1 : spot.hero === "SB" ? .5 : 0;
+    const callAmount = spot.stack - posted;
+    const required = Math.round(callAmount / (spot.pot + callAmount) * 100);
     return action === "fold"
       ? `Contra o shove de ${spot.stack}bb de ${opener}, o call exige cerca de ${required}% de equidade. ${texture}, mas esta mão não alcança esse limiar contra o range de jam.`
       : `O preço exige cerca de ${required}% de equidade contra o shove de ${spot.stack}bb. ${texture} e a mão conserva equidade suficiente para o call.`;
@@ -119,7 +123,7 @@ export default function Home() {
   const next = useCallback(() => {
     setSelected(null);
     setShowMatrix(false);
-    setSpot(makeSpot(stackFor(stack), scenarioFilter, heroFilter));
+    setSpot(makeSpot(stackFor(stack, scenarioFilter), scenarioFilter, heroFilter));
   }, [stack, scenarioFilter, heroFilter]);
 
   useEffect(() => {
@@ -139,9 +143,10 @@ export default function Home() {
   }, [spot.hero]);
 
   const changeConfig = (newStack: StackFilter, newScenario: ScenarioKey | "Todos", newHero: Position | "Todos") => {
-    const compatibleScenario = newScenario !== "Todos" && !scenarioIsCompatible(newScenario, newHero) ? "Todos" : newScenario;
+    const fixedStack = newStack === "Todos" ? undefined : newStack;
+    const compatibleScenario = newScenario !== "Todos" && !scenarioIsCompatible(newScenario, newHero, fixedStack) ? "Todos" : newScenario;
     setStack(newStack); setScenarioFilter(compatibleScenario); setHeroFilter(newHero);
-    setSelected(null); setShowMatrix(false); setSpot(makeSpot(stackFor(newStack), compatibleScenario, newHero));
+    setSelected(null); setShowMatrix(false); setSpot(makeSpot(stackFor(newStack, compatibleScenario), compatibleScenario, newHero));
   };
 
   const leaks = (Object.keys(SCENARIOS) as ScenarioKey[]).map((key) => {
@@ -190,7 +195,7 @@ export default function Home() {
         <label className="field-label" htmlFor="spot">TIPO DE SPOT</label>
         <select id="spot" value={scenarioFilter} onChange={(event) => changeConfig(stack, event.target.value as ScenarioKey | "Todos", heroFilter)}>
           <option value="Todos">Todos os spots</option>
-          {(Object.keys(SCENARIOS) as ScenarioKey[]).map((key) => <option key={key} value={key} disabled={!scenarioIsCompatible(key, heroFilter)}>{SCENARIOS[key].label}</option>)}
+          {(Object.keys(SCENARIOS) as ScenarioKey[]).map((key) => <option key={key} value={key} disabled={!scenarioIsCompatible(key, heroFilter, stack === "Todos" ? undefined : stack)}>{SCENARIOS[key].label}</option>)}
         </select>
 
         <label className="field-label">META DA SESSÃO</label>
@@ -207,7 +212,7 @@ export default function Home() {
             <div><strong>{totalLoss ? `−${totalLoss}` : "—"}</strong><span>EV bb</span></div>
           </div>
         </div>
-        <div className="model-note"><span>β</span><p><strong>Modo demonstrativo</strong>A estrutura está pronta, mas estes ranges ainda não são solves certificados. Não memorize como GTO perfeito.</p></div>
+        <div className="model-note"><span>GTO</span><p><strong>Motor de referência cEV</strong>Ranges por posição, stack, formação, blockers e realização de equidade. As misturas ficam nas fronteiras do range.</p></div>
       </aside>
 
       <section className="table-stage">
@@ -272,13 +277,13 @@ export default function Home() {
           <div className="thought-list"><span>02</span><p><strong>Qual o stack?</strong>Stacks curtos favorecem jams.</p></div>
           <div className="thought-list"><span>03</span><p><strong>Qual sua classe?</strong>Valor, blocker ou realização de equidade.</p></div>
         </div> : answer && <div className={`feedback-card ${answer.loss <= .04 ? "correct" : answer.loss <= .12 ? "close" : "mistake"}`}>
-          <div className="feedback-kicker">BASE PROVISÓRIA · NÃO MEMORIZAR</div>
+          <div className="feedback-kicker">MODELO GTO DE REFERÊNCIA · cEV</div>
           <div className="feedback-score">
             <StatRing value={answer.score} />
-            <div><h3>Comparação do protótipo.</h3><p>{ACTIONS[selected].label} aparece em <strong>{answer.frequency}%</strong> da base provisória.</p></div>
+            <div><h3>Análise da decisão.</h3><p>{ACTIONS[selected].label} aparece em <strong>{answer.frequency}%</strong> neste nó do modelo.</p></div>
           </div>
-          <div className="ev-loss"><span>EV ESTIMADO · DEMO</span><strong>{answer.loss ? `−${answer.loss.toFixed(2)} bb` : "0.00 bb"}</strong></div>
-          <div className="strategy-bars"><span>ESTRATÉGIA PROVISÓRIA</span>{[...spot.strategy].sort((a, b) => b.frequency - a.frequency).map((item) =>
+          <div className="ev-loss"><span>PERDA DE EV MODELADA</span><strong>{answer.loss ? `−${answer.loss.toFixed(2)} bb` : "0.00 bb"}</strong></div>
+          <div className="strategy-bars"><span>ESTRATÉGIA DO MODELO</span>{[...spot.strategy].sort((a, b) => b.frequency - a.frequency).map((item) =>
             <div className="strategy-row" key={item.action}>
               <div><i style={{ background: ACTIONS[item.action].color }} /><strong>{ACTIONS[item.action].label}</strong><b>{item.frequency}%</b></div>
               <span><i style={{ width: `${item.frequency}%`, background: ACTIONS[item.action].color }} /></span>
@@ -328,7 +333,7 @@ export default function Home() {
           <div><strong>{SCENARIOS[row.key].label}</strong><small>{row.count} decisões</small></div>
           <span className="leak-track"><i style={{ width: `${row.score}%` }} /></span>
           <b>{row.count ? row.score : "—"}</b><small>{row.loss ? `−${row.loss} bb` : "0.00 bb"}</small>
-          <button onClick={() => { setScenarioFilter(row.key); setView("trainer"); setSpot(makeSpot(stackFor(stack), row.key, heroFilter)); setSelected(null); }}>Treinar</button>
+          <button onClick={() => { changeConfig(stack, row.key, heroFilter); setView("trainer"); }}>Treinar</button>
         </div>)}</div>
       </div>
     </section>}
