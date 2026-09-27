@@ -11,7 +11,7 @@ export const RANKS = ["2", "3", "4", "5", "6", "7", "8", "9", "T", "J", "Q", "K"
 export const STACKS = [10, 15, 20, 25, 30, 40, 60, 100];
 const SUITS = ["♠", "♥", "♦", "♣"];
 export const SCENARIOS: Record<ScenarioKey, { label: string; short: string; copy: string }> = {
-  rfi: { label: "Pote não aberto", short: "RFI", copy: "A ação chega em fold até você." },
+  rfi: { label: "Pote não aberto", short: "RFI", copy: "Decida se entra no pote como primeiro agressor." },
   "vs-open": { label: "Contra open", short: "vs RFI", copy: "Defenda, 3-bete ou abandone contra uma abertura." },
   "vs-3bet": { label: "Contra 3-bet", short: "vs 3-bet", copy: "Continue corretamente depois de abrir e enfrentar uma 3-bet." },
   "bb-defense": { label: "Defesa do BB", short: "BB defend", copy: "Proteja o big blind contra diferentes posições." },
@@ -285,7 +285,9 @@ export function makeSpot(stack: number, scenarioFilter: ScenarioKey | "Todos", h
   const threeBetSize = stack <= 25 ? (oop ? 6 : 5.2) : (oop ? 8 : 6.8);
   const history: string[] = [];
   let pot = 2.5;
-  if (scenario === "rfi" || scenario === "bvb") history.push("Fold até " + hero);
+  if (scenario === "rfi" || scenario === "bvb") {
+    history.push(scenario === "rfi" && hero === "UTG" ? "UTG é o primeiro a agir" : "Fold até " + hero);
+  }
   if (scenario === "vs-open" || scenario === "bb-defense") {
     history.push(villain + " raise " + openSize + "bb");
     pot += openSize - postedBlind(villain);
