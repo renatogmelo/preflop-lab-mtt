@@ -49,7 +49,8 @@ function quickInsight(spot: Spot, action: ActionKey) {
   const suited = spot.notation.endsWith("s");
   const hasAce = spot.notation.includes("A");
   const broadway = ["A", "K", "Q", "J", "T"].includes(spot.notation[0]) && ["A", "K", "Q", "J", "T"].includes(spot.notation[1]);
-  const texture = pair ? "O par retém equidade contra mãos não pareadas" : suited ? "O combo suited realiza melhor a equidade" : hasAce ? "O Ás funciona como blocker de mãos fortes" : broadway ? "As duas cartas altas reduzem problemas de dominância" : "O combo offsuit realiza pouca equidade";
+  const texture = pair ? "O par retém equidade contra mãos não pareadas" : suited ? "O combo suited realiza melhor a equidade" : hasAce ? "O ás bloqueia algumas mãos fortes do adversário" : broadway ? "As duas cartas altas reduzem problemas de dominância" : "O combo offsuit realiza pouca equidade";
+  const benefit = pair ? "o par retenha equidade contra mãos não pareadas" : suited ? "o combo suited realize melhor sua equidade" : hasAce ? "o ás bloqueie algumas mãos fortes do adversário" : broadway ? "as duas cartas altas reduzam problemas de dominância" : "";
   const opener = spot.villain ?? "o range adversário";
 
   if (spot.scenario === "vs-jam") {
@@ -64,7 +65,9 @@ function quickInsight(spot: Spot, action: ActionKey) {
     ? `${texture}, mas em ${spot.hero} ela fica abaixo do limite de abertura e sofre quando recebe ação. Fold protege a parte fraca do range.`
     : `${texture}; em ${spot.hero}, posição e fold equity tornam a abertura lucrativa. A agressão também nega equidade aos blinds.`;
   if (spot.scenario === "bb-defense") return action === "fold"
-    ? `Mesmo com o desconto do BB, ${texture.toLowerCase()} e não compensa a desvantagem posicional contra ${opener}.`
+    ? hasAce && !suited
+      ? `Embora ${spot.notation} tenha um ás que bloqueia algumas mãos fortes do adversário e o BB receba desconto para pagar, a mão sofre com dominação contra o range de ${opener}. Jogando fora de posição, realiza sua equidade com dificuldade, tornando o fold a escolha do modelo.`
+      : `${benefit ? `Embora o BB receba desconto e ${benefit}, ` : "Mesmo com o desconto do BB, "}a mão não compensa a desvantagem posicional contra ${opener}.`
     : `${texture}. O preço do BB permite continuar mais mãos, enquanto a linha escolhida equilibra realização de equidade e pressão sobre ${opener}.`;
   if (spot.scenario === "vs-3bet") return action === "fold"
     ? `A 3-bet comprime a realização de equidade: ${texture.toLowerCase()}, mas não o bastante para pagar o preço e jogar um pote inflado.`
@@ -212,7 +215,7 @@ export default function Home() {
             <div><strong>{totalLoss ? `−${totalLoss}` : "—"}</strong><span>EV bb</span></div>
           </div>
         </div>
-        <div className="model-note"><span>GTO</span><p><strong>Motor de referência cEV</strong>Ranges por posição, stack, formação, blockers e realização de equidade. As misturas ficam nas fronteiras do range.</p></div>
+        <div className="model-note"><span>GTO</span><p><strong>Motor GTO por regras · cEV</strong>Frequências e EVs são estimativas do modelo. A equivalência com um solve exige a mesma árvore, sizings, stacks e ante.</p></div>
       </aside>
 
       <section className="table-stage">
@@ -277,7 +280,7 @@ export default function Home() {
           <div className="thought-list"><span>02</span><p><strong>Qual o stack?</strong>Stacks curtos favorecem jams.</p></div>
           <div className="thought-list"><span>03</span><p><strong>Qual sua classe?</strong>Valor, blocker ou realização de equidade.</p></div>
         </div> : answer && <div className={`feedback-card ${answer.loss <= .04 ? "correct" : answer.loss <= .12 ? "close" : "mistake"}`}>
-          <div className="feedback-kicker">MODELO GTO DE REFERÊNCIA · cEV</div>
+          <div className="feedback-kicker">MODELO GTO POR REGRAS · cEV</div>
           <div className="feedback-score">
             <StatRing value={answer.score} />
             <div><h3>Análise da decisão.</h3><p>{ACTIONS[selected].label} aparece em <strong>{answer.frequency}%</strong> neste nó do modelo.</p></div>
