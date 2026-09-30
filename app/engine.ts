@@ -3,12 +3,15 @@ export type ScenarioKey = "rfi" | "vs-open" | "vs-3bet" | "bb-defense" | "bvb" |
 export type ActionKey = "fold" | "call" | "limp" | "raise" | "threebet" | "fourbet" | "jam";
 export type Card = { rank: string; suit: string };
 export type StrategyAction = { action: ActionKey; frequency: number; ev: number };
-export type Spot = { id: string; cards: Card[]; notation: string; hero: Position; villain?: Position; caller?: Position; scenario: ScenarioKey; stack: number; history: string[]; pot: number; strategy: StrategyAction[] };
-export type HandRecord = Spot & { selected: ActionKey; loss: number; score: number; marked: boolean; timestamp: number };
+export type SeatState = { position: Position; cards: Card[]; notation: string; actionBeforeHero?: ActionKey };
+export type ActionEvent = { position: Position; action: ActionKey; text: string };
+export type RoundResolution = { events: ActionEvent[]; summary: string };
+export type Spot = { id: string; cards: Card[]; notation: string; hero: Position; villain?: Position; caller?: Position; scenario: ScenarioKey; stack: number; history: string[]; pot: number; strategy: StrategyAction[]; seats?: SeatState[] };
+export type HandRecord = Spot & { selected: ActionKey; loss: number; score: number; marked: boolean; timestamp: number; resolution?: RoundResolution };
 
 export const POSITIONS: Position[] = ["UTG", "UTG+1", "LJ", "HJ", "CO", "BTN", "SB", "BB"];
 export const RANKS = ["2", "3", "4", "5", "6", "7", "8", "9", "T", "J", "Q", "K", "A"];
-export const STACKS = [10, 15, 20, 25, 30, 40, 60, 100];
+export const STACKS = [8, 10, 12, 14, 15, 17, 20, 25, 30, 35, 40, 50, 60, 80, 100];
 const SUITS = ["♠", "♥", "♦", "♣"];
 export const SCENARIOS: Record<ScenarioKey, { label: string; short: string; copy: string }> = {
   rfi: { label: "Pote não aberto", short: "RFI", copy: "Decida se entra no pote como primeiro agressor." },
@@ -178,7 +181,7 @@ export function strategy(hand: string, scenario: ScenarioKey, hero: Position, st
     const aggressiveTarget = 5.5 + late * 5.5 + (stack <= 20 ? 2 : 0);
     const callSignal = frequencyAt(totalTarget, callP, 2.1), aggressive = frequencyAt(aggressiveTarget, aggressiveP, 1.25);
     const total = Math.max(callSignal, aggressive), call = Math.max(0, total - aggressive);
-    const aggressiveAction: ActionKey = stack <= 20 ? "jam" : "threebet";
+    const aggressiveAction: ActionKey = stack <= 12 ? "jam" : "threebet";
     return exact([
       { action: "fold", frequency: 100 - total, ev: 0 },
       { action: "call", frequency: call, ev: evAt(call, totalTarget - callP, .0065, .42) },
@@ -190,7 +193,7 @@ export function strategy(hand: string, scenario: ScenarioKey, hero: Position, st
     const aggressiveTarget = 4 + late * 5 + (stack <= 20 ? 2 : 0);
     const callSignal = frequencyAt(totalTarget, callP, 1.5), aggressive = frequencyAt(aggressiveTarget, aggressiveP, 1.15);
     const total = Math.max(callSignal, aggressive), call = Math.max(0, total - aggressive);
-    const aggressiveAction: ActionKey = stack <= 20 ? "jam" : "threebet";
+    const aggressiveAction: ActionKey = stack <= 12 ? "jam" : "threebet";
     return exact([
       { action: "fold", frequency: 100 - total, ev: 0 },
       { action: "call", frequency: call, ev: evAt(call, totalTarget - callP, .008, .48) },
@@ -235,6 +238,7 @@ export function strategy(hand: string, scenario: ScenarioKey, hero: Position, st
 }
 export function scenarioIsCompatible(scenario: ScenarioKey, hero: Position | "Todos", stack?: number) {
   if (scenario === "vs-jam" && stack !== undefined && stack > 25) return false;
+  if (scenario === "vs-3bet" && stack !== undefined && stack <= 12) return false;
   if (hero === "Todos") return true;
   const index = POSITIONS.indexOf(hero);
   if (scenario === "rfi") return hero !== "BB";

@@ -2,9 +2,10 @@
 
 import { type CSSProperties, useCallback, useEffect, useMemo, useState } from "react";
 import {
-  ACTIONS, grade, INITIAL_SPOT, makeSpot, POSITIONS, RANKS, round, SCENARIOS, scenarioIsCompatible, STACKS, strategy,
-  type ActionKey, type Card, type HandRecord, type Position, type ScenarioKey, type Spot,
+  ACTIONS, grade, INITIAL_SPOT, POSITIONS, RANKS, round, SCENARIOS, scenarioIsCompatible, STACKS, strategy,
+  type ActionKey, type Card, type HandRecord, type Position, type RoundResolution, type ScenarioKey, type Spot,
 } from "./engine";
+import { makeSpot, resolveRound } from "./simulation";
 
 type ViewKey = "trainer" | "review" | "stats";
 type StackFilter = number | "Todos";
@@ -91,6 +92,7 @@ export default function Home() {
   const [target, setTarget] = useState(20);
   const [history, setHistory] = useState<HandRecord[]>([]);
   const [selected, setSelected] = useState<ActionKey | null>(null);
+  const [resolution, setResolution] = useState<RoundResolution | null>(null);
   const [showMatrix, setShowMatrix] = useState(false);
   const [spot, setSpot] = useState<Spot>(INITIAL_SPOT);
   const [loaded, setLoaded] = useState(false);
@@ -118,13 +120,16 @@ export default function Home() {
   const decide = useCallback((action: ActionKey) => {
     if (selected) return;
     const result = grade(spot.strategy, action);
-    const record: HandRecord = { ...spot, selected: action, ...result, marked: false, timestamp: Date.now() };
+    const roundResolution = resolveRound(spot, action);
+    const record: HandRecord = { ...spot, selected: action, ...result, resolution: roundResolution, marked: false, timestamp: Date.now() };
     setSelected(action);
+    setResolution(roundResolution);
     setHistory((items) => [record, ...items.filter((item) => item.id !== record.id)]);
   }, [selected, spot]);
 
   const next = useCallback(() => {
     setSelected(null);
+    setResolution(null);
     setShowMatrix(false);
     setSpot(makeSpot(stackFor(stack, scenarioFilter), scenarioFilter, heroFilter));
   }, [stack, scenarioFilter, heroFilter]);
@@ -149,7 +154,7 @@ export default function Home() {
     const fixedStack = newStack === "Todos" ? undefined : newStack;
     const compatibleScenario = newScenario !== "Todos" && !scenarioIsCompatible(newScenario, newHero, fixedStack) ? "Todos" : newScenario;
     setStack(newStack); setScenarioFilter(compatibleScenario); setHeroFilter(newHero);
-    setSelected(null); setShowMatrix(false); setSpot(makeSpot(stackFor(newStack, compatibleScenario), compatibleScenario, newHero));
+    setSelected(null); setResolution(null); setShowMatrix(false); setSpot(makeSpot(stackFor(newStack, compatibleScenario), compatibleScenario, newHero));
   };
 
   const leaks = (Object.keys(SCENARIOS) as ScenarioKey[]).map((key) => {
@@ -179,7 +184,7 @@ export default function Home() {
       <aside className="control-panel">
         <div className="eyebrow"><span>SESSÃO ATIVA</span><span className="session-status">FOCO</span></div>
         <h1>Treino preflop</h1>
-        <p className="muted">Decisões aleatórias na árvore completa. Um spot de cada vez.</p>
+        <p className="muted">Oito mãos únicas, ranges condicionados e decisões independentes. Um spot de cada vez.</p>
 
         <label className="field-label">STACK EFETIVO</label>
         <div className="stack-pills">
@@ -215,7 +220,7 @@ export default function Home() {
             <div><strong>{totalLoss ? `−${totalLoss}` : "—"}</strong><span>EV bb</span></div>
           </div>
         </div>
-        <div className="model-note"><span>GTO</span><p><strong>Motor GTO por regras · cEV</strong>Frequências e EVs são estimativas do modelo. A equivalência com um solve exige a mesma árvore, sizings, stacks e ante.</p></div>
+        <div className="model-note"><span>GTO</span><p><strong>Motor GTO por regras · cEV</strong>Baralho completo sem colisões; cada ação adversária usa mão, posição, stack e range próprios. Frequências e EVs continuam sendo estimativas do modelo.</p></div>
       </aside>
 
       <section className="table-stage">
@@ -232,13 +237,18 @@ export default function Home() {
             <div className="action-history">{spot.history.map((item, index) => <span key={`${item}-${index}`}>{item}</span>)}</div>
             {seats.map((position, index) => {
               const hero = position === spot.hero;
-              const folded = spot.scenario === "rfi" && !hero && position !== "SB" && position !== "BB";
-              const villain = position === spot.villain;
-              return <div className={`seat seat-${index} ${hero ? "hero" : ""} ${folded ? "folded" : ""}`} key={position}>
-                {villain && <span className="action-bubble">{spot.scenario === "vs-jam" ? "ALL-IN" : spot.scenario === "vs-3bet" ? "3-BET" : "RAISE"}</span>}
+              const seatState = spot.seats?.find((seat) => seat.position === position);
+              const postEvent = resolution?.events.find((event) => event.position === position);
+              const action = postEvent?.action ?? seatState?.actionBeforeHero;
+              const folded = action === "fold";
+              const bubble = action && action !== "fold" ? (postEvent?.text === "BB check" ? "CHECK" : ACTIONS[action].compact) : null;
+              const emptyStack = action === "jam" || (hero && selected === "jam");
+              return <div className={`seat seat-${index} ${hero ? "hero" : ""} ${folded ? "folded" : ""} ${selected && !hero ? "revealed" : ""}`} key={position}>
+                {!hero && bubble && <span className={`action-bubble action-${action}`}>{bubble}</span>}
                 <div className="avatar">{hero ? "VOCÊ" : position === "BTN" ? "D" : position.slice(0, 2)}</div>
-                <div className="seat-copy"><strong>{position}</strong><span>{villain && spot.scenario === "vs-jam" ? "0.0" : `${spot.stack}.0`} bb</span></div>
+                <div className="seat-copy"><strong>{position}</strong><span>{emptyStack ? "0.0" : `${spot.stack}.0`} bb</span></div>
                 {hero && <div className="hole-cards"><CardView card={spot.cards[0]} /><CardView card={spot.cards[1]} /></div>}
+                {selected && !hero && seatState && <div className="hole-cards opponent-cards"><CardView card={seatState.cards[0]} /><CardView card={seatState.cards[1]} /></div>}
               </div>;
             })}
           </div>
@@ -275,7 +285,7 @@ export default function Home() {
       <aside className="coach-panel">
         {!selected ? <div className="waiting-card">
           <span className="target-icon">◎</span><h3>Leia a mesa</h3>
-          <p>Considere posição, stack efetivo e ação anterior. Escolha a linha de maior EV.</p>
+          <p>Considere posição, stack efetivo e ação anterior. Os adversários já têm cartas ocultas e decidirão pelos próprios ranges.</p>
           <div className="thought-list"><span>01</span><p><strong>Quem abriu?</strong>Ranges iniciais mudam toda a defesa.</p></div>
           <div className="thought-list"><span>02</span><p><strong>Qual o stack?</strong>Stacks curtos favorecem jams.</p></div>
           <div className="thought-list"><span>03</span><p><strong>Qual sua classe?</strong>Valor, blocker ou realização de equidade.</p></div>
@@ -293,6 +303,21 @@ export default function Home() {
             </div>
           )}</div>
           <div className="coach-copy"><span>POR QUÊ</span><p>{quickInsight(spot, bestAction.action)}</p></div>
+          {resolution && spot.seats && <div className="reveal-panel">
+            <div className="reveal-head"><span>SHOWDOWN DIDÁTICO</span><small>{resolution.summary}</small></div>
+            <div className="reveal-grid">{spot.seats.filter((seat) => seat.position !== spot.hero).map((seat) => {
+              const event = resolution.events.find((item) => item.position === seat.position);
+              const prior = seat.actionBeforeHero;
+              const line = event?.text ?? (prior ? seat.position + " " + ACTIONS[prior].label.toLowerCase() : "Não precisou agir");
+              return <div className="reveal-row" key={seat.position}>
+                <strong>{seat.position}</strong>
+                <div className="reveal-cards"><CardView card={seat.cards[0]} /><CardView card={seat.cards[1]} /></div>
+                <span>{seat.notation}</span>
+                <small>{line}</small>
+              </div>;
+            })}</div>
+            <p>As decisões adversárias usam somente mão própria, posição, stack e range do nó — nunca as cartas do herói.</p>
+          </div>}
           <button className="next-button" onClick={next}>Próxima mão <span>ENTER ↵</span></button>
           <button className="mark-button" onClick={() => setHistory((items) => items.map((item) => item.id === spot.id ? { ...item, marked: !item.marked } : item))}>
             {history.find((item) => item.id === spot.id)?.marked ? "★ Mão marcada" : "☆ Marcar para revisar"}
