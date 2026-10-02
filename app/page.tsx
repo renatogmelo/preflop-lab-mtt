@@ -50,38 +50,46 @@ function quickInsight(spot: Spot, action: ActionKey) {
   const suited = spot.notation.endsWith("s");
   const hasAce = spot.notation.includes("A");
   const broadway = ["A", "K", "Q", "J", "T"].includes(spot.notation[0]) && ["A", "K", "Q", "J", "T"].includes(spot.notation[1]);
-  const texture = pair ? "O par retém equidade contra mãos não pareadas" : suited ? "O combo suited realiza melhor a equidade" : hasAce ? "O ás bloqueia algumas mãos fortes do adversário" : broadway ? "As duas cartas altas reduzem problemas de dominância" : "O combo offsuit realiza pouca equidade";
-  const benefit = pair ? "o par retenha equidade contra mãos não pareadas" : suited ? "o combo suited realize melhor sua equidade" : hasAce ? "o ás bloqueie algumas mãos fortes do adversário" : broadway ? "as duas cartas altas reduzam problemas de dominância" : "";
+  const strength = pair
+    ? "Um par começa na frente de muitas mãos sem par."
+    : suited
+      ? "Cartas do mesmo naipe podem formar um flush e costumam jogar melhor depois do flop."
+      : hasAce
+        ? "O ás reduz a chance de o adversário ter AA ou AK."
+        : broadway
+          ? "Duas cartas altas podem formar pares fortes e sequências."
+          : "Cartas de naipes diferentes formam menos jogos fortes depois do flop.";
   const opener = spot.villain ?? "o range adversário";
+  const move = action === "call" ? "Pagar" : action === "jam" ? "Ir all-in" : action === "threebet" ? "Aumentar novamente" : action === "fourbet" ? "Fazer a 4-bet" : action === "limp" ? "Completar" : "Abrir raise";
 
   if (spot.scenario === "vs-jam") {
     const posted = spot.hero === "BB" ? 1 : spot.hero === "SB" ? .5 : 0;
     const callAmount = spot.stack - posted;
     const required = Math.round(callAmount / (spot.pot + callAmount) * 100);
     return action === "fold"
-      ? `Contra o shove de ${spot.stack}bb de ${opener}, o call exige cerca de ${required}% de equidade. ${texture}, mas esta mão não alcança esse limiar contra o range de jam.`
-      : `O preço exige cerca de ${required}% de equidade contra o shove de ${spot.stack}bb. ${texture} e a mão conserva equidade suficiente para o call.`;
+      ? `Para pagar o all-in de ${opener}, esta mão precisa ganhar cerca de ${required}% das vezes. ${strength} Mesmo assim, ela não ganha o suficiente contra as mãos que costumam ir all-in.`
+      : `Para pagar o all-in de ${opener}, esta mão precisa ganhar cerca de ${required}% das vezes. ${strength} Aqui ela ganha vezes suficientes para justificar o call.`;
   }
   if (spot.scenario === "rfi") return action === "fold"
-    ? `${texture}, mas em ${spot.hero} ela fica abaixo do limite de abertura e sofre quando recebe ação. Fold protege a parte fraca do range.`
-    : `${texture}; em ${spot.hero}, posição e fold equity tornam a abertura lucrativa. A agressão também nega equidade aos blinds.`;
+    ? `${strength} Porém, em ${spot.hero}, esta mão é fraca demais para abrir com lucro e terá decisões difíceis se alguém reagir.`
+    : `${strength} Em ${spot.hero}, abrir coloca pressão nos jogadores restantes e pode ganhar os blinds sem precisar ver o flop.`;
   if (spot.scenario === "bb-defense") return action === "fold"
     ? hasAce && !suited
-      ? `Embora ${spot.notation} tenha um ás que bloqueia algumas mãos fortes do adversário e o BB receba desconto para pagar, a mão sofre com dominação contra o range de ${opener}. Jogando fora de posição, realiza sua equidade com dificuldade, tornando o fold a escolha do modelo.`
-      : `${benefit ? `Embora o BB receba desconto e ${benefit}, ` : "Mesmo com o desconto do BB, "}a mão não compensa a desvantagem posicional contra ${opener}.`
-    : `${texture}. O preço do BB permite continuar mais mãos, enquanto a linha escolhida equilibra realização de equidade e pressão sobre ${opener}.`;
+      ? `${strength} Mesmo pagando menos por estar no BB, ${spot.notation} costuma perder para ases com carta acompanhante maior. Além disso, você jogará primeiro depois do flop, então o fold é mais seguro.`
+      : `${strength} Mesmo pagando menos no BB, você jogará primeiro depois do flop e esta mão não é forte o bastante para compensar essa desvantagem.`
+    : `${strength} Como o BB já colocou 1 blind, continuar custa menos. ${move} é lucrativo o bastante contra a abertura de ${opener}.`;
   if (spot.scenario === "vs-3bet") return action === "fold"
-    ? `A 3-bet comprime a realização de equidade: ${texture.toLowerCase()}, mas não o bastante para pagar o preço e jogar um pote inflado.`
-    : `${texture}. Contra a 3-bet, esta mão mantém força suficiente para continuar sem deixar o range de abertura excessivamente vulnerável.`;
+    ? `${strength} Porém, contra a 3-bet você precisa investir mais fichas e enfrentará mãos mais fortes. Esta mão não joga bem o bastante para continuar.`
+    : `${strength} Mesmo contra uma 3-bet, esta mão ainda é forte o bastante. ${move} evita abandonar uma mão que pode ganhar um pote grande.`;
   if (spot.scenario === "squeeze") return action === "fold"
-    ? `Há dois ranges envolvidos e pior realização de equidade; ${texture.toLowerCase()}, mas não sustenta um pote multiway inflado.`
-    : `${texture}. O dinheiro morto aumenta o incentivo para continuar, e a linha agressiva captura fold equity contra dois ranges limitados.`;
+    ? `${strength} Aqui já houve um raise e um call, então você pode enfrentar duas mãos ao mesmo tempo. Esta mão não é forte o bastante para entrar nesse pote grande.`
+    : `${strength} Já existe mais dinheiro no pote por causa do raise e do call. ${move} pode ganhar esse dinheiro agora ou jogar com uma mão forte se alguém continuar.`;
   if (spot.scenario === "bvb") return action === "fold"
-    ? `${texture}, mas ainda fica abaixo da defesa necessária nesta profundidade. Evitar o pior bloco offsuit reduz erros pós-flop.`
-    : `${texture}. Blind vs blind contém ranges largos, então esta mão ganha valor relativo e pode disputar os blinds com frequência maior.`;
+    ? `${strength} Mesmo com apenas os blinds na disputa, esta mão continua fraca e tende a criar decisões ruins depois do flop.`
+    : `${strength} Como só restam SB e BB, os dois jogam muito mais mãos. Por isso, ${move.toLowerCase()} com esta mão pode dar lucro.`;
   return action === "fold"
-    ? `Contra a abertura de ${opener}, ${texture.toLowerCase()}, mas não supera dominância, posição e preço para continuar.`
-    : `${texture}. Contra ${opener}, blockers e força relativa sustentam esta continuação sem abrir um excesso de folds exploráveis.`;
+    ? `${strength} Contra a abertura de ${opener}, esta mão costuma estar atrás e pode ser difícil de jogar depois do flop. O fold evita investir fichas em uma situação ruim.`
+    : `${strength} A abertura de ${opener} também pode incluir mãos mais fracas. Por isso, ${move.toLowerCase()} com esta mão pode dar lucro no longo prazo.`;
 }
 
 export default function Home() {
@@ -288,7 +296,7 @@ export default function Home() {
           <p>Considere posição, stack efetivo e ação anterior. Os adversários já têm cartas ocultas e decidirão pelos próprios ranges.</p>
           <div className="thought-list"><span>01</span><p><strong>Quem abriu?</strong>Ranges iniciais mudam toda a defesa.</p></div>
           <div className="thought-list"><span>02</span><p><strong>Qual o stack?</strong>Stacks curtos favorecem jams.</p></div>
-          <div className="thought-list"><span>03</span><p><strong>Qual sua classe?</strong>Valor, blocker ou realização de equidade.</p></div>
+          <div className="thought-list"><span>03</span><p><strong>Qual é o tipo da mão?</strong>Par, cartas altas, mesmo naipe ou mão fraca.</p></div>
         </div> : answer && <div className={`feedback-card ${answer.loss <= .04 ? "correct" : answer.loss <= .12 ? "close" : "mistake"}`}>
           <div className="feedback-kicker">MODELO GTO POR REGRAS · cEV</div>
           <div className="feedback-score">
