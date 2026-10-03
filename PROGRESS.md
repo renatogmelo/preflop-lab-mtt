@@ -75,6 +75,13 @@ Concluir a evolução vertical do Preflop Lab para uma plataforma de estudo MTT 
 - Histórico visual de precisão.
 - Preferência de interface Beginner/Advanced/Professional preparada na UI.
 
+### Deployment — concluído
+
+- Commit funcional validado e enviado ao remote do Sites.
+- Versão privada publicada com sucesso em `https://preflop-lab-mtt.renatogomes2504.chatgpt.site`.
+- D1 incluído no artefato com migration inicial.
+- Site aberto no painel do Codex após confirmação do status `succeeded`.
+
 ### Persistência — schema e integração concluídos
 
 - D1 habilitado como binding `DB`.
@@ -165,8 +172,8 @@ Concluir a evolução vertical do Preflop Lab para uma plataforma de estudo MTT 
 
 ## Próximo passo
 
-1. Publicar a versão validada com Sites e verificar o deployment.
-2. Validar visualmente desktop/mobile quando o runtime do navegador deixar de falhar por ACL.
-3. Adicionar um dataset verificado/licenciado para habilitar EV, golden tests e precisão de solve.
-4. Expandir Tree Explorer para cold 4-bets e linhas profundas quando esses nodes existirem no dataset.
-5. Sincronizar marcações editadas e leitura de presets/notas da nuvem na UI.
+1. Adicionar um dataset verificado/licenciado para habilitar EV, golden tests e precisão de solve.
+2. Validar visualmente desktop/mobile quando o runtime de automação do navegador deixar de falhar por ACL.
+3. Expandir Tree Explorer para cold 4-bets e linhas profundas quando esses nodes existirem no dataset.
+4. Sincronizar marcações editadas e leitura de presets/notas da nuvem na UI.
+5. Continuar calibrando a UX com sessões reais de estudo.
