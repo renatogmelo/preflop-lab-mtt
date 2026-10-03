@@ -43,6 +43,7 @@ export type LearningAttempt = {
 export type LeakInsight = {
   id: string;
   severity: "major" | "moderate" | "watch";
+  confidence: "possible" | "likely" | "confirmed";
   title: string;
   description: string;
   scenario: ScenarioKey;
@@ -61,6 +62,8 @@ export type MasteryNode = {
   label: string;
   mastery: number;
   attempts: number;
+  evidence: "insufficient" | "learning" | "competent" | "strong" | "mastered";
+  datasetLabel?: string;
   children?: MasteryNode[];
 };
 
@@ -114,6 +117,7 @@ export function computeMastery(input: {
   confidenceCalibration: number;
   streak: number;
   lastSeen: number;
+  strategyTrust?: "verified" | "curated" | "modeled" | "experimental";
 }, now = Date.now()) {
   if (input.attempts <= 0) return 0;
   const accuracy = input.correct / input.attempts;
@@ -122,8 +126,9 @@ export function computeMastery(input: {
   const stability = Math.min(1, input.streak / 5);
   const recency = recencyScore(input.lastSeen, now);
   const calibration = Math.max(0, Math.min(1, input.confidenceCalibration));
-  const quality = accuracy * .48 + frequency * .2 + calibration * .12 + stability * .1 + recency * .1;
-  return Math.round(Math.min(.99, quality * evidence) * 100);
+  const trustFactor = input.strategyTrust === "verified" ? 1 : input.strategyTrust === "curated" ? .97 : input.strategyTrust === "experimental" ? .72 : .88;
+  const quality = accuracy * .44 + frequency * .2 + calibration * .12 + stability * .12 + recency * .12;
+  return Math.round(Math.min(.99, quality * evidence * trustFactor) * 100);
 }
 
 function nextIntervalDays(attempts: number, streak: number, correct: boolean, confidence: Confidence, difficulty: Difficulty, knowledge: KnowledgeState) {
@@ -207,7 +212,7 @@ function strategyDistance(left: StrategyAction[], right: StrategyAction[]) {
   return distance / 2;
 }
 
-export function boundaryCandidates(node: StrategyNode, limit = 40): BoundaryCandidate[] {
+export function boundaryCandidates(node: StrategyNode, limit = 40, history: HandRecord[] = []): BoundaryCandidate[] {
   return Object.entries(node.strategyByHand)
     .map(([hand, strategy]) => {
       const neighbors = nearbyHands(hand).filter((item) => node.strategyByHand[item]);
@@ -218,12 +223,21 @@ export function boundaryCandidates(node: StrategyNode, limit = 40): BoundaryCand
         ? Math.max(...neighbors.map((item) => strategyDistance(strategy, node.strategyByHand[item])))
         : 0;
       const actionSwitches = neighbors.filter((item) => dominantAction(node.strategyByHand[item]).action !== primary.action).length;
-      const score = Math.round((mixedBonus + edgeBonus + neighborDistance * .6 + actionSwitches * 12) * 10) / 10;
-      const reason = isMixedStrategy(strategy)
-        ? "Estratégia mista"
+      const attempts = history.filter((record) => record.nodeId === node.id && record.notation === hand);
+      const historicalError = attempts.length ? attempts.filter((record) => !record.correct).length / attempts.length * 28 : 0;
+      const confidentMistakes = attempts.filter((record) => !record.correct && record.confidence >= 4).length * 9;
+      const features = handFeatures(hand);
+      const importance = features.pair ? 8 : features.broadway ? 7 : features.ace && features.suited ? 6 : features.connector ? 4 : 1;
+      const evs = strategy.map((item) => item.ev).filter((value): value is number => value !== null);
+      const evGap = evs.length > 1 ? Math.min(20, (Math.max(...evs) - Math.min(...evs)) * 30) : 0;
+      const score = Math.round((mixedBonus + edgeBonus + neighborDistance * .6 + actionSwitches * 12 + historicalError + confidentMistakes + importance + evGap) * 10) / 10;
+      const reason = confidentMistakes
+        ? "Erro histórico com confiança alta"
         : actionSwitches
-          ? "Ação muda nas mãos vizinhas"
-          : "Frequência muda perto da fronteira";
+          ? "A ação dominante muda nas mãos vizinhas"
+          : isMixedStrategy(strategy)
+            ? "Duas ou mais ações compõem esta fronteira"
+            : "A frequência muda perto da fronteira";
       return { hand, score, reason, strategy };
     })
     .sort((a, b) => b.score - a.score)
@@ -241,7 +255,7 @@ function groupKey(record: HandRecord) {
   return [record.scenario, record.hero, stackBand(record.stack), handFeatures(record.notation).family].join("|");
 }
 
-export function detectLeaks(records: HandRecord[], minimumAttempts = 3): LeakInsight[] {
+export function detectLeaks(records: HandRecord[], minimumAttempts = 4): LeakInsight[] {
   const groups = new Map<string, HandRecord[]>();
   records.forEach((record) => {
     const key = groupKey(record);
@@ -263,6 +277,7 @@ export function detectLeaks(records: HandRecord[], minimumAttempts = 3): LeakIns
     return [{
       id: key,
       severity: leakScore >= 55 ? "major" : leakScore >= 36 ? "moderate" : "watch",
+      confidence: items.length >= 12 && accuracy < 55 ? "confirmed" : items.length >= 7 ? "likely" : "possible",
       title: `${hero} · ${scenario} · ${band}`,
       description: `${handClass}: baixa precisão ao escolher ${ACTIONS[dominantSelected]?.label ?? "a ação"}. Revise a região do range, não apenas uma mão.`,
       scenario: scenario as ScenarioKey,
@@ -294,6 +309,7 @@ function aggregateMastery(records: HandRecord[], now: number) {
     if (!record.correct) break;
     streak += 1;
   }
+  const trust = records.some((record) => record.provenance.trustLevel === "verified") ? "verified" : records.some((record) => record.provenance.trustLevel === "curated") ? "curated" : records.some((record) => record.provenance.trustLevel === "experimental") ? "experimental" : "modeled";
   return computeMastery({
     attempts: records.length,
     correct,
@@ -301,7 +317,16 @@ function aggregateMastery(records: HandRecord[], now: number) {
     confidenceCalibration,
     streak,
     lastSeen: Math.max(...records.map((record) => record.timestamp)),
+    strategyTrust: trust,
   }, now);
+}
+
+export function masteryEvidence(attempts: number, mastery: number): MasteryNode["evidence"] {
+  if (attempts < 5) return "insufficient";
+  if (mastery < 45) return "learning";
+  if (mastery < 65) return "competent";
+  if (mastery < 82 || attempts < 15) return "strong";
+  return "mastered";
 }
 
 export function buildMasteryTree(records: HandRecord[], now = Date.now()): MasteryNode {
@@ -314,6 +339,7 @@ export function buildMasteryTree(records: HandRecord[], now = Date.now()): Maste
       label: scenario,
       mastery: aggregateMastery(scenarioRecords, now),
       attempts: scenarioRecords.length,
+      evidence: masteryEvidence(scenarioRecords.length, aggregateMastery(scenarioRecords, now)),
       children: matchups.map((matchup) => {
         const matchupRecords = scenarioRecords.filter((record) => `${record.hero} vs ${record.villain ?? "field"}` === matchup);
         return {
@@ -321,15 +347,19 @@ export function buildMasteryTree(records: HandRecord[], now = Date.now()): Maste
           label: matchup,
           mastery: aggregateMastery(matchupRecords, now),
           attempts: matchupRecords.length,
+          evidence: masteryEvidence(matchupRecords.length, aggregateMastery(matchupRecords, now)),
           children: [...new Set(matchupRecords.map((record) => stackBand(record.stack)))].map((band) => {
             const bandRecords = matchupRecords.filter((record) => stackBand(record.stack) === band);
-            return { key: scenario + ":" + matchup + ":" + band, label: band, mastery: aggregateMastery(bandRecords, now), attempts: bandRecords.length };
+            const score = aggregateMastery(bandRecords, now);
+            return { key: scenario + ":" + matchup + ":" + band, label: band, mastery: score, attempts: bandRecords.length, evidence: masteryEvidence(bandRecords.length, score) };
           }),
         };
       }),
     };
   });
-  return { key: "preflop", label: "Preflop Mastery", mastery: aggregateMastery(records, now), attempts: records.length, children };
+  const rootMastery = aggregateMastery(records, now);
+  const datasetLabel = records.some((record) => record.provenance.trustLevel === "verified") ? "Mastery — dataset verified" : records.some((record) => record.provenance.trustLevel === "curated") ? "Mastery — Preflop Lab Reference" : "Mastery — Preflop Lab Modeled Strategy";
+  return { key: "preflop", label: datasetLabel, datasetLabel, mastery: rootMastery, attempts: records.length, evidence: masteryEvidence(records.length, rootMastery), children };
 }
 
 export function createSessionReport(records: HandRecord[]): SessionReport {
@@ -350,6 +380,57 @@ export function createSessionReport(records: HandRecord[]): SessionReport {
     misconceptions,
     recommendation: leaks[0] ? `Treine o leak: ${leaks[0].title}` : "Pratique fronteiras e estratégias mistas para consolidar o range.",
   };
+}
+
+
+export type TodayTrainingItem = {
+  id: string;
+  category: "due_review" | "misconception" | "confirmed_leak" | "boundary" | "mixed" | "recent" | "maintenance";
+  record: HandRecord;
+  priority: number;
+};
+
+export function buildTodayTraining(records: HandRecord[], limit = 30, now = Date.now()): TodayTrainingItem[] {
+  if (!records.length) return [];
+  const leaks = detectLeaks(records).filter((leak) => leak.confidence === "confirmed");
+  const leakKeys = new Set(leaks.map((leak) => leak.id));
+  const unique = new Map<string, HandRecord>();
+  [...records].sort((a, b) => b.timestamp - a.timestamp).forEach((record) => {
+    const key = record.nodeId + "::" + record.notation;
+    if (!unique.has(key)) unique.set(key, record);
+  });
+  const candidates = [...unique.values()].map((record) => {
+    const key = groupKey(record);
+    const mixed = record.strategy.filter((action) => action.frequency >= 5).length > 1;
+    const category: TodayTrainingItem["category"] = record.knowledgeState === "misconception"
+      ? "misconception"
+      : leakKeys.has(key)
+        ? "confirmed_leak"
+        : record.marked || !record.correct
+          ? "due_review"
+          : mixed
+            ? "mixed"
+            : dominantAction(record.strategy).frequency < 80
+              ? "boundary"
+              : now - record.timestamp < 7 * DAY
+                ? "recent"
+                : "maintenance";
+    const rank = { misconception: 100, confirmed_leak: 90, due_review: 80, boundary: 65, mixed: 60, recent: 40, maintenance: 20 }[category];
+    return { id: record.nodeId + "::" + record.notation, category, record, priority: rank + record.confidence * (!record.correct ? 4 : 0) + record.frequencyError * .25 };
+  }).sort((a, b) => b.priority - a.priority);
+  const selected: TodayTrainingItem[] = [];
+  const pending = [...candidates];
+  while (pending.length && selected.length < limit) {
+    const recent = selected.slice(-3);
+    let index = pending.findIndex((candidate) => recent.every((item) =>
+      item.record.hero !== candidate.record.hero
+      || stackBand(item.record.stack) !== stackBand(candidate.record.stack)
+      || handFeatures(item.record.notation).family !== handFeatures(candidate.record.notation).family
+      || item.record.nodeId !== candidate.record.nodeId));
+    if (index < 0) index = 0;
+    selected.push(pending.splice(index, 1)[0]);
+  }
+  return selected;
 }
 
 export function adjacentReinforcementHands(hand: string) {

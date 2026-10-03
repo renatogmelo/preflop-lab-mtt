@@ -2,6 +2,68 @@
 
 Atualizado em: 2026-10-03
 
+## PHASE 2 AUDIT
+
+### Implementado e confirmado no código
+
+- `StrategyRepository` é a fronteira única de leitura usada por Explorer, Trainer e simulação.
+- O provider heurístico está isolado, declara `sourceType = modeled`, frequências estimadas, `isExact = false` e EV indisponível.
+- Nodes carregam identidade, query, pote, histórico, ator, ações, 169 classes e provenance.
+- O motor recusa sizings e configurações incompatíveis em vez de adaptar silenciosamente.
+- Decision, Frequency, Range, Boundary, Mixed, Leak e Custom existem e usam Strategy Data.
+- Learning engine possui repetição espaçada, confidence, misconceptions, mastery limitado por evidência, fronteiras, leaks e relatórios.
+- D1 persiste decisões e o JSON integral do registro; o histórico local continua como fallback.
+- Build, lint e 21 testes estavam verdes antes do início desta fase.
+
+### Parcialmente implementado
+
+- Provenance existe, mas ainda não separa formalmente `sourceType` de `trustLevel` nem guarda metodologia, licença, revisão e changelog completos.
+- O repositório suporta providers estáticos, porém o lookup ainda exige um dataset específico e não resolve automaticamente `verified → curated → modeled`.
+- Importação JSON/CSV e validação existem, mas não há status editorial, semver validada, golden snapshots ou inspeção administrativa.
+- Frequency Trainer calcula MAE, mas não informa erro por ação, acerto da ação dominante ou calibração pedagógica.
+- Range Trainer mede VPIP, faltas, excessos e ação dominante, mas não modela frequências do aluno, boundaries clicáveis nem as maiores divergências ponderadas.
+- Boundary Trainer usa mistura e vizinhança, mas não incorpora histórico do aluno, confidence, importância estratégica ou EV disponível.
+- Leak detection exige amostra mínima, mas ainda não comunica níveis estatísticos `possible / likely / confirmed`.
+- Academy conecta teoria, matriz e prática, porém vários capítulos ainda usam uma matriz estática em vez de uma sequência interativa do conceito.
+- Mastery limita pouca evidência, mas não explicita estados de evidência nem contextualiza completamente o nome e trust do dataset estudado.
+
+### Apenas preparado arquiteturalmente
+
+- Entrada de datasets curated/verified legalmente utilizáveis.
+- EV e golden values de solve verificado.
+- ICM, PKO, Cash e Heads-Up (fora do escopo desta fase).
+- Version-aware reinterpretation: decisões já guardam provenance no JSON, mas falta coluna dedicada para `datasetVersion` e sinalização de atualização.
+
+### Limitações e inconsistências encontradas
+
+- `StrategySourceType` mistura origem e confiança (`imported`/`estimated`), o que impede política de confiança inequívoca.
+- `SourceNote` trata qualquer fonte não-modelada como “dataset verificado”; isso pode rotular curated/imported incorretamente.
+- Não existe Coverage Map nem contagem auditável de combinações cobertas.
+- Não há curated dataset instalado, editor, revisão, publicação, diff ou exportação.
+- `Professional` aparece como preferência, mas ainda não desativa fallback modelado.
+- O Mixed Trainer é apenas Frequency Trainer filtrado e não ensina recognition/composition/frequency em etapas.
+- A UI de decisão não oferece todas as rotas contextuais solicitadas após um erro.
+- Testes atuais cobrem invariantes centrais, mas não percorrem um catálogo completo de nodes nem validam workflow editorial, prioridade, fallback e regressões visuais.
+- Não há E2E automatizado real dos fluxos críticos; o teste renderizado atual valida somente o shell HTML.
+
+### Dívidas técnicas prioritárias
+
+1. Separar origem, confiança e status editorial no domínio.
+2. Implementar resolução composta e política de fallback.
+3. Criar catálogo de cobertura mensurável e ferramentas de Inspector/Editor.
+4. Persistir `datasetVersion` em coluna dedicada.
+5. Tornar métricas e explicações trust-aware em todos os trainers e analytics.
+6. Expandir testes parametrizados, golden infrastructure, fluxos E2E e contratos visuais.
+
+### Próximos passos desta fase
+
+1. Implementar trust/provenance e repository resolution.
+2. Integrar Coverage, Inspector e Curated Range Editor.
+3. Corrigir os sete trainers e o fluxo contextual de estudo.
+4. Calibrar mastery/analytics e auditar Academy.
+5. Executar a suíte ampliada e publicar somente após build, lint e testes verdes.
+
+
 ## Objetivo atual
 
 Concluir a evolução vertical do Preflop Lab para uma plataforma de estudo MTT 8-max ChipEV: Strategy Data Layer honesta, Explorer, centro de treino, inteligência de aprendizado, Academy, Analyze/Progress, persistência D1, documentação e hardening.
@@ -177,3 +239,23 @@ Concluir a evolução vertical do Preflop Lab para uma plataforma de estudo MTT 
 3. Expandir Tree Explorer para cold 4-bets e linhas profundas quando esses nodes existirem no dataset.
 4. Sincronizar marcações editadas e leitura de presets/notas da nuvem na UI.
 5. Continuar calibrando a UX com sessões reais de estudo.
+
+
+## Phase 2 — implementação concluída
+
+- Trust Level formal: Verified, Curated, Modeled e Experimental.
+- Provenance completa com metodologia, licença, revisão, precisão, EV, status, id e versão.
+- Resolução `Verified → Curated → Modeled`; Experimental excluído por padrão.
+- Fallback modelado configurável e modo trusted-only funcional em Coverage/Inspector.
+- Coverage Map e métricas sobre 252 combinações canônicas.
+- Cobertura atual: 0 Verified, 0 Curated publicado, 217 Modeled e 35 indisponíveis.
+- Preflop Lab Reference Strategy criada com zero ranges inventados/publicados.
+- Dataset Inspector e Curated Range Editor com matriz 169, validação, diff, notas, SemVer, import/export e workflow explícito.
+- Bloqueio de publicação curated sem revisão.
+- Golden infrastructure e invariantes parametrizados sobre todos os nodes suportados.
+- Trainers auditados e corrigidos; relatórios em `TRAINER_AUDIT.md`.
+- Explanation Engine em três níveis, Range Structure, Neighborhood, Stack Evolution e Position Evolution.
+- Academy auditada e RFI Position Evolution tornou-se interativo.
+- Today's Training V2 com diversidade e mastery calibrado por evidência/trust.
+- Decisões persistem `datasetVersion` em coluna dedicada; versões antigas não são reclassificadas.
+- 36 testes verdes, incluindo 2.500 casos gerados, catálogo completo, workflow, golden, E2E lógico, performance e contratos visuais estruturais.

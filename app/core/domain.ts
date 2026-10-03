@@ -1,7 +1,9 @@
 export type Position = "UTG" | "UTG+1" | "LJ" | "HJ" | "CO" | "BTN" | "SB" | "BB";
 export type ScenarioKey = "rfi" | "vs-open" | "vs-3bet" | "bb-defense" | "bvb" | "squeeze" | "vs-jam";
 export type ActionKey = "fold" | "call" | "limp" | "raise" | "threebet" | "fourbet" | "jam";
-export type StrategySourceType = "verified" | "imported" | "modeled" | "estimated";
+export type StrategySourceType = "licensed" | "internal-solve" | "reviewed" | "imported" | "modeled" | "estimated";
+export type StrategyTrustLevel = "verified" | "curated" | "modeled" | "experimental";
+export type DatasetWorkflowStatus = "draft" | "review_required" | "reviewed" | "published" | "deprecated";
 export type GameType = "MTT";
 export type GameModel = "ChipEV" | "ICM";
 export type InterfaceLevel = "beginner" | "advanced" | "professional";
@@ -17,10 +19,15 @@ export type StrategyProvenance = {
   datasetId: string;
   datasetVersion: string;
   sourceType: StrategySourceType;
+  trustLevel: StrategyTrustLevel;
   sourceLabel: string;
   isExact: boolean;
   frequencyPrecision: "exact" | "rounded" | "estimated";
   evAvailable: boolean;
+  methodology: string;
+  license: string;
+  status: DatasetWorkflowStatus;
+  reviewedAt?: string;
   notes?: string;
 };
 export type DatasetMetadata = {
@@ -29,7 +36,11 @@ export type DatasetMetadata = {
   version: string;
   createdAt: string;
   updatedAt: string;
+  generatedAt: string;
+  reviewedAt?: string;
   sourceType: StrategySourceType;
+  trustLevel: StrategyTrustLevel;
+  status: DatasetWorkflowStatus;
   gameType: GameType;
   model: GameModel;
   format: string;
@@ -39,6 +50,12 @@ export type DatasetMetadata = {
   availableOpenSizes: number[];
   available3betSizes: number[];
   supportedNodes: ScenarioKey[];
+  methodology: string;
+  frequencyPrecision: "exact" | "rounded" | "estimated";
+  evAvailable: boolean;
+  isExact: boolean;
+  license: string;
+  changeLog: Array<{ version: string; date: string; changes: string[] }>;
   notes: string;
   enabled: boolean;
 };
@@ -127,6 +144,32 @@ export type Spot = {
 };
 export type Confidence = 1 | 2 | 3 | 4 | 5;
 export type KnowledgeState = "knowledge-gap" | "uncertain" | "misconception" | "mastered";
+export type ResolutionPolicy = {
+  allowModeledFallback: boolean;
+  allowExperimental: boolean;
+  trustedOnly?: boolean;
+};
+
+export type CoverageEntry = {
+  query: StrategyQuery;
+  status: "available" | "unavailable";
+  trustLevel: StrategyTrustLevel | "unavailable";
+  datasetId: string | null;
+  datasetVersion: string | null;
+  nodeId: string | null;
+  reason?: string;
+};
+
+export type CoverageMetrics = {
+  totalCombinations: number;
+  supportedNodes: number;
+  verifiedNodes: number;
+  curatedNodes: number;
+  modeledNodes: number;
+  experimentalNodes: number;
+  unavailableCombinations: number;
+};
+
 export type HandRecord = Spot & {
   selected: ActionKey;
   correct: boolean;

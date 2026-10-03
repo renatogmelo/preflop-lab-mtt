@@ -4,6 +4,7 @@ import { useState } from "react";
 import { SCENARIOS, type Position, type ScenarioKey } from "../core/domain";
 import { defaultQuery, strategyRepository } from "../core/strategy-data";
 import { StrategyMatrix } from "../components/strategy-matrix";
+import { PositionExpansionLab } from "../components/academy-interactive";
 
 type Lesson = {
   id: string;
@@ -49,7 +50,7 @@ export function LearnView({ onPractice }: { onPractice: (scenario: ScenarioKey, 
     const next = [...new Set([...completed, lesson.id])];
     setCompleted(next);
     localStorage.setItem("preflop-lab-academy", JSON.stringify(next));
-    void fetch("/api/user-data", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ operation: "academy", data: { lessonId: lesson.id, status: "completed", mastery: 100, attempts: 1 } }) });
+    void fetch("/api/user-data", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ operation: "academy", data: { lessonId: lesson.id, status: "learning", mastery: 20, attempts: 1 } }) });
   };
   return <section className="academy-page">
     <aside className="academy-sidebar"><div><span>PREFLOP ACADEMY</span><b>{completed.length}/{LESSONS.length}</b></div><i><em style={{ width: `${completed.length / LESSONS.length * 100}%` }} /></i>
@@ -59,6 +60,7 @@ export function LearnView({ onPractice }: { onPractice: (scenario: ScenarioKey, 
       <header><span>{lesson.chapter}</span><h1>{lesson.title}</h1><p>{lesson.summary}</p></header>
       <section className="theory-card"><small>THEORY</small>{lesson.theory.map((paragraph) => <p key={paragraph}>{paragraph}</p>)}<blockquote>{lesson.takeaway}</blockquote></section>
       <section className="lesson-example"><div><small>EXEMPLO NO RANGE</small><span className="hand-chip large">{lesson.example.hand}</span><h2>{lesson.example.node}</h2><p>{lesson.example.explanation}</p></div>{lookup.status === "available" && <StrategyMatrix node={lookup.node} selectedHand={lesson.example.hand} compact />}</section>
+      {lesson.id === "rfi" && <PositionExpansionLab />}
       <section className="mini-test"><small>MINI TEST</small><h2>{lesson.question}</h2><div>{lesson.options.map((option, index) => <button key={option} disabled={answer !== null} className={answer !== null ? index === lesson.correct ? "correct" : index === answer ? "wrong" : "" : ""} onClick={() => setAnswer(index)}>{option}</button>)}</div>
         {answer !== null && <p><b>{answer === lesson.correct ? "Boa." : "Revise o princípio."}</b> {lesson.answer}</p>}
       </section>

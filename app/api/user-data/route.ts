@@ -142,6 +142,7 @@ export async function POST(request: Request) {
         userId: user.userId,
         nodeId: record.nodeId,
         datasetId: record.datasetId,
+        datasetVersion: record.provenance.datasetVersion,
         hand: record.notation,
         hero: record.hero,
         villain: record.villain ?? null,

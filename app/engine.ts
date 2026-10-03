@@ -16,7 +16,7 @@ import {
   type StrategyAction,
 } from "./core/domain";
 import {
-  MODELED_DATASET_ID,
+  AUTO_DATASET_ID,
   defaultQuery,
   dominantAction,
   scenarioIsCompatible,
@@ -34,7 +34,7 @@ export function strategy(
   villain?: Position,
   caller?: Position,
 ): StrategyAction[] {
-  const query = defaultQuery({ datasetId: MODELED_DATASET_ID });
+  const query = defaultQuery({ datasetId: AUTO_DATASET_ID });
   const result = strategyRepository.hand(
     { ...query, stack, hero, scenario, villain, caller, openSize: undefined, threeBetSize: undefined },
     hand,

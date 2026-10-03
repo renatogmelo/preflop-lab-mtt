@@ -91,3 +91,19 @@ Relatórios incluem decisions, accuracy, frequency MAE, EV loss disponível, str
 ## Testabilidade
 
 O learning engine não depende de React, relógio global obrigatório ou banco. Funções aceitam `now`/timestamp, tornando scheduling, mastery e leaks determinísticos em testes.
+
+
+## Phase 2 — pedagogia e trust
+
+Todo feedback mostra trust e versão. EV loss continua nulo quando EV não existe.
+
+- Decision: ação do usuário, distribuição de referência, trust, confidence, explicações Beginner/Advanced/Professional, navegação contextual e review.
+- Frequency: MAE, erro por ação, acerto da ação dominante e faixa de calibração.
+- Range: VPIP/agressão do usuário e referência, faltas, excessos, frequência, fronteiras e desvios clicáveis.
+- Boundary: ação vizinha, distância estratégica, mistura, histórico de erros, confiança alta, importância da mão e EV gap disponível.
+- Mixed: Recognition → Composition → Frequency.
+- Leak: `possible | likely | confirmed` conforme amostra; nunca certeza a partir de duas mãos.
+
+Mastery usa evidência, accuracy, frequency error, confidence, streak, recência e trust. Estados visíveis: insufficient evidence, learning, competent, strong e mastered. Modeled mastery recebe o nome `Preflop Lab Modeled Strategy`, não “GTO mastery”.
+
+Today's Training V2 deduplica node+mão e diversifica posição, stack band, família, node e ação nos itens recentes, combinando review, misconception, leak confirmado, boundary, mixed, recente e manutenção.

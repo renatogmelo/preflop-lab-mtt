@@ -16,6 +16,7 @@ export const decisions = sqliteTable("decisions", {
   userId: text("user_id").notNull(),
   nodeId: text("node_id").notNull(),
   datasetId: text("dataset_id").notNull(),
+  datasetVersion: text("dataset_version").notNull().default("legacy-unknown"),
   hand: text("hand").notNull(),
   hero: text("hero").notNull(),
   villain: text("villain"),
@@ -34,6 +35,7 @@ export const decisions = sqliteTable("decisions", {
 }, (table) => [
   index("decisions_user_created_idx").on(table.userId, table.createdAt),
   index("decisions_user_node_hand_idx").on(table.userId, table.nodeId, table.hand),
+  index("decisions_user_dataset_version_idx").on(table.userId, table.datasetId, table.datasetVersion),
   index("decisions_user_knowledge_idx").on(table.userId, table.knowledgeState),
 ]);
 

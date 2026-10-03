@@ -17,6 +17,8 @@ import { MATRIX_RANKS, handFeatures } from "../core/hands";
 import { boundaryCandidates, detectLeaks } from "../core/learning";
 import { defaultQuery, dominantAction, isMixedStrategy, strategyRepository } from "../core/strategy-data";
 import { StrategyLegend } from "../components/strategy-matrix";
+import { TrustBadge } from "../components/trust-badge";
+import { MixedStrategyTrainer } from "../components/mixed-trainer";
 
 export type TrainingMode = "decision" | "frequency" | "range" | "boundary" | "leak" | "mixed" | "custom";
 
@@ -40,7 +42,8 @@ function queryFor(stack = 40, hero: Position = "BTN", scenario: ScenarioKey = "r
 }
 
 function SourceNote({ node }: { node: StrategyNode }) {
-  return <div className="training-source"><b>{node.provenance.sourceType === "modeled" ? "MODELO EDUCACIONAL" : "DATASET VERIFICADO"}</b><span>{node.provenance.isExact ? "Frequências do dataset." : "Frequências aproximadas; EV indisponível."}</span></div>;
+  const copy = node.provenance.trustLevel === "verified" ? "Dataset validado; metodologia auditável." : node.provenance.trustLevel === "curated" ? "Referência humana revisada; não é equilibrium solve." : "Aproximação educacional; frequências estimadas e EV indisponível.";
+  return <div className="training-source"><TrustBadge level={node.provenance.trustLevel} /><span>{node.provenance.sourceLabel} · v{node.provenance.datasetVersion} · {copy}</span></div>;
 }
 
 function TrainerHeader({ kicker, title, copy }: { kicker: string; title: string; copy: string }) {
@@ -56,7 +59,12 @@ function FrequencyTrainer({ mixedOnly = false }: { mixedOnly?: boolean }) {
   const pool = boundaryCandidates(lookup.node, 169).filter((item) => !mixedOnly || isMixedStrategy(item.strategy));
   const current = pool[index % pool.length];
   const total = current.strategy.reduce((sum, item) => sum + (estimate[item.action] ?? 0), 0);
-  const mae = current.strategy.reduce((sum, item) => sum + Math.abs((estimate[item.action] ?? 0) - item.frequency), 0) / current.strategy.length;
+  const actionErrors = current.strategy.map((item) => ({ ...item, error: Math.abs((estimate[item.action] ?? 0) - item.frequency) }));
+  const mae = actionErrors.reduce((sum, item) => sum + item.error, 0) / current.strategy.length;
+  const referenceDominant = dominantAction(current.strategy).action;
+  const estimatedDominant = [...current.strategy].sort((a, b) => (estimate[b.action] ?? 0) - (estimate[a.action] ?? 0))[0]?.action;
+  const dominantCorrect = referenceDominant === estimatedDominant;
+  const calibration = mae <= 5 ? "calibrada" : mae <= 12 ? "próxima" : "descalibrada";
   const next = () => { setIndex((value) => value + 1); setEstimate({}); setChecked(false); };
   return <section className="training-lab">
     <TrainerHeader kicker={mixedOnly ? "MIXED STRATEGY TRAINER" : "FREQUENCY TRAINER"} title={mixedOnly ? "Domine as misturas" : "Calibre suas frequências"} copy="Estime a distribuição completa. O objetivo é compreender a região do range, não decorar uma porcentagem isolada." />
@@ -72,8 +80,8 @@ function FrequencyTrainer({ mixedOnly = false }: { mixedOnly?: boolean }) {
         <div className={`frequency-total ${total === 100 ? "valid" : ""}`}><span>Total</span><b>{total}%</b></div>
         {!checked ? <button className="primary-lab-button" disabled={total !== 100} onClick={() => setChecked(true)}>Comparar com a referência</button> : <button className="primary-lab-button" onClick={next}>Próxima mão</button>}
       </div>
-      {checked && <div className="frequency-result"><span>ERRO MÉDIO ABSOLUTO</span><strong>{mae.toFixed(1)}pp</strong><p>{mae <= 5 ? "Boa calibração. Agora compare as mãos vizinhas para entender a fronteira." : "Revise como esta mão se encaixa na construção do range."}</p>
-        {current.strategy.map((item) => <div key={item.action}><span>{ACTIONS[item.action].label}</span><b>Você {estimate[item.action] ?? 0}%</b><em>Referência {item.frequency}%</em></div>)}
+      {checked && <div className="frequency-result"><span>ERRO MÉDIO ABSOLUTO</span><strong>{mae.toFixed(1)}pp</strong><p>{dominantCorrect ? `Você identificou a ação dominante, mas sua frequência está ${calibration}.` : `A ação dominante é ${ACTIONS[referenceDominant].label}; revise primeiro a composição do range.`}</p><div className="frequency-diagnostics"><b>Ação dominante: {dominantCorrect ? "correta" : "incorreta"}</b><b>Calibração: {calibration}</b></div>
+        {actionErrors.map((item) => <div key={item.action}><span>{ACTIONS[item.action].label}</span><b>Você {estimate[item.action] ?? 0}%</b><em>Referência {item.frequency}% · erro {item.error.toFixed(0)}pp</em></div>)}
       </div>}
     </div>
   </section>;
@@ -113,6 +121,7 @@ function RangeTrainer() {
   const [tool, setTool] = useState<ActionKey | "erase">("raise");
   const [assignments, setAssignments] = useState<Record<string, ActionKey>>({});
   const [compared, setCompared] = useState(false);
+  const [focusedHand, setFocusedHand] = useState<string | null>(null);
   if (lookup.status === "unavailable") return null;
   const node = lookup.node;
   const allowed = [...node.actionsAvailable, "erase" as const];
@@ -122,28 +131,45 @@ function RangeTrainer() {
     const expected = node.strategyByHand[hand];
     return expected && (expected.find((item) => item.action === action)?.frequency ?? 0) < 50;
   });
+  const frequencyMistakes = Object.entries(assignments).filter(([hand, action]) => {
+    const expected = node.strategyByHand[hand];
+    const chosen = expected?.find((item) => item.action === action)?.frequency ?? 0;
+    return expected && isMixedStrategy(expected) && chosen < 95;
+  });
+  const boundaryMistakes = wrong.filter(([hand]) => isMixedStrategy(node.strategyByHand[hand]) || dominantAction(node.strategyByHand[hand]).frequency < 80);
   const userVpip = Object.entries(assignments).reduce((sum, [hand, action]) => sum + (action === "fold" ? 0 : handFeatures(hand).combos), 0) / 1326 * 100;
+  const aggressiveActions: ActionKey[] = ["raise", "threebet", "fourbet", "jam"];
+  const userRaise = Object.entries(assignments).reduce((sum, [hand, action]) => sum + (aggressiveActions.includes(action) ? handFeatures(hand).combos : 0), 0) / 1326 * 100;
+  const referenceRaise = aggressiveActions.reduce((sum, action) => sum + rangeComposition(node, action), 0);
+  const deviations = Object.keys(node.strategyByHand).map((hand) => {
+    const yourAction = assignments[hand] ?? "fold";
+    const reference = node.strategyByHand[hand];
+    const referenceFrequency = reference.find((item) => item.action === yourAction)?.frequency ?? 0;
+    return { hand, yourAction, reference, deviation: 100 - referenceFrequency };
+  }).sort((a, b) => b.deviation - a.deviation);
+  const focused = focusedHand ? deviations.find((item) => item.hand === focusedHand) : null;
   return <section className="training-lab">
-    <TrainerHeader kicker="RANGE TRAINER" title="Construa o range completo" copy="Escolha uma ação e pinte a matriz. Depois compare sua construção com a referência." />
+    <TrainerHeader kicker="RANGE TRAINER" title="Construa o range completo" copy="Escolha uma ação e pinte a matriz. Depois compare composição, frequências e fronteiras com a referência." />
     <SourceNote node={node} />
     <div className="range-trainer-layout">
       <div className="range-builder-card">
-        <div className="range-tools">{allowed.map((action) => <button key={action} className={tool === action ? "selected" : ""} style={action !== "erase" ? { borderColor: ACTIONS[action].color } : undefined} onClick={() => setTool(action)}>{action === "erase" ? "Apagar" : ACTIONS[action].label}</button>)}</div>
+        <div className="range-tools">{allowed.map((action) => <button key={action} className={tool === action ? "selected" : ""} style={action !== "erase" ? { borderColor: ACTIONS[action].color } : undefined} onClick={() => { setTool(action); setCompared(false); }}>{action === "erase" ? "Apagar" : ACTIONS[action].label}</button>)}</div>
         <RangeBuilderMatrix assignments={assignments} tool={tool} reference={compared ? node : undefined} onAssign={(hand, action) => {
+          if (compared) { setFocusedHand(hand); return; }
           setAssignments((current) => {
             const next = { ...current };
             if (action === "erase") delete next[hand]; else next[hand] = action;
             return next;
           });
-          setCompared(false);
         }} />
-        <button className="primary-lab-button" onClick={() => setCompared(true)}>Comparar ranges</button>
+        <button className="primary-lab-button" onClick={() => { setCompared(true); setFocusedHand(deviations[0]?.hand ?? null); }}>Comparar ranges</button>
       </div>
       <aside className="range-score-card">
-        <span>COMPOSIÇÃO</span><div><small>Seu VPIP</small><b>{userVpip.toFixed(1)}%</b></div><div><small>Referência</small><b>~{rangeComposition(node).toFixed(1)}%</b></div>
-        {compared ? <><div><small>Mãos ausentes</small><b className="bad">{missing.length}</b></div><div><small>Mãos em excesso</small><b className="warn">{excess.length}</b></div><div><small>Ação dominante errada</small><b>{wrong.length}</b></div>
-          <section><small>MAIORES AJUSTES</small>{[...missing.slice(0, 4), ...excess.slice(0, 4)].slice(0, 7).map(([hand, strategy]) => <p key={hand}><strong>{hand}</strong><span>{Array.isArray(strategy) ? `Adicionar ${ACTIONS[dominantAction(strategy).action].label}` : "Remover do range"}</span></p>)}</section>
-        </> : <p className="range-tip">Preencha o máximo que conseguir. A comparação destaca regiões ausentes, excessos e escolhas de ação incorretas.</p>}
+        <span>COMPOSIÇÃO</span><div><small>Seu VPIP</small><b>{userVpip.toFixed(1)}%</b></div><div><small>VPIP referência</small><b>{rangeComposition(node).toFixed(1)}%</b></div><div><small>Seu raise</small><b>{userRaise.toFixed(1)}%</b></div><div><small>Raise referência</small><b>{referenceRaise.toFixed(1)}%</b></div>
+        {compared ? <><div><small>Mãos ausentes</small><b className="bad">{missing.length}</b></div><div><small>Mãos em excesso</small><b className="warn">{excess.length}</b></div><div><small>Ação dominante errada</small><b>{wrong.length}</b></div><div><small>Erros de frequência</small><b>{frequencyMistakes.length}</b></div><div><small>Erros de fronteira</small><b>{boundaryMistakes.length}</b></div>
+          <section className="deviation-list"><small>MAIORES DESVIOS · CLIQUE PARA ENTENDER</small>{deviations.slice(0, 8).map((item) => <button key={item.hand} onClick={() => setFocusedHand(item.hand)} className={focusedHand === item.hand ? "selected" : ""}><strong>{item.hand}</strong><span>{ACTIONS[item.yourAction].label + " · desvio " + item.deviation.toFixed(0) + "pp"}</span></button>)}</section>
+          {focused && <section className="range-error-detail"><span>{focused.hand}</span><p>Você marcou <b>{ACTIONS[focused.yourAction].label}</b>. A referência distribui {focused.reference.map((item) => ACTIONS[item.action].label + " " + item.frequency + "%").join(" · ")}.</p><small>{isMixedStrategy(focused.reference) ? "Esta mão pertence a uma fronteira mista; uma escolha 100% pura perde a estrutura da região." : dominantAction(focused.reference).action === focused.yourAction ? "A ação dominante está correta; refine a frequência." : "A ação dominante diverge. Compare as mãos vizinhas antes de memorizar esta célula."}</small></section>}
+        </> : <p className="range-tip">Preencha o máximo que conseguir. A comparação destaca regiões ausentes, excessos, frequências e fronteiras.</p>}
       </aside>
     </div>
   </section>;
@@ -161,10 +187,10 @@ function DecisionCard({ node, candidates, title }: { node: StrategyNode; candida
   </div>;
 }
 
-function BoundaryTrainer() {
+function BoundaryTrainer({ history }: { history: HandRecord[] }) {
   const lookup = strategyRepository.lookup(queryFor());
   if (lookup.status === "unavailable") return null;
-  const candidates = boundaryCandidates(lookup.node);
+  const candidates = boundaryCandidates(lookup.node, 40, history);
   return <section className="training-lab"><TrainerHeader kicker="BOUNDARY TRAINER" title="Descubra onde o range muda" copy="Priorizamos misturas, trocas de ação e diferenças entre mãos vizinhas. AA não desperdiça sua sessão." /><SourceNote node={lookup.node} /><DecisionCard node={lookup.node} candidates={candidates} title="FRONTEIRA ESTRATÉGICA" /></section>;
 }
 
@@ -182,10 +208,10 @@ function LeakTrainer({ history }: { history: HandRecord[] }) {
   if (leak) {
     const hero = POSITIONS.includes(leak.hero as Position) ? leak.hero as Position : "BTN";
     const lookup = strategyRepository.lookup(queryFor(stackFromBand(leak.stackBand), hero, leak.scenario));
-    if (lookup.status === "available") return <section className="training-lab"><button className="back-link" onClick={() => setActive(null)}>← Voltar aos leaks</button><TrainerHeader kicker="LEAK TRAINER" title={leak.title} copy={leak.description} /><SourceNote node={lookup.node} /><DecisionCard node={lookup.node} candidates={boundaryCandidates(lookup.node)} title="SESSÃO DIRECIONADA" /></section>;
+    if (lookup.status === "available") return <section className="training-lab"><button className="back-link" onClick={() => setActive(null)}>← Voltar aos leaks</button><TrainerHeader kicker="LEAK TRAINER" title={leak.title} copy={leak.description} /><SourceNote node={lookup.node} /><DecisionCard node={lookup.node} candidates={boundaryCandidates(lookup.node, 40, history)} title="SESSÃO DIRECIONADA" /></section>;
   }
   return <section className="training-lab"><TrainerHeader kicker="LEAK TRAINER" title="Treino guiado pelos seus padrões" copy="Agrupamos erros por node, posição, stack e classe de mão para corrigir regiões inteiras." />
-    {leaks.length ? <div className="leak-cards">{leaks.map((item) => <article key={item.id} className={`leak-card ${item.severity}`}><span>{item.severity === "major" ? "MAJOR LEAK" : item.severity === "moderate" ? "LEAK MODERADO" : "OBSERVAR"}</span><h2>{item.title}</h2><p>{item.description}</p><div><b>{item.accuracy}%</b><small>accuracy</small><b>{item.frequencyError}pp</b><small>erro freq.</small><b>{item.evLoss === null ? "—" : `${item.evLoss.toFixed(2)}bb`}</b><small>EV loss</small></div><button onClick={() => setActive(item.id)}>Treinar este leak</button></article>)}</div>
+    {leaks.length ? <div className="leak-cards">{leaks.map((item) => <article key={item.id} className={`leak-card ${item.severity}`}><span>{item.confidence === "confirmed" ? "FRAQUEZA CONFIRMADA" : item.confidence === "likely" ? "LEAK PROVÁVEL" : "POSSÍVEL LEAK"} · {item.attempts} amostras</span><h2>{item.title}</h2><p>{item.description}</p><div><b>{item.accuracy}%</b><small>accuracy</small><b>{item.frequencyError}pp</b><small>erro freq.</small><b>{item.evLoss === null ? "—" : `${item.evLoss.toFixed(2)}bb`}</b><small>EV loss</small></div><button onClick={() => setActive(item.id)}>Treinar este leak</button></article>)}</div>
       : <div className="honest-empty"><span>SEM AMOSTRA SUFICIENTE</span><h2>Ainda não há um padrão confiável</h2><p>Complete pelo menos três decisões na mesma região. O sistema não inventa um leak a partir de uma única mão.</p></div>}
   </section>;
 }
@@ -231,8 +257,8 @@ function CustomTrainer() {
 export function TrainingLab({ mode, history }: { mode: Exclude<TrainingMode, "decision">; history: HandRecord[] }) {
   if (mode === "frequency") return <FrequencyTrainer />;
   if (mode === "range") return <RangeTrainer />;
-  if (mode === "boundary") return <BoundaryTrainer />;
+  if (mode === "boundary") return <BoundaryTrainer history={history} />;
   if (mode === "leak") return <LeakTrainer history={history} />;
-  if (mode === "mixed") return <FrequencyTrainer mixedOnly />;
+  if (mode === "mixed") return <MixedStrategyTrainer />;
   return <CustomTrainer />;
 }

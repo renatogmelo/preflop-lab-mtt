@@ -12,7 +12,7 @@ A aplicação combina Explorer de ranges e árvore, sete modos de treino, Academ
 
 O projeto separa rigorosamente o Trainer da origem estratégica.
 
-O dataset incluído atualmente é identificado na interface como **modelo educacional**. Suas frequências são aproximações arredondadas e seu EV é indisponível. Ele não é apresentado como solve verificado. Datasets verificados ou importados podem substituir o provider sem alterar o Trainer.
+O dataset incluído atualmente é identificado na interface como **modelo educacional**. Suas frequências são aproximações arredondadas e seu EV é indisponível. Ele não é apresentado como solve verificado. Datasets Verified ou Curated publicados substituem seletivamente o provider modelado sem alterar o Trainer. Experimental nunca entra por padrão.
 
 Nunca adicione fallback silencioso ou EV fabricado. Quando um node/sizing não existe, a resposta correta do produto é `Strategy unavailable`.
 
@@ -23,8 +23,10 @@ Requisitos: Node.js `>=22.13.0`.
 ```bash
 npm install
 npm run dev
+npm run typecheck
 npm run lint
 npm test
+npm run check
 npm run db:generate
 ```
 
@@ -34,7 +36,7 @@ A suíte `npm test` executa uma build de produção e todos os testes de domíni
 
 - **Learn:** 13 capítulos com teoria, exemplo de range, mini teste e prática.
 - **Train:** Decision, Frequency, Range, Boundary, Leak, Mixed e Custom Session.
-- **Explore:** Range, Tree, Compare e Diff.
+- **Explore:** Range, Tree, Compare, Diff, Coverage, Inspector e Curated Editor.
 - **Analyze:** histórico, review, marcadas, leaks, misconceptions e heatmaps.
 - **Progress:** mastery hierárquica, Today's Training e histórico de precisão.
 
@@ -42,7 +44,7 @@ A suíte `npm test` executa uma build de produção e todos os testes de domíni
 
 O site usa Cloudflare D1 através do binding `DB`. Em produção, cada registro é associado ao header estável `oai-authenticated-user-id` do site privado. No desenvolvimento sem D1, a interface mantém fallback local explícito.
 
-A migration inicial está em `drizzle/0000_superb_robbie_robertson.sql`.
+As migrations estão em `drizzle/0000_superb_robbie_robertson.sql` e `drizzle/0001_square_chat.sql`.
 
 ## Documentação
 
@@ -50,3 +52,6 @@ A migration inicial está em `drizzle/0000_superb_robbie_robertson.sql`.
 - [STRATEGY_DATA.md](./STRATEGY_DATA.md)
 - [TRAINING_ENGINE.md](./TRAINING_ENGINE.md)
 - [PROGRESS.md](./PROGRESS.md)
+- [TRAINER_AUDIT.md](./TRAINER_AUDIT.md)
+- [ACADEMY_AUDIT.md](./ACADEMY_AUDIT.md)
+- [DATASET_COVERAGE.md](./DATASET_COVERAGE.md)

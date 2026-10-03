@@ -68,3 +68,31 @@ Learning engine → Analyze / Progress / Today's Training
 ## Extensão futura
 
 Um novo dataset implementa o schema documentado, passa pela validação e é instalado no `StrategyRepository`. Uma nova árvore pode introduzir child nodes sem alterar os trainers. Novas métricas devem permanecer funções puras no learning engine antes de ganhar UI.
+
+
+## Phase 2 — confiança e curadoria
+
+A resolução pública usa providers publicados e habilitados na ordem:
+
+```text
+Verified → Curated → Modeled (somente se allowModeledFallback)
+```
+
+Experimental nunca participa por padrão. Draft, review-required, reviewed e deprecated não entram no treino normal. `Professional Mode` consulta a mesma camada com `allowModeledFallback = false`.
+
+A confiança é independente da origem:
+
+- `sourceType` descreve como o dado nasceu;
+- `trustLevel` descreve quanto o produto pode afirmar;
+- `status` descreve o estágio editorial;
+- provenance replica dataset id, versão, trust, metodologia, licença, precisão, EV e revisão no node consumido.
+
+O fluxo editorial é:
+
+```text
+Create → Draft → Review required → Reviewed → Published
+```
+
+`StrategyRepository.install` bloqueia publicação curated que tente pular a revisão. O editor pode usar o modelo como rascunho apenas após uma ação explícita; isso não altera o trust.
+
+Coverage usa um catálogo auditável de 252 combinações canônicas. Inspector valida node, 169 mãos e metadata. O histórico persiste `datasetId + datasetVersion + nodeId`, portanto atualizações futuras não reclassificam decisões antigas.

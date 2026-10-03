@@ -15,7 +15,7 @@ import {
 } from "../core/domain";
 import { handFeatures, nearbyHands } from "../core/hands";
 import {
-  MODELED_DATASET_ID,
+  AUTO_DATASET_ID,
   defaultQuery,
   dominantAction,
   isMixedStrategy,
@@ -23,14 +23,17 @@ import {
   strategyRepository,
 } from "../core/strategy-data";
 import { StrategyLegend, StrategyMatrix } from "../components/strategy-matrix";
+import { TrustBadge } from "../components/trust-badge";
+import { HandEvolution, RangeStructure } from "../components/range-insights";
+import { CoveragePanel, CuratedRangeEditor, DatasetInspector } from "./data-quality-view";
 
-type ExploreMode = "range" | "tree" | "compare" | "diff";
-export type ExploreSearchRequest = { id: number; text: string };
+export type ExploreMode = "range" | "tree" | "compare" | "diff" | "coverage" | "inspector" | "editor";
+export type ExploreSearchRequest = { id: number; text: string; mode?: ExploreMode; hand?: string };
 
 function StrategySource({ node }: { node: StrategyNode }) {
-  return <div className={`source-banner source-${node.provenance.sourceType}`}>
-    <div><span>{node.provenance.sourceType === "verified" ? "DADOS VERIFICADOS" : "DADOS MODELADOS"}</span><strong>{node.provenance.sourceLabel} · v{node.provenance.datasetVersion}</strong></div>
-    <p>{node.provenance.isExact ? "Frequências e EVs vêm do dataset selecionado." : "Frequências aproximadas para estudo estrutural. Não são um solve verificado; EV indisponível."}</p>
+  return <div className={`source-banner source-${node.provenance.trustLevel}`}>
+    <div><TrustBadge level={node.provenance.trustLevel} /><strong>{node.provenance.sourceLabel} · v{node.provenance.datasetVersion}</strong></div>
+    <p>{node.provenance.trustLevel === "verified" ? "Dataset validado; consulte a metodologia e licença no Inspector." : node.provenance.trustLevel === "curated" ? "Referência revisada para estudo; não é apresentada como equilibrium solve." : "Aproximação educacional para estudo estrutural. Não é um solve verificado; EV indisponível."}</p>
   </div>;
 }
 
@@ -73,6 +76,7 @@ function HandDetail({ node, hand }: { node: StrategyNode; hand: string }) {
       const primary = dominantAction(strategy);
       return <div key={neighbor}><b>{neighbor}</b><span>{ACTIONS[primary.action].label}</span><em>{primary.frequency}%</em></div>;
     })}</div>
+    <HandEvolution node={node} hand={hand} />
     <div className="study-tools"><small>ESTUDO PESSOAL</small><textarea value={note} onChange={(event) => setNote(event.target.value)} placeholder="Ex.: revisar esta fronteira em 20bb." aria-label="Nota de estudo" /><div><button disabled={!note.trim()} onClick={() => persist("note")}>{saved === "note" ? "✓ Nota salva" : "Salvar nota"}</button><button onClick={() => persist("bookmark")}>{saved === "bookmark" ? "★ Salvo" : "☆ Bookmark"}</button></div></div>
   </aside>;
 }
@@ -102,13 +106,14 @@ function QueryControls({
   </div>;
 }
 
-function RangeExplorer({ query, setQuery }: { query: StrategyQuery; setQuery: (query: StrategyQuery) => void }) {
-  const [hand, setHand] = useState("A5s");
+function RangeExplorer({ query, setQuery, initialHand = "A5s" }: { query: StrategyQuery; setQuery: (query: StrategyQuery) => void; initialHand?: string }) {
+  const [hand, setHand] = useState(initialHand);
   const lookup = useMemo(() => strategyRepository.lookup(query), [query]);
   return <div className="explorer-body">
     <QueryControls query={query} onChange={setQuery} />
     {lookup.status === "unavailable" ? <Unavailable result={lookup} onChoose={setQuery} /> : <>
       <StrategySource node={lookup.node} />
+      <RangeStructure node={lookup.node} />
       <div className="range-layout">
         <section className="range-card">
           <div className="range-card-head"><div><small>RANGE EXPLORER</small><h2>{query.hero} · {SCENARIOS[query.scenario].label} · {query.stack}bb</h2></div><StrategyLegend actions={lookup.node.actionsAvailable} /></div>
@@ -218,7 +223,7 @@ function DiffExplorer({ query }: { query: StrategyQuery }) {
 }
 
 function queryFromSearch(search?: string) {
-  if (!search) return defaultQuery({ datasetId: MODELED_DATASET_ID, stack: 40, hero: "BTN", scenario: "rfi" });
+  if (!search) return defaultQuery({ datasetId: AUTO_DATASET_ID, stack: 40, hero: "BTN", scenario: "rfi" });
   const text = search.toUpperCase().replaceAll("-", "");
   const stack = Number(text.match(/(8|10|12|14|15|17|20|25|30|35|40|50|60|80|100)\s*BB/)?.[1] ?? 40);
   const hero = [...POSITIONS].sort((left, right) => right.length - left.length).find((position) => text.includes(position.replace("-", ""))) ?? "BTN";
@@ -229,21 +234,26 @@ function queryFromSearch(search?: string) {
     : text.includes("VS") ? "vs-open"
     : "rfi";
   if (!scenarioIsCompatible(scenario, hero, stack)) scenario = hero === "BB" ? "bb-defense" : "rfi";
-  return defaultQuery({ datasetId: MODELED_DATASET_ID, stack, hero, scenario });
+  return defaultQuery({ datasetId: AUTO_DATASET_ID, stack, hero, scenario });
 }
 
+function queryKeyForRender(query: StrategyQuery) { return [query.stack, query.hero, query.scenario, query.villain ?? "-"].join("|"); }
+
 export function ExploreView({ searchRequest }: { searchRequest?: ExploreSearchRequest }) {
-  const [mode, setMode] = useState<ExploreMode>("range");
+  const [mode, setMode] = useState<ExploreMode>(searchRequest?.mode ?? "range");
   const [query, setQuery] = useState<StrategyQuery>(() => queryFromSearch(searchRequest?.text));
   return <section className="page-view explore-page">
     <div className="page-title"><div><span>ENTENDA RANGES</span><h1>Explore</h1><p>Veja a construção do range, percorra a árvore e compare mudanças sem decorar charts.</p></div></div>
     <div className="subnav" role="tablist" aria-label="Ferramentas de exploração">
-      {([["range", "Range Explorer"], ["tree", "Tree Explorer"], ["compare", "Compare"], ["diff", "Diff"]] as Array<[ExploreMode, string]>).map(([key, label]) => <button role="tab" aria-selected={mode === key} className={mode === key ? "active" : ""} key={key} onClick={() => setMode(key)}>{label}</button>)}
+      {([["range", "Range Explorer"], ["tree", "Tree Explorer"], ["compare", "Compare"], ["diff", "Diff"], ["coverage", "Coverage"], ["inspector", "Inspector"], ["editor", "Curated Editor"]] as Array<[ExploreMode, string]>).map(([key, label]) => <button role="tab" aria-selected={mode === key} className={mode === key ? "active" : ""} key={key} onClick={() => setMode(key)}>{label}</button>)}
     </div>
-    {mode === "range" && <RangeExplorer query={query} setQuery={setQuery} />}
+    {mode === "range" && <RangeExplorer query={query} setQuery={setQuery} initialHand={searchRequest?.hand} />}
     {mode === "tree" && <><QueryControls query={query} onChange={setQuery} /><TreeExplorer baseQuery={query} /></>}
     {mode === "compare" && <><QueryControls query={query} onChange={setQuery} /><CompareExplorer query={query} /></>}
     {mode === "diff" && <><QueryControls query={query} onChange={setQuery} /><DiffExplorer query={query} /></>}
+    {mode === "coverage" && <CoveragePanel onInspect={(next) => { setQuery(next); setMode("inspector"); }} />}
+    {mode === "inspector" && <DatasetInspector key={queryKeyForRender(query)} initialQuery={query} />}
+    {mode === "editor" && <CuratedRangeEditor />}
   </section>;
 }
 

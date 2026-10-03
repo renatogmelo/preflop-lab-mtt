@@ -10,6 +10,8 @@ import { ExploreView, type ExploreSearchRequest } from "./views/explore-view";
 import { TrainingLab, TrainingModeNav, type TrainingMode } from "./views/training-lab";
 import { LearnView } from "./views/learn-view";
 import { AnalyzeView, ProgressView } from "./views/analytics-view";
+import { explainDecision } from "./core/explanations";
+import { TrustBadge } from "./components/trust-badge";
 
 type ViewKey = "learn" | "train" | "explore" | "analyze" | "progress";
 type StackFilter = number | "Todos";
@@ -47,53 +49,6 @@ function Matrix({ spot }: { spot: Spot }) {
       >{hand}</div>;
     }))}
   </div>;
-}
-
-function quickInsight(spot: Spot, action: ActionKey) {
-  const pair = spot.notation.length === 2;
-  const suited = spot.notation.endsWith("s");
-  const hasAce = spot.notation.includes("A");
-  const broadway = ["A", "K", "Q", "J", "T"].includes(spot.notation[0]) && ["A", "K", "Q", "J", "T"].includes(spot.notation[1]);
-  const strength = pair
-    ? "Um par começa na frente de muitas mãos sem par."
-    : suited
-      ? "Cartas do mesmo naipe podem formar um flush e costumam jogar melhor depois do flop."
-      : hasAce
-        ? "O ás reduz a chance de o adversário ter AA ou AK."
-        : broadway
-          ? "Duas cartas altas podem formar pares fortes e sequências."
-          : "Cartas de naipes diferentes formam menos jogos fortes depois do flop.";
-  const opener = spot.villain ?? "o range adversário";
-  const move = action === "call" ? "Pagar" : action === "jam" ? "Ir all-in" : action === "threebet" ? "Aumentar novamente" : action === "fourbet" ? "Fazer a 4-bet" : action === "limp" ? "Completar" : "Abrir raise";
-
-  if (spot.scenario === "vs-jam") {
-    const posted = spot.hero === "BB" ? 1 : spot.hero === "SB" ? .5 : 0;
-    const callAmount = spot.stack - posted;
-    const required = Math.round(callAmount / (spot.pot + callAmount) * 100);
-    return action === "fold"
-      ? `Para pagar o all-in de ${opener}, esta mão precisa ganhar cerca de ${required}% das vezes. ${strength} Mesmo assim, ela não ganha o suficiente contra as mãos que costumam ir all-in.`
-      : `Para pagar o all-in de ${opener}, esta mão precisa ganhar cerca de ${required}% das vezes. ${strength} Aqui ela ganha vezes suficientes para justificar o call.`;
-  }
-  if (spot.scenario === "rfi") return action === "fold"
-    ? `${strength} Porém, em ${spot.hero}, esta mão é fraca demais para abrir com lucro e terá decisões difíceis se alguém reagir.`
-    : `${strength} Em ${spot.hero}, abrir coloca pressão nos jogadores restantes e pode ganhar os blinds sem precisar ver o flop.`;
-  if (spot.scenario === "bb-defense") return action === "fold"
-    ? hasAce && !suited
-      ? `${strength} Mesmo pagando menos por estar no BB, ${spot.notation} costuma perder para ases com carta acompanhante maior. Além disso, você jogará primeiro depois do flop, então o fold é mais seguro.`
-      : `${strength} Mesmo pagando menos no BB, você jogará primeiro depois do flop e esta mão não é forte o bastante para compensar essa desvantagem.`
-    : `${strength} Como o BB já colocou 1 blind, continuar custa menos. ${move} é lucrativo o bastante contra a abertura de ${opener}.`;
-  if (spot.scenario === "vs-3bet") return action === "fold"
-    ? `${strength} Porém, contra a 3-bet você precisa investir mais fichas e enfrentará mãos mais fortes. Esta mão não joga bem o bastante para continuar.`
-    : `${strength} Mesmo contra uma 3-bet, esta mão ainda é forte o bastante. ${move} evita abandonar uma mão que pode ganhar um pote grande.`;
-  if (spot.scenario === "squeeze") return action === "fold"
-    ? `${strength} Aqui já houve um raise e um call, então você pode enfrentar duas mãos ao mesmo tempo. Esta mão não é forte o bastante para entrar nesse pote grande.`
-    : `${strength} Já existe mais dinheiro no pote por causa do raise e do call. ${move} pode ganhar esse dinheiro agora ou jogar com uma mão forte se alguém continuar.`;
-  if (spot.scenario === "bvb") return action === "fold"
-    ? `${strength} Mesmo com apenas os blinds na disputa, esta mão continua fraca e tende a criar decisões ruins depois do flop.`
-    : `${strength} Como só restam SB e BB, os dois jogam muito mais mãos. Por isso, ${move.toLowerCase()} com esta mão pode dar lucro.`;
-  return action === "fold"
-    ? `${strength} Contra a abertura de ${opener}, esta mão costuma estar atrás e pode ser difícil de jogar depois do flop. O fold evita investir fichas em uma situação ruim.`
-    : `${strength} A abertura de ${opener} também pode incluir mãos mais fracas. Por isso, ${move.toLowerCase()} com esta mão pode dar lucro no longo prazo.`;
 }
 
 export default function Home() {
@@ -226,6 +181,11 @@ export default function Home() {
     setSelected(null); setResolution(null); setShowMatrix(false); setSpot(makeSpot(stackFor(newStack, compatibleScenario), compatibleScenario, newHero));
   };
 
+  const exploreContext = (mode: "range" | "compare") => {
+    setExploreSearch({ id: Date.now(), text: spot.hero + " " + SCENARIOS[spot.scenario].short + " " + spot.stack + "bb", mode, hand: spot.notation });
+    setView("explore");
+  };
+
   return <main className="app-shell">
     <header className="topbar">
       <button className="brand" onClick={() => setView("train")} aria-label="Preflop Lab — início">
@@ -290,7 +250,7 @@ export default function Home() {
             <div><strong>{totalLoss !== null ? `−${totalLoss}` : "—"}</strong><span>EV verificado</span></div>
           </div>
         </div>
-        <div className="model-note"><span>~</span><p><strong>{spot.provenance.sourceLabel} · {spot.provenance.sourceType}</strong>Frequências aproximadas e claramente identificadas. EV não é exibido sem um dataset confiável.</p></div>
+        <div className="model-note"><TrustBadge level={spot.provenance.trustLevel ?? "modeled"} /><p><strong>{spot.provenance.sourceLabel} · v{spot.provenance.datasetVersion}</strong>{spot.provenance.trustLevel === "verified" ? "Dataset validado." : spot.provenance.trustLevel === "curated" ? "Referência revisada; não é equilibrium solve." : "Aproximação educacional. EV não é exibido sem dados confiáveis."}</p></div>
       </aside>
 
       <section className="table-stage">
@@ -361,7 +321,7 @@ export default function Home() {
           <div className="thought-list"><span>02</span><p><strong>Qual o stack?</strong>Stacks curtos favorecem jams.</p></div>
           <div className="thought-list"><span>03</span><p><strong>Qual é o tipo da mão?</strong>Par, cartas altas, mesmo naipe ou mão fraca.</p></div>
         </div> : answer && <div className={`feedback-card ${answer.correct ? "correct" : answer.frequencyError <= 20 ? "close" : "mistake"}`}>
-          <div className="feedback-kicker">{spot.provenance.sourceLabel.toUpperCase()} · {spot.provenance.sourceType.toUpperCase()}</div>
+          <div className="feedback-kicker"><TrustBadge level={spot.provenance.trustLevel ?? "modeled"} /> {spot.provenance.sourceLabel.toUpperCase()} · V{spot.provenance.datasetVersion}</div>
           <div className="feedback-score">
             <StatRing value={answer.score} />
             <div><h3>Análise da decisão.</h3><p>{ACTIONS[selected].label} aparece em aproximadamente <strong>{answer.frequency}%</strong> neste dataset.</p></div>
@@ -373,7 +333,8 @@ export default function Home() {
               <span><i style={{ width: `${item.frequency}%`, background: ACTIONS[item.action].color }} /></span>
             </div>
           )}</div>
-          <div className="coach-copy"><span>POR QUÊ</span><p>{quickInsight(spot, bestAction.action)}</p></div>
+          <div className="coach-copy"><span>POR QUÊ · BEGINNER</span><p>{explainDecision(spot, bestAction.action, "beginner")}</p><details><summary>Advanced</summary><p>{explainDecision(spot, bestAction.action, "advanced")}</p></details><details><summary>Professional</summary><p>{explainDecision(spot, bestAction.action, "professional")}</p></details></div>
+          <div className="context-actions"><button onClick={() => exploreContext("range")}>Explorar esta mão</button><button onClick={() => exploreContext("compare")}>Comparar stacks</button><button onClick={() => exploreContext("range")}>Comparar posições</button><button onClick={() => { setTrainMode("boundary"); setView("train"); }}>Treinar fronteira</button></div>
           {resolution && spot.seats && <div className="reveal-panel">
             <div className="reveal-head"><span>SHOWDOWN DIDÁTICO</span><small>{resolution.summary}</small></div>
             <div className="reveal-grid">{spot.seats.filter((seat) => seat.position !== spot.hero).map((seat) => {
@@ -404,6 +365,6 @@ export default function Home() {
       setView("train");
     }} />}
 
-    {view === "progress" && <ProgressView history={history} onToday={() => { setTrainMode("boundary"); setView("train"); }} />}
+    {view === "progress" && <ProgressView history={history} onToday={(mode) => { setTrainMode(mode); setView("train"); }} />}
   </main>;
 }

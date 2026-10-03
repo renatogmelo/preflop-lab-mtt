@@ -1,0 +1,2 @@
+ALTER TABLE `decisions` ADD `dataset_version` text DEFAULT 'legacy-unknown' NOT NULL;--> statement-breakpoint
+CREATE INDEX `decisions_user_dataset_version_idx` ON `decisions` (`user_id`,`dataset_id`,`dataset_version`);

@@ -81,3 +81,36 @@ CSV é convertido para a mesma estrutura interna. Cada linha precisa identificar
 ## Golden tests
 
 Golden tests só devem existir para datasets verificados e licenciados. O modelo educacional tem testes de invariantes e provenance, não snapshots que fingem validar teoria GTO.
+
+
+## Trust Level e workflow
+
+`StrategyTrustLevel` possui `verified | curated | modeled | experimental`. `DatasetWorkflowStatus` possui `draft | review_required | reviewed | published | deprecated`.
+
+Metadata agora inclui geração/revisão, metodologia, precisão, EV, exatidão, licença e changelog. Cada node replica essas informações essenciais em provenance.
+
+O modelo embutido mantém obrigatoriamente:
+
+```text
+trustLevel = modeled
+sourceType = modeled
+isExact = false
+frequencyPrecision = estimated
+evAvailable = false
+```
+
+## Resolução composta e fallback
+
+O dataset id `auto` solicita resolução composta. A prioridade é Verified, Curated e Modeled. O último só participa quando `allowModeledFallback` está habilitado. Experimental exige política explícita e nunca substitui automaticamente uma fonte superior.
+
+Curated só participa com status `published`. Nodes ausentes continuam ausentes; datasets parciais são suportados.
+
+## Preflop Lab Reference Strategy
+
+`datasets/preflop-lab-reference/` contém a metadata canônica da base original curada. A cobertura publicada inicial é zero. O editor suporta matriz 169, frequências, validação da soma, cópia explícita de rascunho, diff, notas, SemVer, JSON import/export e workflow editorial.
+
+## Coverage e Golden Tests
+
+O catálogo atual contém 252 combinações de cenário × posição elegível × stack canônico. A cobertura real está em `DATASET_COVERAGE.md`.
+
+`app/core/golden.ts` cria e compara snapshots explícitos. Verified sem golden é reportado como erro de governança. Modeled usa testes de invariantes, nunca golden values que insinuem precisão GTO.
