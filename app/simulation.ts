@@ -1,14 +1,13 @@
 import {
   ACTIONS,
   POSITIONS,
-  RANKS,
   SCENARIOS,
+  lookupStrategy,
   round,
   scenarioIsCompatible,
   strategy,
   type ActionEvent,
   type ActionKey,
-  type Card,
   type Position,
   type RoundResolution,
   type ScenarioKey,
@@ -17,26 +16,12 @@ import {
   type StrategyAction,
 } from "./engine";
 
-const SUITS = ["♠", "♥", "♦", "♣"];
-const pick = <T,>(items: T[]) => items[Math.floor(Math.random() * items.length)];
+import { dealTable, handNotation } from "./core/hands";
+export { handNotation } from "./core/hands";
 
-export function handNotation(cards: Card[]) {
-  const sorted = [...cards].sort((a, b) => RANKS.indexOf(b.rank) - RANKS.indexOf(a.rank));
-  if (sorted[0].rank === sorted[1].rank) return sorted[0].rank + sorted[1].rank;
-  return sorted[0].rank + sorted[1].rank + (sorted[0].suit === sorted[1].suit ? "s" : "o");
-}
-
-function dealTable() {
-  const deck = RANKS.flatMap((rank) => SUITS.map((suit) => ({ rank, suit })));
-  for (let i = deck.length - 1; i > 0; i -= 1) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [deck[i], deck[j]] = [deck[j], deck[i]];
-  }
-  const table = {} as Record<Position, Card[]>;
-  POSITIONS.forEach((position) => {
-    table[position] = [deck.pop() as Card, deck.pop() as Card];
-  });
-  return table;
+function pick<T>(items: T[]): T {
+  if (!items.length) throw new Error("Cannot pick from an empty collection.");
+  return items[Math.floor(Math.random() * items.length)];
 }
 
 function sampleAction(items: StrategyAction[]) {
@@ -50,16 +35,6 @@ function sampleAction(items: StrategyAction[]) {
 
 function actionFrequency(items: StrategyAction[], actions: ActionKey[]) {
   return items.filter((item) => actions.includes(item.action)).reduce((sum, item) => sum + item.frequency, 0);
-}
-
-function openJamFrequency(hand: string, position: Position, stack: number) {
-  const rank = RANKS.indexOf(hand[0]) + RANKS.indexOf(hand[1]);
-  const pair = hand.length === 2;
-  const ace = hand.includes("A");
-  const late = Math.min(1, POSITIONS.indexOf(position) / 6);
-  const target = stack <= 10 ? 14 + late * 24 : stack <= 15 ? 10 + late * 18 : stack <= 20 ? 6 + late * 12 : 3 + late * 7;
-  const score = pair ? 32 + (RANKS.indexOf(hand[0]) + 2) * 4 : rank * 2.4 + (ace ? 13 : 0) + (hand.endsWith("s") ? 5 : 0);
-  return Math.max(0, Math.min(100, Math.round(50 + (score - (78 - target)) * 10)));
 }
 
 function range(from: number, to: number) {
@@ -88,10 +63,7 @@ function buildFormation(stack: number, scenario: ScenarioKey, hero: Position, vi
     };
     const vsJamFold = (position: Position, jammer: Position) =>
       requireOne(position, strategy(hand(position), "vs-jam", position, stack, jammer), ["fold"]);
-    const coldThreeBetFold = (position: Position, aggressor: Position) =>
-      requireOne(position, strategy(hand(position), "vs-3bet", position, stack, aggressor), ["fold"]);
-
-    let valid = true;
+     let valid = true;
 
     if (scenario === "rfi" || scenario === "bvb") {
       for (const position of range(0, POSITIONS.indexOf(hero))) {
@@ -127,7 +99,7 @@ function buildFormation(stack: number, scenario: ScenarioKey, hero: Position, vi
       if (valid && !requireOne(villain, strategy(hand(villain), "vs-open", villain, stack, hero), ["threebet"])) valid = false;
       if (valid) {
         for (const position of range(vi + 1, POSITIONS.length)) {
-          if (!coldThreeBetFold(position, villain)) { valid = false; break; }
+          if (!vsOpenFold(position, hero)) { valid = false; break; }
         }
       }
     }
@@ -159,9 +131,7 @@ function buildFormation(stack: number, scenario: ScenarioKey, hero: Position, vi
       for (const position of range(0, vi)) {
         if (!rfiFold(position)) { valid = false; break; }
       }
-      const jamFrequency = openJamFrequency(hand(villain), villain, stack);
-      if (valid && (jamFrequency <= 0 || (strict && Math.random() * 100 >= jamFrequency))) valid = false;
-      if (valid) actions[villain] = "jam";
+      if (valid && !requireOne(villain, strategy(hand(villain), "rfi", villain, stack), ["jam"])) valid = false;
       if (valid) {
         for (const position of range(vi + 1, hi)) {
           if (!vsJamFold(position, villain)) { valid = false; break; }
@@ -209,6 +179,9 @@ export function makeSpot(stack: number, scenarioFilter: ScenarioKey | "Todos", h
     const openerIndex = Math.floor(Math.random() * (before.length - 1));
     villain = before[openerIndex];
     caller = pick(before.slice(openerIndex + 1));
+  } else if (scenario === "vs-jam") {
+    const candidates = POSITIONS.slice(0, heroIndex).filter((position) => !(stack > 15 && position === "SB"));
+    villain = pick(candidates);
   } else if (scenario !== "rfi") {
     villain = scenario === "bb-defense" ? pick(POSITIONS.slice(0, 6)) : pick(POSITIONS.slice(0, heroIndex));
   }
@@ -253,6 +226,9 @@ export function makeSpot(stack: number, scenarioFilter: ScenarioKey | "Todos", h
     pot += stack - postedBlind(villain);
   }
 
+  const lookup = lookupStrategy(heroSeat.notation, scenario, hero, stack, villain, caller);
+  if (lookup.status === "unavailable") throw new Error(lookup.reason);
+
   return {
     id: Math.random().toString(36).slice(2),
     cards: heroSeat.cards,
@@ -264,8 +240,11 @@ export function makeSpot(stack: number, scenarioFilter: ScenarioKey | "Todos", h
     stack,
     history,
     pot: round(pot, 1),
-    strategy: strategy(heroSeat.notation, scenario, hero, stack, villain, caller),
+    strategy: lookup.strategy,
     seats,
+    nodeId: lookup.node.id,
+    datasetId: lookup.node.datasetId,
+    provenance: lookup.node.provenance,
   };
 }
 

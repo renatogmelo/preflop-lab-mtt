@@ -1,100 +1,52 @@
-# vinext-starter
+# Preflop Lab
 
-A clean full-stack starter running on
-[vinext](https://github.com/cloudflare/vinext), with optional Cloudflare D1 and
-Drizzle support.
+Preflop Lab é uma plataforma privada de estudo preflop para MTT 8-max ChipEV.
 
-## Prerequisites
+Princípio do produto:
 
-- Node.js `>=22.13.0`
+> Não memorize charts. Entenda ranges.
 
-## Quick Start
+A aplicação combina Explorer de ranges e árvore, sete modos de treino, Academy, revisão espaçada, mastery, detecção de leaks e analytics por mão/node.
+
+## Integridade dos dados
+
+O projeto separa rigorosamente o Trainer da origem estratégica.
+
+O dataset incluído atualmente é identificado na interface como **modelo educacional**. Suas frequências são aproximações arredondadas e seu EV é indisponível. Ele não é apresentado como solve verificado. Datasets verificados ou importados podem substituir o provider sem alterar o Trainer.
+
+Nunca adicione fallback silencioso ou EV fabricado. Quando um node/sizing não existe, a resposta correta do produto é `Strategy unavailable`.
+
+## Desenvolvimento
+
+Requisitos: Node.js `>=22.13.0`.
 
 ```bash
 npm install
 npm run dev
-npm run build
+npm run lint
+npm test
+npm run db:generate
 ```
 
-This starter does not use `wrangler.jsonc`.
+A suíte `npm test` executa uma build de produção e todos os testes de domínio/renderização.
 
-## Included Shape
+## Áreas
 
-- edit site code under `app/`
-- `.openai/hosting.json` declares optional Sites D1 and R2 bindings
-- `vite.config.ts` simulates declared bindings for local development
-- `db/schema.ts` starts intentionally empty
-- `examples/d1/` contains an optional D1 example surface
-- `drizzle.config.ts` supports local migration generation when needed
+- **Learn:** 13 capítulos com teoria, exemplo de range, mini teste e prática.
+- **Train:** Decision, Frequency, Range, Boundary, Leak, Mixed e Custom Session.
+- **Explore:** Range, Tree, Compare e Diff.
+- **Analyze:** histórico, review, marcadas, leaks, misconceptions e heatmaps.
+- **Progress:** mastery hierárquica, Today's Training e histórico de precisão.
 
-## Workspace Auth Headers
+## Persistência
 
-Signed-in visitors receive both `oai-authenticated-user-id` and `oai-authenticated-user-email`. Private Sites require every visitor to sign in; public Sites may also have anonymous visitors, for whom neither header is present.
+O site usa Cloudflare D1 através do binding `DB`. Em produção, cada registro é associado ao header estável `oai-authenticated-user-id` do site privado. No desenvolvimento sem D1, a interface mantém fallback local explícito.
 
-The user ID is stable for the same user on the same Site and different across Sites. Email and name are intended for display or contact purposes.
+A migration inicial está em `drizzle/0000_superb_robbie_robertson.sql`.
 
-SIWC-authenticated workspace sites may also receive
-`oai-authenticated-user-full-name` when the user's SIWC profile has a non-empty
-`name` claim. The full-name value is percent-encoded UTF-8 and is accompanied by
-`oai-authenticated-user-full-name-encoding: percent-encoded-utf-8`.
+## Documentação
 
-Treat the full name as optional and fall back to email when it is absent:
-
-```tsx
-import { headers } from "next/headers";
-
-export default async function Home() {
-  const requestHeaders = await headers();
-  const userId = requestHeaders.get("oai-authenticated-user-id");
-  const email = requestHeaders.get("oai-authenticated-user-email");
-  const encodedFullName = requestHeaders.get("oai-authenticated-user-full-name");
-  const fullName =
-    encodedFullName &&
-    requestHeaders.get("oai-authenticated-user-full-name-encoding") ===
-      "percent-encoded-utf-8"
-      ? decodeURIComponent(encodedFullName)
-      : null;
-
-  const displayName = fullName ?? email;
-  // ...
-}
-```
-
-## Optional Dispatch-Owned ChatGPT Sign-In
-
-Import the ready-to-use helpers from `app/chatgpt-auth.ts` when the site needs
-optional or required ChatGPT sign-in:
-
-- Use `getChatGPTUser()` for optional signed-in UI.
-- Use `requireChatGPTUser(returnTo)` for server-rendered pages that should send
-  anonymous visitors through Sign in with ChatGPT.
-- Use `chatGPTSignInPath(returnTo)` and `chatGPTSignOutPath(returnTo)` for
-  browser links or actions.
-- Pass a same-origin relative `returnTo` path for the destination after sign-in
-  or sign-out. The helper validates and safely encodes it.
-- Mark protected pages with `export const dynamic = "force-dynamic"` because
-  they depend on per-request identity headers.
-
-Dispatch owns `/signin-with-chatgpt`, `/signout-with-chatgpt`, `/callback`, the
-OAuth cookies, and identity header injection. Do not implement app routes for
-those reserved paths. Routes that do not import and call the helper remain
-anonymous-compatible.
-
-SIWC establishes identity only; it does not prove workspace membership. Use the
-Sites hosting platform's access policy controls for workspace-wide restrictions,
-or enforce explicit server-side membership or allowlist checks.
-
-Use SIWC for account pages, user-specific dashboards, saved records, and write
-actions tied to the current ChatGPT user. Leave public content anonymous.
-
-## Useful Commands
-
-- `npm run dev`: start local development
-- `npm run build`: verify the vinext build output
-- `npm test`: build the starter and verify its rendered loading skeleton
-- `npm run db:generate`: generate Drizzle migrations after schema changes
-
-## Learn More
-
-- [vinext Documentation](https://github.com/cloudflare/vinext)
-- [Drizzle D1 Guide](https://orm.drizzle.team/docs/get-started/d1-new)
+- [ARCHITECTURE.md](./ARCHITECTURE.md)
+- [STRATEGY_DATA.md](./STRATEGY_DATA.md)
+- [TRAINING_ENGINE.md](./TRAINING_ENGINE.md)
+- [PROGRESS.md](./PROGRESS.md)

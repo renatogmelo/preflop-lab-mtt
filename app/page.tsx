@@ -1,13 +1,17 @@
 "use client";
 
-import { type CSSProperties, useCallback, useEffect, useMemo, useState } from "react";
+import { type CSSProperties, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   ACTIONS, grade, INITIAL_SPOT, POSITIONS, RANKS, round, SCENARIOS, scenarioIsCompatible, STACKS, strategy,
-  type ActionKey, type Card, type HandRecord, type Position, type RoundResolution, type ScenarioKey, type Spot,
+  type ActionKey, type Card, type Confidence, type HandRecord, type Position, type RoundResolution, type ScenarioKey, type Spot,
 } from "./engine";
 import { makeSpot, resolveRound } from "./simulation";
+import { ExploreView, type ExploreSearchRequest } from "./views/explore-view";
+import { TrainingLab, TrainingModeNav, type TrainingMode } from "./views/training-lab";
+import { LearnView } from "./views/learn-view";
+import { AnalyzeView, ProgressView } from "./views/analytics-view";
 
-type ViewKey = "trainer" | "review" | "stats";
+type ViewKey = "learn" | "train" | "explore" | "analyze" | "progress";
 type StackFilter = number | "Todos";
 
 function stackFor(filter: StackFilter, scenario?: ScenarioKey | "Todos") {
@@ -93,47 +97,88 @@ function quickInsight(spot: Spot, action: ActionKey) {
 }
 
 export default function Home() {
-  const [view, setView] = useState<ViewKey>("trainer");
+  const [view, setView] = useState<ViewKey>("train");
+  const [trainMode, setTrainMode] = useState<TrainingMode>("decision");
   const [stack, setStack] = useState<StackFilter>("Todos");
   const [heroFilter, setHeroFilter] = useState<Position | "Todos">("Todos");
   const [scenarioFilter, setScenarioFilter] = useState<ScenarioKey | "Todos">("Todos");
   const [target, setTarget] = useState(20);
   const [history, setHistory] = useState<HandRecord[]>([]);
   const [selected, setSelected] = useState<ActionKey | null>(null);
+  const [confidence, setConfidence] = useState<Confidence>(3);
+  const [autoNext, setAutoNext] = useState(() => typeof window === "undefined" ? 0 : Number(localStorage.getItem("preflop-lab-auto-next") ?? 0));
+  const [pauseOnMistake, setPauseOnMistake] = useState(() => typeof window === "undefined" ? true : localStorage.getItem("preflop-lab-pause-mistake") !== "false");
   const [resolution, setResolution] = useState<RoundResolution | null>(null);
   const [showMatrix, setShowMatrix] = useState(false);
   const [spot, setSpot] = useState<Spot>(INITIAL_SPOT);
   const [loaded, setLoaded] = useState(false);
+  const [persistence, setPersistence] = useState<"local" | "d1">("local");
+  const [searchText, setSearchText] = useState("");
+  const [exploreSearch, setExploreSearch] = useState<ExploreSearchRequest>();
+  const migratedRef = useRef(false);
 
   useEffect(() => {
-    try {
-      const saved = localStorage.getItem("preflop-lab-history");
-      if (saved) setHistory(JSON.parse(saved));
-    } catch {}
-    setSpot(makeSpot(stackFor("Todos"), "Todos", "Todos"));
-    setLoaded(true);
+    const timer = window.setTimeout(() => {
+      try {
+        const saved = localStorage.getItem("preflop-lab-history");
+        if (saved) {
+          const parsed = JSON.parse(saved) as HandRecord[];
+          setHistory(parsed.map((hand) => ({
+            ...hand,
+            correct: hand.correct ?? (typeof hand.loss === "number" && hand.loss <= .04),
+            frequencyError: hand.frequencyError ?? 0,
+            confidence: hand.confidence ?? 3,
+            knowledgeState: hand.knowledgeState ?? "uncertain",
+            loss: hand.provenance?.evAvailable ? hand.loss : null,
+          })));
+        }
+      } catch {
+        localStorage.removeItem("preflop-lab-history");
+      }
+      setSpot(makeSpot(stackFor("Todos"), "Todos", "Todos"));
+      setLoaded(true);
+    }, 0);
+    return () => window.clearTimeout(timer);
   }, []);
 
   useEffect(() => {
     if (loaded) localStorage.setItem("preflop-lab-history", JSON.stringify(history.slice(0, 250)));
   }, [history, loaded]);
 
+  useEffect(() => {
+    if (!loaded || migratedRef.current) return;
+    migratedRef.current = true;
+    const local = history;
+    void fetch("/api/user-data").then(async (response) => {
+      if (!response.ok) return;
+      const remote = await response.json() as { history?: HandRecord[] };
+      const merged = [...(remote.history ?? []), ...local].filter((item, index, items) => items.findIndex((candidate) => candidate.id === item.id) === index).sort((a, b) => b.timestamp - a.timestamp);
+      setHistory(merged.slice(0, 2000));
+      setPersistence("d1");
+      if (local.length) void fetch("/api/user-data", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ history: local }) });
+    }).catch(() => setPersistence("local"));
+  }, [loaded, history]);
+
   const answer = selected ? grade(spot.strategy, selected) : null;
   const recent = history.slice(0, target);
   const avgScore = recent.length ? Math.round(recent.reduce((sum, hand) => sum + hand.score, 0) / recent.length) : 0;
-  const accuracy = recent.length ? Math.round(recent.filter((hand) => hand.loss <= .04).length / recent.length * 100) : 0;
-  const totalLoss = round(recent.reduce((sum, hand) => sum + hand.loss, 0));
-  const bestAction = [...spot.strategy].sort((a, b) => b.ev - a.ev)[0];
+  const accuracy = recent.length ? Math.round(recent.filter((hand) => hand.correct).length / recent.length * 100) : 0;
+  const knownLosses = recent.filter((hand) => hand.loss !== null);
+  const totalLoss = knownLosses.length ? round(knownLosses.reduce((sum, hand) => sum + (hand.loss ?? 0), 0)) : null;
+  const bestAction = [...spot.strategy].sort((a, b) => b.frequency - a.frequency)[0];
 
   const decide = useCallback((action: ActionKey) => {
     if (selected) return;
-    const result = grade(spot.strategy, action);
+    const result = grade(spot.strategy, action, confidence);
     const roundResolution = resolveRound(spot, action);
-    const record: HandRecord = { ...spot, selected: action, ...result, resolution: roundResolution, marked: false, timestamp: Date.now() };
+    const record: HandRecord = { ...spot, selected: action, ...result, confidence, resolution: roundResolution, marked: false, timestamp: Date.now() };
     setSelected(action);
     setResolution(roundResolution);
     setHistory((items) => [record, ...items.filter((item) => item.id !== record.id)]);
-  }, [selected, spot]);
+    void fetch("/api/user-data", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ history: [record] }) }).then((response) => {
+      if (response.ok) setPersistence("d1");
+    }).catch(() => setPersistence("local"));
+  }, [selected, spot, confidence]);
 
   const next = useCallback(() => {
     setSelected(null);
@@ -143,11 +188,27 @@ export default function Home() {
   }, [stack, scenarioFilter, heroFilter]);
 
   useEffect(() => {
+    if (!selected || !autoNext || (pauseOnMistake && !answer?.correct)) return;
+    const timer = window.setTimeout(next, autoNext * 1000);
+    return () => window.clearTimeout(timer);
+  }, [selected, autoNext, pauseOnMistake, answer?.correct, next]);
+
+  useEffect(() => {
+    if (!loaded) return;
+    localStorage.setItem("preflop-lab-auto-next", String(autoNext));
+    localStorage.setItem("preflop-lab-pause-mistake", String(pauseOnMistake));
+    void fetch("/api/user-data", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ preferences: { autoNext, pauseOnMistake } }) });
+  }, [autoNext, pauseOnMistake, loaded]);
+
+  useEffect(() => {
     const onKey = (event: KeyboardEvent) => {
       if (event.target instanceof HTMLInputElement || event.target instanceof HTMLSelectElement) return;
       const match = spot.strategy.find((item) => ACTIONS[item.action].hotkey.toLowerCase() === event.key.toLowerCase());
       if (match) decide(match.action);
-      if ((event.key === "Enter" || event.key === " ") && selected) next();
+      if (/^[1-5]$/.test(event.key)) setConfidence(Number(event.key) as Confidence);
+      if (event.key.toLowerCase() === "m" && selected) setHistory((items) => items.map((item) => item.id === spot.id ? { ...item, marked: !item.marked } : item));
+      if (event.key.toLowerCase() === "e") setShowMatrix((value) => !value);
+      if ((event.key === "Enter" || event.key === " ") && selected) { event.preventDefault(); next(); }
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
@@ -165,36 +226,35 @@ export default function Home() {
     setSelected(null); setResolution(null); setShowMatrix(false); setSpot(makeSpot(stackFor(newStack, compatibleScenario), compatibleScenario, newHero));
   };
 
-  const leaks = (Object.keys(SCENARIOS) as ScenarioKey[]).map((key) => {
-    const hands = history.filter((hand) => hand.scenario === key);
-    return {
-      key, count: hands.length,
-      score: hands.length ? Math.round(hands.reduce((sum, hand) => sum + hand.score, 0) / hands.length) : 0,
-      loss: round(hands.reduce((sum, hand) => sum + hand.loss, 0)),
-    };
-  }).sort((a, b) => (a.score || 101) - (b.score || 101));
-
   return <main className="app-shell">
     <header className="topbar">
-      <button className="brand" onClick={() => setView("trainer")} aria-label="Preflop Lab — início">
+      <button className="brand" onClick={() => setView("train")} aria-label="Preflop Lab — início">
         <span className="brand-mark">P<span>♠</span></span>
         <span><strong>PREFLOP</strong><small>LAB</small></span>
       </button>
       <nav aria-label="Navegação principal">
-        <button className={view === "trainer" ? "active" : ""} onClick={() => setView("trainer")}>Treinar</button>
-        <button className={view === "review" ? "active" : ""} onClick={() => setView("review")}>Revisão <span>{history.length}</span></button>
-        <button className={view === "stats" ? "active" : ""} onClick={() => setView("stats")}>Estatísticas</button>
+        <button className={view === "learn" ? "active" : ""} onClick={() => setView("learn")}>Aprender</button>
+        <button className={view === "train" ? "active" : ""} onClick={() => setView("train")}>Treinar</button>
+        <button className={view === "explore" ? "active" : ""} onClick={() => setView("explore")}>Explorar</button>
+        <button className={view === "analyze" ? "active" : ""} onClick={() => setView("analyze")}>Analisar <span>{history.length}</span></button>
+        <button className={view === "progress" ? "active" : ""} onClick={() => setView("progress")}>Progresso</button>
       </nav>
-      <div className="top-meta"><span className="live-dot" /> MTT 8-max <b>Chip EV</b></div>
+      <div className="top-meta"><form className="global-search" onSubmit={(event) => { event.preventDefault(); if (!searchText.trim()) return; setExploreSearch({ id: Date.now(), text: searchText }); setView("explore"); }}><input value={searchText} onChange={(event) => setSearchText(event.target.value)} placeholder="BTN vs BB 40bb" aria-label="Buscar spot" /><button aria-label="Buscar">⌕</button></form><span className="live-dot" /><small>{persistence === "d1" ? "Cloud" : "Local"}</small></div>
     </header>
 
-    {view === "trainer" && <div className="workspace">
+    {view === "learn" && <LearnView onPractice={(scenario, hero, lessonStack) => { changeConfig(lessonStack, scenario, hero); setTrainMode("decision"); setView("train"); }} />}
+
+    {view === "explore" && <ExploreView key={exploreSearch?.id ?? 0} searchRequest={exploreSearch} />}
+
+    {view === "train" && <>
+      <TrainingModeNav mode={trainMode} onChange={setTrainMode} />
+      {trainMode === "decision" ? <div className="workspace">
       <aside className="control-panel">
         <div className="eyebrow"><span>SESSÃO ATIVA</span><span className="session-status">FOCO</span></div>
         <h1>Treino preflop</h1>
         <p className="muted">Oito mãos únicas, ranges condicionados e decisões independentes. Um spot de cada vez.</p>
 
-        <label className="field-label">STACK EFETIVO</label>
+        <div className="field-label">STACK EFETIVO</div>
         <div className="stack-pills">
           <button className={stack === "Todos" ? "selected" : ""} onClick={() => changeConfig("Todos", scenarioFilter, heroFilter)}>Todos</button>
           {STACKS.map((value) =>
@@ -214,10 +274,12 @@ export default function Home() {
           {(Object.keys(SCENARIOS) as ScenarioKey[]).map((key) => <option key={key} value={key} disabled={!scenarioIsCompatible(key, heroFilter, stack === "Todos" ? undefined : stack)}>{SCENARIOS[key].label}</option>)}
         </select>
 
-        <label className="field-label">META DA SESSÃO</label>
+        <div className="field-label">META DA SESSÃO</div>
         <div className="target-row">{[10, 20, 50].map((value) =>
           <button key={value} className={target === value ? "selected" : ""} onClick={() => setTarget(value)}>{value} mãos</button>
         )}</div>
+
+        <div className="speed-settings"><label>PRÓXIMA MÃO<select value={autoNext} onChange={(event) => setAutoNext(Number(event.target.value))}><option value={0}>Manual</option><option value={1.5}>Após 1.5s</option><option value={3}>Após 3s</option><option value={5}>Após 5s</option></select></label><label className="pause-toggle"><input type="checkbox" checked={pauseOnMistake} onChange={(event) => setPauseOnMistake(event.target.checked)} />Pausar nos erros</label></div>
 
         <div className="session-card">
           <div className="progress-copy"><span>Progresso</span><strong>{Math.min(recent.length, target)} / {target}</strong></div>
@@ -225,10 +287,10 @@ export default function Home() {
           <div className="quick-stats">
             <div><strong>{avgScore || "—"}</strong><span>score</span></div>
             <div><strong>{accuracy ? `${accuracy}%` : "—"}</strong><span>precisão</span></div>
-            <div><strong>{totalLoss ? `−${totalLoss}` : "—"}</strong><span>EV bb</span></div>
+            <div><strong>{totalLoss !== null ? `−${totalLoss}` : "—"}</strong><span>EV verificado</span></div>
           </div>
         </div>
-        <div className="model-note"><span>GTO</span><p><strong>Motor GTO por regras · cEV</strong>Baralho completo sem colisões; cada ação adversária usa mão, posição, stack e range próprios. Frequências e EVs continuam sendo estimativas do modelo.</p></div>
+        <div className="model-note"><span>~</span><p><strong>{spot.provenance.sourceLabel} · {spot.provenance.sourceType}</strong>Frequências aproximadas e claramente identificadas. EV não é exibido sem um dataset confiável.</p></div>
       </aside>
 
       <section className="table-stage">
@@ -264,9 +326,10 @@ export default function Home() {
 
         <div className="decision-area">
           <div className="decision-title"><span>SUA DECISÃO</span><small>{spot.notation} · {spot.hero}</small></div>
+          <div className="confidence-row"><span>CONFIANÇA</span><div>{([1, 2, 3, 4, 5] as Confidence[]).map((value) => <button key={value} className={confidence === value ? "selected" : ""} onClick={() => setConfidence(value)} disabled={Boolean(selected)} aria-label={`Confiança ${value} de 5`}><kbd>{value}</kbd>{value === 1 ? "Chute" : value === 3 ? "Acho" : value === 5 ? "Certeza" : ""}</button>)}</div></div>
           <div className="action-buttons">{spot.strategy.map((item) => {
             const chosen = selected === item.action;
-            const best = Boolean(selected) && item.ev === bestAction.ev;
+            const best = Boolean(selected) && item.action === bestAction.action;
             return <button
               key={item.action}
               className={`${chosen ? "chosen" : ""} ${best ? "best" : ""}`}
@@ -276,7 +339,7 @@ export default function Home() {
             >
               <span className="hotkey">{ACTIONS[item.action].hotkey}</span>
               <strong>{ACTIONS[item.action].label}</strong>
-              {selected && <small>{item.frequency}% · {item.ev >= 0 ? "+" : ""}{item.ev.toFixed(2)} EV</small>}
+              {selected && <small>~{item.frequency}% · {item.ev === null ? "EV indisponível" : `${item.ev >= 0 ? "+" : ""}${item.ev.toFixed(2)} EV`}</small>}
             </button>;
           })}</div>
         </div>
@@ -297,14 +360,14 @@ export default function Home() {
           <div className="thought-list"><span>01</span><p><strong>Quem abriu?</strong>Ranges iniciais mudam toda a defesa.</p></div>
           <div className="thought-list"><span>02</span><p><strong>Qual o stack?</strong>Stacks curtos favorecem jams.</p></div>
           <div className="thought-list"><span>03</span><p><strong>Qual é o tipo da mão?</strong>Par, cartas altas, mesmo naipe ou mão fraca.</p></div>
-        </div> : answer && <div className={`feedback-card ${answer.loss <= .04 ? "correct" : answer.loss <= .12 ? "close" : "mistake"}`}>
-          <div className="feedback-kicker">MODELO GTO POR REGRAS · cEV</div>
+        </div> : answer && <div className={`feedback-card ${answer.correct ? "correct" : answer.frequencyError <= 20 ? "close" : "mistake"}`}>
+          <div className="feedback-kicker">{spot.provenance.sourceLabel.toUpperCase()} · {spot.provenance.sourceType.toUpperCase()}</div>
           <div className="feedback-score">
             <StatRing value={answer.score} />
-            <div><h3>Análise da decisão.</h3><p>{ACTIONS[selected].label} aparece em <strong>{answer.frequency}%</strong> neste nó do modelo.</p></div>
+            <div><h3>Análise da decisão.</h3><p>{ACTIONS[selected].label} aparece em aproximadamente <strong>{answer.frequency}%</strong> neste dataset.</p></div>
           </div>
-          <div className="ev-loss"><span>PERDA DE EV MODELADA</span><strong>{answer.loss ? `−${answer.loss.toFixed(2)} bb` : "0.00 bb"}</strong></div>
-          <div className="strategy-bars"><span>ESTRATÉGIA DO MODELO</span>{[...spot.strategy].sort((a, b) => b.frequency - a.frequency).map((item) =>
+          <div className="ev-loss"><span>PERDA DE EV</span><strong>{answer.loss === null ? "INDISPONÍVEL" : answer.loss ? `−${answer.loss.toFixed(2)} bb` : "0.00 bb"}</strong></div>
+          <div className="strategy-bars"><span>REFERÊNCIA DO DATASET</span>{[...spot.strategy].sort((a, b) => b.frequency - a.frequency).map((item) =>
             <div className="strategy-row" key={item.action}>
               <div><i style={{ background: ACTIONS[item.action].color }} /><strong>{ACTIONS[item.action].label}</strong><b>{item.frequency}%</b></div>
               <span><i style={{ width: `${item.frequency}%`, background: ACTIONS[item.action].color }} /></span>
@@ -332,46 +395,15 @@ export default function Home() {
           </button>
         </div>}
       </aside>
-    </div>}
+    </div> : <TrainingLab mode={trainMode} history={history} />}
+    </>}
 
-    {view === "review" && <section className="page-view">
-      <div className="page-title">
-        <div><span>HISTÓRICO LOCAL</span><h1>Revisão de mãos</h1><p>Volte aos spots de maior impacto e transforme erro em padrão reconhecível.</p></div>
-        <button className="secondary-button" onClick={() => setHistory([])}>Limpar histórico</button>
-      </div>
-      {history.length ? <div className="review-table">
-        <div className="review-head"><span>MÃO</span><span>SPOT</span><span>DECISÃO</span><span>SCORE</span><span>EV</span><span /></div>
-        {history.slice(0, 40).map((hand) => {
-          const optimal = [...hand.strategy].sort((a, b) => b.ev - a.ev)[0];
-          return <div className="review-row" key={hand.id}>
-            <span className="hand-chip">{hand.notation}</span>
-            <span><strong>{hand.hero} · {hand.stack}BB</strong><small>{SCENARIOS[hand.scenario].label}</small></span>
-            <span><strong>{ACTIONS[hand.selected].label}</strong><small>Modelo: {ACTIONS[optimal.action].label}</small></span>
-            <span className={hand.score >= 85 ? "good" : hand.score >= 65 ? "warn" : "bad"}>{hand.score}</span>
-            <span className={hand.loss ? "bad" : "good"}>{hand.loss ? `−${hand.loss.toFixed(2)} bb` : "0.00 bb"}</span>
-            <button aria-label="Marcar mão" onClick={() => setHistory((items) => items.map((item) => item.id === hand.id ? { ...item, marked: !item.marked } : item))}>{hand.marked ? "★" : "☆"}</button>
-          </div>;
-        })}
-      </div> : <div className="empty-state"><span>♠</span><h2>Nenhuma decisão registrada</h2><p>Complete algumas mãos no treino para construir seu histórico.</p><button onClick={() => setView("trainer")}>Começar sessão</button></div>}
-    </section>}
+    {view === "analyze" && <AnalyzeView history={history} onHistoryChange={setHistory} onTrainLeak={(scenario, targetHero, targetStack) => {
+      changeConfig(targetStack, scenario, POSITIONS.includes(targetHero as Position) ? targetHero as Position : "BTN");
+      setTrainMode("leak");
+      setView("train");
+    }} />}
 
-    {view === "stats" && <section className="page-view">
-      <div className="page-title"><div><span>DIAGNÓSTICO</span><h1>Seu jogo em números</h1><p>Os dados ficam somente neste dispositivo.</p></div></div>
-      <div className="stats-grid">
-        <div className="hero-stat"><StatRing value={history.length ? Math.round(history.reduce((sum, hand) => sum + hand.score, 0) / history.length) : 0} /><div><span>SCORE GERAL</span><strong>{history.length} decisões</strong><p>{history.length ? "Continue atacando primeiro os spots de menor score." : "Sua leitura começa na primeira sessão."}</p></div></div>
-        <div className="metric"><span>PRECISÃO</span><strong>{history.length ? Math.round(history.filter((hand) => hand.loss <= .04).length / history.length * 100) : 0}%</strong><small>sem perda relevante</small></div>
-        <div className="metric"><span>EV PERDIDO</span><strong>−{round(history.reduce((sum, hand) => sum + hand.loss, 0))} bb</strong><small>acumulado no histórico</small></div>
-        <div className="metric"><span>MARCADAS</span><strong>{history.filter((hand) => hand.marked).length}</strong><small>mãos para revisão</small></div>
-      </div>
-      <div className="leaks-card">
-        <div className="card-title"><div><span>MAPA DE LEAKS</span><h2>Performance por formação</h2></div><small>priorizado pelo menor score</small></div>
-        <div className="leak-table">{leaks.map((row) => <div className="leak-row" key={row.key}>
-          <div><strong>{SCENARIOS[row.key].label}</strong><small>{row.count} decisões</small></div>
-          <span className="leak-track"><i style={{ width: `${row.score}%` }} /></span>
-          <b>{row.count ? row.score : "—"}</b><small>{row.loss ? `−${row.loss} bb` : "0.00 bb"}</small>
-          <button onClick={() => { changeConfig(stack, row.key, heroFilter); setView("trainer"); }}>Treinar</button>
-        </div>)}</div>
-      </div>
-    </section>}
+    {view === "progress" && <ProgressView history={history} onToday={() => { setTrainMode("boundary"); setView("train"); }} />}
   </main>;
 }
