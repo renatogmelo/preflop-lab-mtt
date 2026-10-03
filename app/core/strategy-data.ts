@@ -23,10 +23,13 @@ import {
 } from "./domain";
 import { HAND_CLASSES, HAND_CLASS_SET } from "./hands";
 import { modeledStrategy } from "./modeled-provider";
+import solverExperimentalDatasetJson from "../../datasets/solver-experimental/holdem-poc-v0.1.0.json";
 
 export const AUTO_DATASET_ID = "auto";
 export const MODELED_DATASET_ID = "mtt-8max-chipev-educational-model";
 export const REFERENCE_DATASET_ID = "preflop-lab-reference";
+export const SOLVER_EXPERIMENTAL_DATASET = solverExperimentalDatasetJson as unknown as SerializedStrategyDataset;
+export const SOLVER_EXPERIMENTAL_DATASET_ID = SOLVER_EXPERIMENTAL_DATASET.metadata.id;
 export const COVERAGE_STACKS = [10, 15, 20, 30, 40, 60, 100];
 
 export const MODELED_METADATA: DatasetMetadata = {
@@ -338,6 +341,11 @@ export class StrategyRepository {
   constructor() {
     this.installProvider(createModeledProvider());
     this.installProvider(createStaticProvider({ metadata: { ...REFERENCE_METADATA }, nodes: [] }));
+    const experimentalReport = validateDataset(SOLVER_EXPERIMENTAL_DATASET);
+    if (!experimentalReport.valid) {
+      throw new Error("Bundled solver Experimental dataset failed validation.");
+    }
+    this.installProvider(createStaticProvider(SOLVER_EXPERIMENTAL_DATASET));
   }
 
   private installProvider(provider: Provider) {

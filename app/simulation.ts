@@ -276,6 +276,10 @@ export function resolveRound(spot: Spot, selected: ActionKey): RoundResolution {
     if (selected === "fold") {
       let opener: Position | undefined;
       for (const position of unacted) {
+        if (!opener && position === "BB") {
+          add("BB", "call", "BB recebe o walk");
+          break;
+        }
         const node: ScenarioKey = opener ? (position === "BB" ? "bb-defense" : "vs-open") : "rfi";
         const action = decideOpponent(spot, position, node, opener);
         add(position, action);

@@ -114,3 +114,14 @@ Curated só participa com status `published`. Nodes ausentes continuam ausentes;
 O catálogo atual contém 252 combinações de cenário × posição elegível × stack canônico. A cobertura real está em `DATASET_COVERAGE.md`.
 
 `app/core/golden.ts` cria e compara snapshots explícitos. Verified sem golden é reportado como erro de governança. Modeled usa testes de invariantes, nunca golden values que insinuem precisão GTO.
+
+## Solver datasets
+
+O exporter do solver preserva no dataset:
+
+- solver/version, algoritmo e par?metros;
+- game definition hash e solve id;
+- itera??es, runtime e m?tricas dispon?veis;
+- continuation model, abstra??o e validation report id.
+
+Todo output nasce `Experimental`. O POC `solver-experimental-6a62393e944f6db2` est? instalado para inspe??o expl?cita, mas ? exclu?do do auto-resolution e n?o altera a cobertura MTT 8-max atual.

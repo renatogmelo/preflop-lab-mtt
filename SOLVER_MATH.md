@@ -1,0 +1,103 @@
+# Preflop Lab Solver — Mathematical Core
+
+## Extensive-form game
+
+Um estado define jogador atuante, ações legais, transições, chance e utility terminal. Um infoset `I` agrupa estados indistinguíveis para o jogador. A estratégia comportamental é `σ(I,a)` e satisfaz:
+
+```text
+σ(I,a) ≥ 0
+Σa σ(I,a) = 1
+```
+
+Chance possui probabilidades próprias e nunca é tratada como jogador estratégico.
+
+## Reach probability
+
+Para um histórico `h`, o reach é fatorado:
+
+```text
+πσ(h) = πchance(h) × π0σ(h) × π1σ(h)
+```
+
+No update do jogador `i`, o peso contrafactual exclui o reach do próprio jogador:
+
+```text
+π−iσ(h) = πchance(h) × πopponentσ(h)
+```
+
+Isso faz ações observadas condicionarem ranges implicitamente por Bayes/reach, sem filtros manuais.
+
+## Counterfactual regret
+
+Para ação `a` no infoset `I`:
+
+```text
+rᵗ(I,a) = vᵗ(I,a) − vᵗ(I)
+Rᵀ(I,a) = Σt π−iᵗ(I) × rᵗ(I,a)
+```
+
+Regret matching usa apenas regrets positivos:
+
+```text
+σᵀ⁺¹(I,a) = max(Rᵀ(I,a), 0) / Σa' max(Rᵀ(I,a'), 0)
+```
+
+Quando o denominador é zero, a distribuição é uniforme.
+
+## Average strategy
+
+Current strategy é a distribuição obtida dos regrets atuais. Average strategy acumula estratégia ponderada pelo reach do próprio jogador e chance. O artefato final usa average strategy.
+
+## Vanilla CFR
+
+Executa traversal completo para cada jogador a cada iteração. Regrets acumulam sem clipping e average strategy usa peso unitário.
+
+## CFR+
+
+Após cada update:
+
+```text
+Rᵀ⁺(I,a) = max(0, Rᵀ⁻¹⁺(I,a) + rᵗ(I,a))
+```
+
+A média recebe peso linear após `cfrPlusAveragingDelay`, registrado na configuração.
+
+## DCFR
+
+Antes da iteração `t`, a implementação desconta regrets positivos, negativos e strategy sums:
+
+```text
+positiveScale = t^α / (t^α + 1)
+negativeScale = t^β / (t^β + 1)
+strategyScale = ((t−1)/t)^γ
+```
+
+Defaults explícitos do benchmark: `α=1.5`, `β=0`, `γ=2`.
+
+## Best response, NashConv e exploitability
+
+Kuhn enumera todas as políticas puras do jogador em cada infoset e escolhe o maior valor contra a estratégia adversária. Como é two-player zero-sum:
+
+```text
+NashConv(σ) = BR₀(σ₁) + BR₁(σ₀)
+Exploitability(σ) = NashConv(σ) / 2
+```
+
+Essa métrica é exata para o benchmark. Para o POC Hold'em, best response ainda não foi implementado; os campos permanecem `null`.
+
+## Kuhn known solution
+
+O valor de equilíbrio do jogador zero é `−1/18 ≈ −0.0555556`. Kuhn admite uma família de equilíbrios, então testes não fixam uma única frequência arbitrária; validam valor, probability integrity e exploitability exata.
+
+## Numerical safety
+
+- toda probabilidade é finita e normalizada;
+- chance deve somar 1 dentro de epsilon;
+- regret/strategy sum com NaN ou Infinity interrompe o solve;
+- utilities zero-sum são testadas;
+- checkpoints rejeitam hashes incompatíveis;
+- strategy delta mede a maior mudança absoluta entre snapshots da average strategy.
+
+## Hold'em POC
+
+O POC usa chance-sampled CFR sobre 1.326 combos para cada jogador. Deals com cartas compartilhadas são rejeitados. O jogo é push/fold e a continuação de call vem de `EquityApproximationProvider`; logo ele resolve o jogo aproximado declarado, não NLHE completo.

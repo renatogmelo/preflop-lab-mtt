@@ -1,0 +1,10 @@
+{
+  "game": "kuhn",
+  "algorithm": "dcfr",
+  "seed": 20261003,
+  "iterations": 50000,
+  "metricInterval": 500,
+  "targetExploitability": 0.003,
+  "output": "solver/artifacts/kuhn-dcfr-v0.1.0.json",
+  "checkpoint": "solver/artifacts/kuhn-dcfr-v0.1.0.checkpoint.json"
+}

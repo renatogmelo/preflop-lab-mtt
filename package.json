@@ -13,7 +13,11 @@
     "lint": "eslint . --ignore-pattern dist --ignore-pattern .next",
     "db:generate": "drizzle-kit generate",
     "typecheck": "tsc --noEmit",
-    "check": "npm run typecheck && npm run lint && npm run test"
+    "check": "npm run typecheck && npm run lint && npm run test",
+    "solver": "node --import tsx solver/cli/index.ts",
+    "solver:kuhn": "node --import tsx solver/cli/index.ts solve solver/configs/kuhn-dcfr.json",
+    "solver:holdem": "node --import tsx solver/cli/index.ts solve solver/configs/holdem-poc.json",
+    "solver:benchmark": "node --import tsx solver/cli/index.ts benchmark"
   },
   "dependencies": {
     "drizzle-orm": "0.45.2",

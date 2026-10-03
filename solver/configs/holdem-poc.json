@@ -1,0 +1,14 @@
+{
+  "game": "holdem-poc",
+  "id": "hu-sb-vs-bb-10bb-push-fold-poc",
+  "seed": 20261003,
+  "iterations": 5000000,
+  "metricInterval": 250000,
+  "stack": 10,
+  "smallBlind": 0.5,
+  "bigBlind": 1,
+  "output": "solver/artifacts/holdem-poc-v0.1.0.json",
+  "datasetOutput": "datasets/solver-experimental/holdem-poc-v0.1.0.json",
+  "validationOutput": "solver/artifacts/holdem-poc-v0.1.0.validation.json",
+  "checkpoint": "solver/artifacts/holdem-poc-v0.1.0.checkpoint.json"
+}

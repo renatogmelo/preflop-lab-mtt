@@ -1,0 +1,249 @@
+{
+  "schemaVersion": 1,
+  "solverVersion": "0.1.0",
+  "solveId": "d6a3c693e3bf145f",
+  "gameId": "kuhn-poker-v1",
+  "gameDefinitionHash": "2f4a546df8494c69",
+  "configurationHash": "15a661006708c5dc",
+  "configuration": {
+    "dcfr": {
+      "alpha": 1.5,
+      "beta": 0,
+      "gamma": 2
+    },
+    "seed": 20261003,
+    "algorithm": "dcfr"
+  },
+  "iteration": 2500,
+  "nodesVisited": 275000,
+  "infosets": [
+    {
+      "key": "0|J|root",
+      "actions": [
+        "check",
+        "bet"
+      ],
+      "regrets": [
+        8.643282330509313,
+        2.6004738804126832
+      ],
+      "strategySum": [
+        212.0710198642967,
+        65.87344680236973
+      ]
+    },
+    {
+      "key": "1|Q|c",
+      "actions": [
+        "check",
+        "bet"
+      ],
+      "regrets": [
+        0.0031932289872789775,
+        -0.1008714808493733
+      ],
+      "strategySum": [
+        277.9444665333293,
+        1.333333333333331e-7
+      ]
+    },
+    {
+      "key": "0|J|cb",
+      "actions": [
+        "fold",
+        "call"
+      ],
+      "regrets": [
+        0.009426672323049758,
+        -0.33333333333333326
+      ],
+      "strategySum": [
+        212.07101985762972,
+        6.66666666666663e-9
+      ]
+    },
+    {
+      "key": "1|Q|b",
+      "actions": [
+        "fold",
+        "call"
+      ],
+      "regrets": [
+        5.225918800880952,
+        2.645417841256113
+      ],
+      "strategySum": [
+        183.0582635823202,
+        94.88620308434609
+      ]
+    },
+    {
+      "key": "1|K|c",
+      "actions": [
+        "check",
+        "bet"
+      ],
+      "regrets": [
+        -0.1892844054815787,
+        0.013526774376995185
+      ],
+      "strategySum": [
+        1.333333333333331e-7,
+        277.9444665333293
+      ]
+    },
+    {
+      "key": "1|K|b",
+      "actions": [
+        "fold",
+        "call"
+      ],
+      "regrets": [
+        -0.23128559431942455,
+        0.05656003393829899
+      ],
+      "strategySum": [
+        1.333333333333326e-8,
+        277.9444666533294
+      ]
+    },
+    {
+      "key": "0|Q|root",
+      "actions": [
+        "check",
+        "bet"
+      ],
+      "regrets": [
+        0.09599950842189935,
+        -0.10908727667140516
+      ],
+      "strategySum": [
+        277.94444104116184,
+        0.00002562550127979127
+      ]
+    },
+    {
+      "key": "1|J|c",
+      "actions": [
+        "check",
+        "bet"
+      ],
+      "regrets": [
+        2.2910336182827846,
+        1.122251831428322
+      ],
+      "strategySum": [
+        183.71022297419026,
+        94.23424369247623
+      ]
+    },
+    {
+      "key": "0|Q|cb",
+      "actions": [
+        "fold",
+        "call"
+      ],
+      "regrets": [
+        4.944914482201046,
+        6.494846579586212
+      ],
+      "strategySum": [
+        119.1868666300604,
+        158.75757441110477
+      ]
+    },
+    {
+      "key": "1|J|b",
+      "actions": [
+        "fold",
+        "call"
+      ],
+      "regrets": [
+        0.018853344646099515,
+        -0.23246185248396
+      ],
+      "strategySum": [
+        277.9444666533294,
+        1.333333333333326e-8
+      ]
+    },
+    {
+      "key": "0|K|root",
+      "actions": [
+        "check",
+        "bet"
+      ],
+      "regrets": [
+        1.1540063153670912,
+        2.6610858264568784
+      ],
+      "strategySum": [
+        85.326946933176,
+        192.61751973348993
+      ]
+    },
+    {
+      "key": "0|K|cb",
+      "actions": [
+        "fold",
+        "call"
+      ],
+      "regrets": [
+        -0.3290447772307063,
+        0.028280016969149495
+      ],
+      "strategySum": [
+        6.66666666666663e-9,
+        85.32694692650944
+      ]
+    }
+  ],
+  "convergenceHistory": [
+    {
+      "iteration": 500,
+      "exploitability": 0.006347530573836815,
+      "nashConv": 0.01269506114767363,
+      "averagePositiveRegret": 0.0013763890643575846,
+      "strategyDelta": 0.9999999960530767,
+      "elapsedMs": 89,
+      "nodesVisited": 55000
+    },
+    {
+      "iteration": 1000,
+      "exploitability": 0.0043840053546852775,
+      "nashConv": 0.008768010709370555,
+      "averagePositiveRegret": 0.0009870776470089669,
+      "strategyDelta": 0.005833857525065711,
+      "elapsedMs": 178,
+      "nodesVisited": 110000
+    },
+    {
+      "iteration": 1500,
+      "exploitability": 0.0035341529384945447,
+      "nashConv": 0.007068305876989089,
+      "averagePositiveRegret": 0.0008118605987636162,
+      "strategyDelta": 0.0024632865429264905,
+      "elapsedMs": 259,
+      "nodesVisited": 165000
+    },
+    {
+      "iteration": 2000,
+      "exploitability": 0.003019624478882349,
+      "nashConv": 0.006039248957764698,
+      "averagePositiveRegret": 0.0007063597847390302,
+      "strategyDelta": 0.0015101580980381168,
+      "elapsedMs": 326,
+      "nodesVisited": 220000
+    },
+    {
+      "iteration": 2500,
+      "exploitability": 0.0027172556806145665,
+      "nashConv": 0.005434511361229133,
+      "averagePositiveRegret": 0.0006334845181007361,
+      "strategyDelta": 0.0009357110276999037,
+      "elapsedMs": 381,
+      "nodesVisited": 275000
+    }
+  ],
+  "createdAt": "2026-10-03T22:30:43.745Z"
+}

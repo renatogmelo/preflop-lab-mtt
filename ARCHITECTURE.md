@@ -96,3 +96,17 @@ Create → Draft → Review required → Reviewed → Published
 `StrategyRepository.install` bloqueia publicação curated que tente pular a revisão. O editor pode usar o modelo como rascunho apenas após uma ação explícita; isso não altera o trust.
 
 Coverage usa um catálogo auditável de 252 combinações canônicas. Inspector valida node, 169 mãos e metadata. O histórico persiste `datasetId + datasetVersion + nodeId`, portanto atualizações futuras não reclassificam decisões antigas.
+
+## Phase 3 ? solver boundary
+
+O solver vive em `solver/` e n?o depende de React, D1 ou views. Somente o exporter conhece o schema do StrategyDataset.
+
+```text
+GameDefinition ? Solver Core ? Raw Artifact ? Validation ? Exporter ? StrategyRepository
+```
+
+O dataset POC ? instalado como `Experimental`, exige opt-in e n?o participa da resolu??o padr?o. Resultados do solver nunca mudam trust automaticamente.
+
+O core de refer?ncia 0.1.0 usa TypeScript/f64 e execu??o single-thread para auditabilidade. Portar traversal/storage para Rust ? uma evolu??o p?s-profiling e deve manter artefatos e testes diferenciais compat?veis.
+
+Continuation values permanecem uma interface separada. Level 0 ? desenvolvimento; somente uma continua??o tecnicamente defens?vel pode entrar num candidato Verified.

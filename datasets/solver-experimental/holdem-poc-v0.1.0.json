@@ -1,0 +1,2153 @@
+{
+  "metadata": {
+    "id": "solver-experimental-6a62393e944f6db2",
+    "name": "Preflop Lab Solver — Hold'em POC Experimental",
+    "version": "0.1.0",
+    "createdAt": "2026-10-03T22:41:23.098Z",
+    "updatedAt": "2026-10-03T22:41:23.098Z",
+    "generatedAt": "2026-10-03T22:41:23.098Z",
+    "sourceType": "internal-solve",
+    "trustLevel": "experimental",
+    "status": "published",
+    "gameType": "MTT",
+    "model": "ChipEV",
+    "format": "heads-up-preflop-poc",
+    "players": 2,
+    "anteStructure": "No ante; SB 0.5bb; BB 1bb",
+    "availableStacks": [
+      10
+    ],
+    "availableOpenSizes": [
+      10
+    ],
+    "available3betSizes": [],
+    "supportedNodes": [
+      "bvb"
+    ],
+    "methodology": "Chance-sampled CFR structural proof at combo level with explicit card removal and a Level 0 equity approximation continuation provider.",
+    "frequencyPrecision": "estimated",
+    "evAvailable": false,
+    "isExact": false,
+    "license": "Preflop Lab original solver output; no third-party strategy data.",
+    "changeLog": [
+      {
+        "version": "0.1.0",
+        "date": "2026-10-03",
+        "changes": [
+          "First reproducible Hold'em structural POC export."
+        ]
+      }
+    ],
+    "notes": "Experimental only. This is not an 8-max solve, not a postflop-coupled solution and not GTO/Verified.",
+    "enabled": true,
+    "solver": {
+      "solverName": "Preflop Lab Solver",
+      "solverVersion": "0.1.0",
+      "algorithm": "chance-sampled-cfr",
+      "algorithmParameters": {
+        "seed": 20261003,
+        "metricInterval": 250000
+      },
+      "gameDefinitionHash": "4b3a79217806dde5",
+      "solveId": "6a62393e944f6db2",
+      "iterations": 5000000,
+      "runtimeMs": 5157,
+      "convergenceMetrics": {
+        "exploitability": null,
+        "nashConv": null,
+        "strategyDelta": 0.036109948014555804,
+        "averagePositiveRegret": 7.693999828095985e-7
+      },
+      "continuationModel": "strength-proxy-v1",
+      "abstraction": {
+        "sb": [
+          "fold",
+          "jam"
+        ],
+        "bbVsJam": [
+          "fold",
+          "call"
+        ]
+      },
+      "validationReportId": "validation:6a62393e944f6db2"
+    }
+  },
+  "nodes": [
+    {
+      "id": "node:solver-experimental-6a62393e944f6db2|MTT|ChipEV|heads-up-preflop-poc|2|10|SB|bvb|BB|-|10|-",
+      "parentNodeId": null,
+      "datasetId": "solver-experimental-6a62393e944f6db2",
+      "actingPosition": "SB",
+      "effectiveStack": 10,
+      "pot": 1.5,
+      "openSize": 10,
+      "actionsAvailable": [
+        "fold",
+        "jam"
+      ],
+      "actionHistory": [
+        {
+          "position": "SB",
+          "text": "SB acts first in the heads-up structural POC"
+        }
+      ],
+      "strategyByHand": {
+        "22": [
+          {
+            "action": "fold",
+            "frequency": 99.805798,
+            "ev": null
+          },
+          {
+            "action": "jam",
+            "frequency": 0.194202,
+            "ev": null
+          }
+        ],
+        "33": [
+          {
+            "action": "fold",
+            "frequency": 4.792302,
+            "ev": null
+          },
+          {
+            "action": "jam",
+            "frequency": 95.207698,
+            "ev": null
+          }
+        ],
+        "44": [
+          {
+            "action": "fold",
+            "frequency": 0.038145,
+            "ev": null
+          },
+          {
+            "action": "jam",
+            "frequency": 99.961855,
+            "ev": null
+          }
+        ],
+        "55": [
+          {
+            "action": "fold",
+            "frequency": 0.060725,
+            "ev": null
+          },
+          {
+            "action": "jam",
+            "frequency": 99.939275,
+            "ev": null
+          }
+        ],
+        "66": [
+          {
+            "action": "fold",
+            "frequency": 0.031937,
+            "ev": null
+          },
+          {
+            "action": "jam",
+            "frequency": 99.968063,
+            "ev": null
+          }
+        ],
+        "77": [
+          {
+            "action": "fold",
+            "frequency": 0.025645,
+            "ev": null
+          },
+          {
+            "action": "jam",
+            "frequency": 99.974355,
+            "ev": null
+          }
+        ],
+        "88": [
+          {
+            "action": "fold",
+            "frequency": 0.013202,
+            "ev": null
+          },
+          {
+            "action": "jam",
+            "frequency": 99.986798,
+            "ev": null
+          }
+        ],
+        "99": [
+          {
+            "action": "fold",
+            "frequency": 0.013141,
+            "ev": null
+          },
+          {
+            "action": "jam",
+            "frequency": 99.986859,
+            "ev": null
+          }
+        ],
+        "AA": [
+          {
+            "action": "fold",
+            "frequency": 0.013245,
+            "ev": null
+          },
+          {
+            "action": "jam",
+            "frequency": 99.986755,
+            "ev": null
+          }
+        ],
+        "AKs": [
+          {
+            "action": "fold",
+            "frequency": 0.013449,
+            "ev": null
+          },
+          {
+            "action": "jam",
+            "frequency": 99.986551,
+            "ev": null
+          }
+        ],
+        "AQs": [
+          {
+            "action": "fold",
+            "frequency": 0.013469,
+            "ev": null
+          },
+          {
+            "action": "jam",
+            "frequency": 99.986531,
+            "ev": null
+          }
+        ],
+        "AJs": [
+          {
+            "action": "fold",
+            "frequency": 0.015589,
+            "ev": null
+          },
+          {
+            "action": "jam",
+            "frequency": 99.984411,
+            "ev": null
+          }
+        ],
+        "ATs": [
+          {
+            "action": "fold",
+            "frequency": 0.013155,
+            "ev": null
+          },
+          {
+            "action": "jam",
+            "frequency": 99.986845,
+            "ev": null
+          }
+        ],
+        "A9s": [
+          {
+            "action": "fold",
+            "frequency": 0.020535,
+            "ev": null
+          },
+          {
+            "action": "jam",
+            "frequency": 99.979465,
+            "ev": null
+          }
+        ],
+        "A8s": [
+          {
+            "action": "fold",
+            "frequency": 0.0267,
+            "ev": null
+          },
+          {
+            "action": "jam",
+            "frequency": 99.9733,
+            "ev": null
+          }
+        ],
+        "A7s": [
+          {
+            "action": "fold",
+            "frequency": 0.013317,
+            "ev": null
+          },
+          {
+            "action": "jam",
+            "frequency": 99.986683,
+            "ev": null
+          }
+        ],
+        "A6s": [
+          {
+            "action": "fold",
+            "frequency": 0.030053,
+            "ev": null
+          },
+          {
+            "action": "jam",
+            "frequency": 99.969947,
+            "ev": null
+          }
+        ],
+        "A5s": [
+          {
+            "action": "fold",
+            "frequency": 0.013353,
+            "ev": null
+          },
+          {
+            "action": "jam",
+            "frequency": 99.986647,
+            "ev": null
+          }
+        ],
+        "A4s": [
+          {
+            "action": "fold",
+            "frequency": 0.037152,
+            "ev": null
+          },
+          {
+            "action": "jam",
+            "frequency": 99.962848,
+            "ev": null
+          }
+        ],
+        "A3s": [
+          {
+            "action": "fold",
+            "frequency": 0.013151,
+            "ev": null
+          },
+          {
+            "action": "jam",
+            "frequency": 99.986849,
+            "ev": null
+          }
+        ],
+        "A2s": [
+          {
+            "action": "fold",
+            "frequency": 0.013593,
+            "ev": null
+          },
+          {
+            "action": "jam",
+            "frequency": 99.986407,
+            "ev": null
+          }
+        ],
+        "AKo": [
+          {
+            "action": "fold",
+            "frequency": 0.014606,
+            "ev": null
+          },
+          {
+            "action": "jam",
+            "frequency": 99.985394,
+            "ev": null
+          }
+        ],
+        "KK": [
+          {
+            "action": "fold",
+            "frequency": 0.013178,
+            "ev": null
+          },
+          {
+            "action": "jam",
+            "frequency": 99.986822,
+            "ev": null
+          }
+        ],
+        "KQs": [
+          {
+            "action": "fold",
+            "frequency": 0.013422,
+            "ev": null
+          },
+          {
+            "action": "jam",
+            "frequency": 99.986578,
+            "ev": null
+          }
+        ],
+        "KJs": [
+          {
+            "action": "fold",
+            "frequency": 0.013011,
+            "ev": null
+          },
+          {
+            "action": "jam",
+            "frequency": 99.986989,
+            "ev": null
+          }
+        ],
+        "KTs": [
+          {
+            "action": "fold",
+            "frequency": 0.023812,
+            "ev": null
+          },
+          {
+            "action": "jam",
+            "frequency": 99.976188,
+            "ev": null
+          }
+        ],
+        "K9s": [
+          {
+            "action": "fold",
+            "frequency": 0.013421,
+            "ev": null
+          },
+          {
+            "action": "jam",
+            "frequency": 99.986579,
+            "ev": null
+          }
+        ],
+        "K8s": [
+          {
+            "action": "fold",
+            "frequency": 0.013243,
+            "ev": null
+          },
+          {
+            "action": "jam",
+            "frequency": 99.986757,
+            "ev": null
+          }
+        ],
+        "K7s": [
+          {
+            "action": "fold",
+            "frequency": 0.01342,
+            "ev": null
+          },
+          {
+            "action": "jam",
+            "frequency": 99.98658,
+            "ev": null
+          }
+        ],
+        "K6s": [
+          {
+            "action": "fold",
+            "frequency": 0.048215,
+            "ev": null
+          },
+          {
+            "action": "jam",
+            "frequency": 99.951785,
+            "ev": null
+          }
+        ],
+        "K5s": [
+          {
+            "action": "fold",
+            "frequency": 0.060086,
+            "ev": null
+          },
+          {
+            "action": "jam",
+            "frequency": 99.939914,
+            "ev": null
+          }
+        ],
+        "K4s": [
+          {
+            "action": "fold",
+            "frequency": 0.081728,
+            "ev": null
+          },
+          {
+            "action": "jam",
+            "frequency": 99.918272,
+            "ev": null
+          }
+        ],
+        "K3s": [
+          {
+            "action": "fold",
+            "frequency": 0.063362,
+            "ev": null
+          },
+          {
+            "action": "jam",
+            "frequency": 99.936638,
+            "ev": null
+          }
+        ],
+        "K2s": [
+          {
+            "action": "fold",
+            "frequency": 0.0264,
+            "ev": null
+          },
+          {
+            "action": "jam",
+            "frequency": 99.9736,
+            "ev": null
+          }
+        ],
+        "AQo": [
+          {
+            "action": "fold",
+            "frequency": 0.014601,
+            "ev": null
+          },
+          {
+            "action": "jam",
+            "frequency": 99.985399,
+            "ev": null
+          }
+        ],
+        "KQo": [
+          {
+            "action": "fold",
+            "frequency": 0.013224,
+            "ev": null
+          },
+          {
+            "action": "jam",
+            "frequency": 99.986776,
+            "ev": null
+          }
+        ],
+        "QQ": [
+          {
+            "action": "fold",
+            "frequency": 0.01337,
+            "ev": null
+          },
+          {
+            "action": "jam",
+            "frequency": 99.98663,
+            "ev": null
+          }
+        ],
+        "QJs": [
+          {
+            "action": "fold",
+            "frequency": 0.01311,
+            "ev": null
+          },
+          {
+            "action": "jam",
+            "frequency": 99.98689,
+            "ev": null
+          }
+        ],
+        "QTs": [
+          {
+            "action": "fold",
+            "frequency": 0.028468,
+            "ev": null
+          },
+          {
+            "action": "jam",
+            "frequency": 99.971532,
+            "ev": null
+          }
+        ],
+        "Q9s": [
+          {
+            "action": "fold",
+            "frequency": 0.013428,
+            "ev": null
+          },
+          {
+            "action": "jam",
+            "frequency": 99.986572,
+            "ev": null
+          }
+        ],
+        "Q8s": [
+          {
+            "action": "fold",
+            "frequency": 0.026691,
+            "ev": null
+          },
+          {
+            "action": "jam",
+            "frequency": 99.973309,
+            "ev": null
+          }
+        ],
+        "Q7s": [
+          {
+            "action": "fold",
+            "frequency": 0.087929,
+            "ev": null
+          },
+          {
+            "action": "jam",
+            "frequency": 99.912071,
+            "ev": null
+          }
+        ],
+        "Q6s": [
+          {
+            "action": "fold",
+            "frequency": 0.016639,
+            "ev": null
+          },
+          {
+            "action": "jam",
+            "frequency": 99.983361,
+            "ev": null
+          }
+        ],
+        "Q5s": [
+          {
+            "action": "fold",
+            "frequency": 0.043178,
+            "ev": null
+          },
+          {
+            "action": "jam",
+            "frequency": 99.956822,
+            "ev": null
+          }
+        ],
+        "Q4s": [
+          {
+            "action": "fold",
+            "frequency": 0.424804,
+            "ev": null
+          },
+          {
+            "action": "jam",
+            "frequency": 99.575196,
+            "ev": null
+          }
+        ],
+        "Q3s": [
+          {
+            "action": "fold",
+            "frequency": 0.249575,
+            "ev": null
+          },
+          {
+            "action": "jam",
+            "frequency": 99.750425,
+            "ev": null
+          }
+        ],
+        "Q2s": [
+          {
+            "action": "fold",
+            "frequency": 0.266228,
+            "ev": null
+          },
+          {
+            "action": "jam",
+            "frequency": 99.733772,
+            "ev": null
+          }
+        ],
+        "AJo": [
+          {
+            "action": "fold",
+            "frequency": 0.01497,
+            "ev": null
+          },
+          {
+            "action": "jam",
+            "frequency": 99.98503,
+            "ev": null
+          }
+        ],
+        "KJo": [
+          {
+            "action": "fold",
+            "frequency": 0.016145,
+            "ev": null
+          },
+          {
+            "action": "jam",
+            "frequency": 99.983855,
+            "ev": null
+          }
+        ],
+        "QJo": [
+          {
+            "action": "fold",
+            "frequency": 0.013376,
+            "ev": null
+          },
+          {
+            "action": "jam",
+            "frequency": 99.986624,
+            "ev": null
+          }
+        ],
+        "JJ": [
+          {
+            "action": "fold",
+            "frequency": 0.013192,
+            "ev": null
+          },
+          {
+            "action": "jam",
+            "frequency": 99.986808,
+            "ev": null
+          }
+        ],
+        "JTs": [
+          {
+            "action": "fold",
+            "frequency": 0.013623,
+            "ev": null
+          },
+          {
+            "action": "jam",
+            "frequency": 99.986377,
+            "ev": null
+          }
+        ],
+        "J9s": [
+          {
+            "action": "fold",
+            "frequency": 0.040423,
+            "ev": null
+          },
+          {
+            "action": "jam",
+            "frequency": 99.959577,
+            "ev": null
+          }
+        ],
+        "J8s": [
+          {
+            "action": "fold",
+            "frequency": 0.159862,
+            "ev": null
+          },
+          {
+            "action": "jam",
+            "frequency": 99.840138,
+            "ev": null
+          }
+        ],
+        "J7s": [
+          {
+            "action": "fold",
+            "frequency": 0.047625,
+            "ev": null
+          },
+          {
+            "action": "jam",
+            "frequency": 99.952375,
+            "ev": null
+          }
+        ],
+        "J6s": [
+          {
+            "action": "fold",
+            "frequency": 0.025534,
+            "ev": null
+          },
+          {
+            "action": "jam",
+            "frequency": 99.974466,
+            "ev": null
+          }
+        ],
+        "J5s": [
+          {
+            "action": "fold",
+            "frequency": 0.037684,
+            "ev": null
+          },
+          {
+            "action": "jam",
+            "frequency": 99.962316,
+            "ev": null
+          }
+        ],
+        "J4s": [
+          {
+            "action": "fold",
+            "frequency": 0.586842,
+            "ev": null
+          },
+          {
+            "action": "jam",
+            "frequency": 99.413158,
+            "ev": null
+          }
+        ],
+        "J3s": [
+          {
+            "action": "fold",
+            "frequency": 0.374032,
+            "ev": null
+          },
+          {
+            "action": "jam",
+            "frequency": 99.625968,
+            "ev": null
+          }
+        ],
+        "J2s": [
+          {
+            "action": "fold",
+            "frequency": 4.415899,
+            "ev": null
+          },
+          {
+            "action": "jam",
+            "frequency": 95.584101,
+            "ev": null
+          }
+        ],
+        "ATo": [
+          {
+            "action": "fold",
+            "frequency": 0.017056,
+            "ev": null
+          },
+          {
+            "action": "jam",
+            "frequency": 99.982944,
+            "ev": null
+          }
+        ],
+        "KTo": [
+          {
+            "action": "fold",
+            "frequency": 0.017134,
+            "ev": null
+          },
+          {
+            "action": "jam",
+            "frequency": 99.982866,
+            "ev": null
+          }
+        ],
+        "QTo": [
+          {
+            "action": "fold",
+            "frequency": 0.018798,
+            "ev": null
+          },
+          {
+            "action": "jam",
+            "frequency": 99.981202,
+            "ev": null
+          }
+        ],
+        "JTo": [
+          {
+            "action": "fold",
+            "frequency": 0.01684,
+            "ev": null
+          },
+          {
+            "action": "jam",
+            "frequency": 99.98316,
+            "ev": null
+          }
+        ],
+        "TT": [
+          {
+            "action": "fold",
+            "frequency": 0.017759,
+            "ev": null
+          },
+          {
+            "action": "jam",
+            "frequency": 99.982241,
+            "ev": null
+          }
+        ],
+        "T9s": [
+          {
+            "action": "fold",
+            "frequency": 0.013278,
+            "ev": null
+          },
+          {
+            "action": "jam",
+            "frequency": 99.986722,
+            "ev": null
+          }
+        ],
+        "T8s": [
+          {
+            "action": "fold",
+            "frequency": 0.014773,
+            "ev": null
+          },
+          {
+            "action": "jam",
+            "frequency": 99.985227,
+            "ev": null
+          }
+        ],
+        "T7s": [
+          {
+            "action": "fold",
+            "frequency": 0.03842,
+            "ev": null
+          },
+          {
+            "action": "jam",
+            "frequency": 99.96158,
+            "ev": null
+          }
+        ],
+        "T6s": [
+          {
+            "action": "fold",
+            "frequency": 0.19345,
+            "ev": null
+          },
+          {
+            "action": "jam",
+            "frequency": 99.80655,
+            "ev": null
+          }
+        ],
+        "T5s": [
+          {
+            "action": "fold",
+            "frequency": 0.671289,
+            "ev": null
+          },
+          {
+            "action": "jam",
+            "frequency": 99.328711,
+            "ev": null
+          }
+        ],
+        "T4s": [
+          {
+            "action": "fold",
+            "frequency": 2.224165,
+            "ev": null
+          },
+          {
+            "action": "jam",
+            "frequency": 97.775835,
+            "ev": null
+          }
+        ],
+        "T3s": [
+          {
+            "action": "fold",
+            "frequency": 26.642695,
+            "ev": null
+          },
+          {
+            "action": "jam",
+            "frequency": 73.357305,
+            "ev": null
+          }
+        ],
+        "T2s": [
+          {
+            "action": "fold",
+            "frequency": 58.627085,
+            "ev": null
+          },
+          {
+            "action": "jam",
+            "frequency": 41.372915,
+            "ev": null
+          }
+        ],
+        "A9o": [
+          {
+            "action": "fold",
+            "frequency": 0.064086,
+            "ev": null
+          },
+          {
+            "action": "jam",
+            "frequency": 99.935914,
+            "ev": null
+          }
+        ],
+        "K9o": [
+          {
+            "action": "fold",
+            "frequency": 0.049674,
+            "ev": null
+          },
+          {
+            "action": "jam",
+            "frequency": 99.950326,
+            "ev": null
+          }
+        ],
+        "Q9o": [
+          {
+            "action": "fold",
+            "frequency": 0.100097,
+            "ev": null
+          },
+          {
+            "action": "jam",
+            "frequency": 99.899903,
+            "ev": null
+          }
+        ],
+        "J9o": [
+          {
+            "action": "fold",
+            "frequency": 0.170675,
+            "ev": null
+          },
+          {
+            "action": "jam",
+            "frequency": 99.829325,
+            "ev": null
+          }
+        ],
+        "T9o": [
+          {
+            "action": "fold",
+            "frequency": 0.29915,
+            "ev": null
+          },
+          {
+            "action": "jam",
+            "frequency": 99.70085,
+            "ev": null
+          }
+        ],
+        "98s": [
+          {
+            "action": "fold",
+            "frequency": 0.18041,
+            "ev": null
+          },
+          {
+            "action": "jam",
+            "frequency": 99.81959,
+            "ev": null
+          }
+        ],
+        "97s": [
+          {
+            "action": "fold",
+            "frequency": 0.069687,
+            "ev": null
+          },
+          {
+            "action": "jam",
+            "frequency": 99.930313,
+            "ev": null
+          }
+        ],
+        "96s": [
+          {
+            "action": "fold",
+            "frequency": 5.256081,
+            "ev": null
+          },
+          {
+            "action": "jam",
+            "frequency": 94.743919,
+            "ev": null
+          }
+        ],
+        "95s": [
+          {
+            "action": "fold",
+            "frequency": 17.560693,
+            "ev": null
+          },
+          {
+            "action": "jam",
+            "frequency": 82.439307,
+            "ev": null
+          }
+        ],
+        "94s": [
+          {
+            "action": "fold",
+            "frequency": 62.548847,
+            "ev": null
+          },
+          {
+            "action": "jam",
+            "frequency": 37.451153,
+            "ev": null
+          }
+        ],
+        "93s": [
+          {
+            "action": "fold",
+            "frequency": 98.559616,
+            "ev": null
+          },
+          {
+            "action": "jam",
+            "frequency": 1.440384,
+            "ev": null
+          }
+        ],
+        "92s": [
+          {
+            "action": "fold",
+            "frequency": 97.534308,
+            "ev": null
+          },
+          {
+            "action": "jam",
+            "frequency": 2.465692,
+            "ev": null
+          }
+        ],
+        "A8o": [
+          {
+            "action": "fold",
+            "frequency": 0.015905,
+            "ev": null
+          },
+          {
+            "action": "jam",
+            "frequency": 99.984095,
+            "ev": null
+          }
+        ],
+        "K8o": [
+          {
+            "action": "fold",
+            "frequency": 0.04013,
+            "ev": null
+          },
+          {
+            "action": "jam",
+            "frequency": 99.95987,
+            "ev": null
+          }
+        ],
+        "Q8o": [
+          {
+            "action": "fold",
+            "frequency": 0.193908,
+            "ev": null
+          },
+          {
+            "action": "jam",
+            "frequency": 99.806092,
+            "ev": null
+          }
+        ],
+        "J8o": [
+          {
+            "action": "fold",
+            "frequency": 0.103568,
+            "ev": null
+          },
+          {
+            "action": "jam",
+            "frequency": 99.896432,
+            "ev": null
+          }
+        ],
+        "T8o": [
+          {
+            "action": "fold",
+            "frequency": 0.296869,
+            "ev": null
+          },
+          {
+            "action": "jam",
+            "frequency": 99.703131,
+            "ev": null
+          }
+        ],
+        "98o": [
+          {
+            "action": "fold",
+            "frequency": 1.726152,
+            "ev": null
+          },
+          {
+            "action": "jam",
+            "frequency": 98.273848,
+            "ev": null
+          }
+        ],
+        "87s": [
+          {
+            "action": "fold",
+            "frequency": 0.422192,
+            "ev": null
+          },
+          {
+            "action": "jam",
+            "frequency": 99.577808,
+            "ev": null
+          }
+        ],
+        "86s": [
+          {
+            "action": "fold",
+            "frequency": 9.419845,
+            "ev": null
+          },
+          {
+            "action": "jam",
+            "frequency": 90.580155,
+            "ev": null
+          }
+        ],
+        "85s": [
+          {
+            "action": "fold",
+            "frequency": 98.628269,
+            "ev": null
+          },
+          {
+            "action": "jam",
+            "frequency": 1.371731,
+            "ev": null
+          }
+        ],
+        "84s": [
+          {
+            "action": "fold",
+            "frequency": 99.364568,
+            "ev": null
+          },
+          {
+            "action": "jam",
+            "frequency": 0.635432,
+            "ev": null
+          }
+        ],
+        "83s": [
+          {
+            "action": "fold",
+            "frequency": 99.527473,
+            "ev": null
+          },
+          {
+            "action": "jam",
+            "frequency": 0.472527,
+            "ev": null
+          }
+        ],
+        "82s": [
+          {
+            "action": "fold",
+            "frequency": 99.410398,
+            "ev": null
+          },
+          {
+            "action": "jam",
+            "frequency": 0.589602,
+            "ev": null
+          }
+        ],
+        "A7o": [
+          {
+            "action": "fold",
+            "frequency": 0.018754,
+            "ev": null
+          },
+          {
+            "action": "jam",
+            "frequency": 99.981246,
+            "ev": null
+          }
+        ],
+        "K7o": [
+          {
+            "action": "fold",
+            "frequency": 0.143033,
+            "ev": null
+          },
+          {
+            "action": "jam",
+            "frequency": 99.856967,
+            "ev": null
+          }
+        ],
+        "Q7o": [
+          {
+            "action": "fold",
+            "frequency": 0.086746,
+            "ev": null
+          },
+          {
+            "action": "jam",
+            "frequency": 99.913254,
+            "ev": null
+          }
+        ],
+        "J7o": [
+          {
+            "action": "fold",
+            "frequency": 1.404094,
+            "ev": null
+          },
+          {
+            "action": "jam",
+            "frequency": 98.595906,
+            "ev": null
+          }
+        ],
+        "T7o": [
+          {
+            "action": "fold",
+            "frequency": 16.953906,
+            "ev": null
+          },
+          {
+            "action": "jam",
+            "frequency": 83.046094,
+            "ev": null
+          }
+        ],
+        "97o": [
+          {
+            "action": "fold",
+            "frequency": 67.235613,
+            "ev": null
+          },
+          {
+            "action": "jam",
+            "frequency": 32.764387,
+            "ev": null
+          }
+        ],
+        "87o": [
+          {
+            "action": "fold",
+            "frequency": 65.2021,
+            "ev": null
+          },
+          {
+            "action": "jam",
+            "frequency": 34.7979,
+            "ev": null
+          }
+        ],
+        "76s": [
+          {
+            "action": "fold",
+            "frequency": 28.09119,
+            "ev": null
+          },
+          {
+            "action": "jam",
+            "frequency": 71.90881,
+            "ev": null
+          }
+        ],
+        "75s": [
+          {
+            "action": "fold",
+            "frequency": 99.707859,
+            "ev": null
+          },
+          {
+            "action": "jam",
+            "frequency": 0.292141,
+            "ev": null
+          }
+        ],
+        "74s": [
+          {
+            "action": "fold",
+            "frequency": 99.904612,
+            "ev": null
+          },
+          {
+            "action": "jam",
+            "frequency": 0.095388,
+            "ev": null
+          }
+        ],
+        "73s": [
+          {
+            "action": "fold",
+            "frequency": 99.588544,
+            "ev": null
+          },
+          {
+            "action": "jam",
+            "frequency": 0.411456,
+            "ev": null
+          }
+        ],
+        "72s": [
+          {
+            "action": "fold",
+            "frequency": 99.978947,
+            "ev": null
+          },
+          {
+            "action": "jam",
+            "frequency": 0.021053,
+            "ev": null
+          }
+        ],
+        "A6o": [
+          {
+            "action": "fold",
+            "frequency": 0.054016,
+            "ev": null
+          },
+          {
+            "action": "jam",
+            "frequency": 99.945984,
+            "ev": null
+          }
+        ],
+        "K6o": [
+          {
+            "action": "fold",
+            "frequency": 0.204056,
+            "ev": null
+          },
+          {
+            "action": "jam",
+            "frequency": 99.795944,
+            "ev": null
+          }
+        ],
+        "Q6o": [
+          {
+            "action": "fold",
+            "frequency": 0.300663,
+            "ev": null
+          },
+          {
+            "action": "jam",
+            "frequency": 99.699337,
+            "ev": null
+          }
+        ],
+        "J6o": [
+          {
+            "action": "fold",
+            "frequency": 4.312553,
+            "ev": null
+          },
+          {
+            "action": "jam",
+            "frequency": 95.687447,
+            "ev": null
+          }
+        ],
+        "T6o": [
+          {
+            "action": "fold",
+            "frequency": 67.172283,
+            "ev": null
+          },
+          {
+            "action": "jam",
+            "frequency": 32.827717,
+            "ev": null
+          }
+        ],
+        "96o": [
+          {
+            "action": "fold",
+            "frequency": 97.57225,
+            "ev": null
+          },
+          {
+            "action": "jam",
+            "frequency": 2.42775,
+            "ev": null
+          }
+        ],
+        "86o": [
+          {
+            "action": "fold",
+            "frequency": 99.342763,
+            "ev": null
+          },
+          {
+            "action": "jam",
+            "frequency": 0.657237,
+            "ev": null
+          }
+        ],
+        "76o": [
+          {
+            "action": "fold",
+            "frequency": 99.647922,
+            "ev": null
+          },
+          {
+            "action": "jam",
+            "frequency": 0.352078,
+            "ev": null
+          }
+        ],
+        "65s": [
+          {
+            "action": "fold",
+            "frequency": 98.818836,
+            "ev": null
+          },
+          {
+            "action": "jam",
+            "frequency": 1.181164,
+            "ev": null
+          }
+        ],
+        "64s": [
+          {
+            "action": "fold",
+            "frequency": 99.717799,
+            "ev": null
+          },
+          {
+            "action": "jam",
+            "frequency": 0.282201,
+            "ev": null
+          }
+        ],
+        "63s": [
+          {
+            "action": "fold",
+            "frequency": 99.978405,
+            "ev": null
+          },
+          {
+            "action": "jam",
+            "frequency": 0.021595,
+            "ev": null
+          }
+        ],
+        "62s": [
+          {
+            "action": "fold",
+            "frequency": 99.908892,
+            "ev": null
+          },
+          {
+            "action": "jam",
+            "frequency": 0.091108,
+            "ev": null
+          }
+        ],
+        "A5o": [
+          {
+            "action": "fold",
+            "frequency": 0.029131,
+            "ev": null
+          },
+          {
+            "action": "jam",
+            "frequency": 99.970869,
+            "ev": null
+          }
+        ],
+        "K5o": [
+          {
+            "action": "fold",
+            "frequency": 0.069432,
+            "ev": null
+          },
+          {
+            "action": "jam",
+            "frequency": 99.930568,
+            "ev": null
+          }
+        ],
+        "Q5o": [
+          {
+            "action": "fold",
+            "frequency": 0.530761,
+            "ev": null
+          },
+          {
+            "action": "jam",
+            "frequency": 99.469239,
+            "ev": null
+          }
+        ],
+        "J5o": [
+          {
+            "action": "fold",
+            "frequency": 19.827531,
+            "ev": null
+          },
+          {
+            "action": "jam",
+            "frequency": 80.172469,
+            "ev": null
+          }
+        ],
+        "T5o": [
+          {
+            "action": "fold",
+            "frequency": 94.621213,
+            "ev": null
+          },
+          {
+            "action": "jam",
+            "frequency": 5.378787,
+            "ev": null
+          }
+        ],
+        "95o": [
+          {
+            "action": "fold",
+            "frequency": 99.32292,
+            "ev": null
+          },
+          {
+            "action": "jam",
+            "frequency": 0.67708,
+            "ev": null
+          }
+        ],
+        "85o": [
+          {
+            "action": "fold",
+            "frequency": 99.776668,
+            "ev": null
+          },
+          {
+            "action": "jam",
+            "frequency": 0.223332,
+            "ev": null
+          }
+        ],
+        "75o": [
+          {
+            "action": "fold",
+            "frequency": 99.557455,
+            "ev": null
+          },
+          {
+            "action": "jam",
+            "frequency": 0.442545,
+            "ev": null
+          }
+        ],
+        "65o": [
+          {
+            "action": "fold",
+            "frequency": 99.816621,
+            "ev": null
+          },
+          {
+            "action": "jam",
+            "frequency": 0.183379,
+            "ev": null
+          }
+        ],
+        "54s": [
+          {
+            "action": "fold",
+            "frequency": 99.718976,
+            "ev": null
+          },
+          {
+            "action": "jam",
+            "frequency": 0.281024,
+            "ev": null
+          }
+        ],
+        "53s": [
+          {
+            "action": "fold",
+            "frequency": 99.887803,
+            "ev": null
+          },
+          {
+            "action": "jam",
+            "frequency": 0.112197,
+            "ev": null
+          }
+        ],
+        "52s": [
+          {
+            "action": "fold",
+            "frequency": 99.861747,
+            "ev": null
+          },
+          {
+            "action": "jam",
+            "frequency": 0.138253,
+            "ev": null
+          }
+        ],
+        "A4o": [
+          {
+            "action": "fold",
+            "frequency": 0.019933,
+            "ev": null
+          },
+          {
+            "action": "jam",
+            "frequency": 99.980067,
+            "ev": null
+          }
+        ],
+        "K4o": [
+          {
+            "action": "fold",
+            "frequency": 0.382342,
+            "ev": null
+          },
+          {
+            "action": "jam",
+            "frequency": 99.617658,
+            "ev": null
+          }
+        ],
+        "Q4o": [
+          {
+            "action": "fold",
+            "frequency": 2.408186,
+            "ev": null
+          },
+          {
+            "action": "jam",
+            "frequency": 97.591814,
+            "ev": null
+          }
+        ],
+        "J4o": [
+          {
+            "action": "fold",
+            "frequency": 56.600984,
+            "ev": null
+          },
+          {
+            "action": "jam",
+            "frequency": 43.399016,
+            "ev": null
+          }
+        ],
+        "T4o": [
+          {
+            "action": "fold",
+            "frequency": 99.516567,
+            "ev": null
+          },
+          {
+            "action": "jam",
+            "frequency": 0.483433,
+            "ev": null
+          }
+        ],
+        "94o": [
+          {
+            "action": "fold",
+            "frequency": 99.478178,
+            "ev": null
+          },
+          {
+            "action": "jam",
+            "frequency": 0.521822,
+            "ev": null
+          }
+        ],
+        "84o": [
+          {
+            "action": "fold",
+            "frequency": 99.736751,
+            "ev": null
+          },
+          {
+            "action": "jam",
+            "frequency": 0.263249,
+            "ev": null
+          }
+        ],
+        "74o": [
+          {
+            "action": "fold",
+            "frequency": 99.913284,
+            "ev": null
+          },
+          {
+            "action": "jam",
+            "frequency": 0.086716,
+            "ev": null
+          }
+        ],
+        "64o": [
+          {
+            "action": "fold",
+            "frequency": 99.94801,
+            "ev": null
+          },
+          {
+            "action": "jam",
+            "frequency": 0.05199,
+            "ev": null
+          }
+        ],
+        "54o": [
+          {
+            "action": "fold",
+            "frequency": 99.886596,
+            "ev": null
+          },
+          {
+            "action": "jam",
+            "frequency": 0.113404,
+            "ev": null
+          }
+        ],
+        "43s": [
+          {
+            "action": "fold",
+            "frequency": 99.909598,
+            "ev": null
+          },
+          {
+            "action": "jam",
+            "frequency": 0.090402,
+            "ev": null
+          }
+        ],
+        "42s": [
+          {
+            "action": "fold",
+            "frequency": 99.978678,
+            "ev": null
+          },
+          {
+            "action": "jam",
+            "frequency": 0.021322,
+            "ev": null
+          }
+        ],
+        "A3o": [
+          {
+            "action": "fold",
+            "frequency": 0.127495,
+            "ev": null
+          },
+          {
+            "action": "jam",
+            "frequency": 99.872505,
+            "ev": null
+          }
+        ],
+        "K3o": [
+          {
+            "action": "fold",
+            "frequency": 1.164211,
+            "ev": null
+          },
+          {
+            "action": "jam",
+            "frequency": 98.835789,
+            "ev": null
+          }
+        ],
+        "Q3o": [
+          {
+            "action": "fold",
+            "frequency": 9.848181,
+            "ev": null
+          },
+          {
+            "action": "jam",
+            "frequency": 90.151819,
+            "ev": null
+          }
+        ],
+        "J3o": [
+          {
+            "action": "fold",
+            "frequency": 97.878658,
+            "ev": null
+          },
+          {
+            "action": "jam",
+            "frequency": 2.121342,
+            "ev": null
+          }
+        ],
+        "T3o": [
+          {
+            "action": "fold",
+            "frequency": 99.244804,
+            "ev": null
+          },
+          {
+            "action": "jam",
+            "frequency": 0.755196,
+            "ev": null
+          }
+        ],
+        "93o": [
+          {
+            "action": "fold",
+            "frequency": 99.8076,
+            "ev": null
+          },
+          {
+            "action": "jam",
+            "frequency": 0.1924,
+            "ev": null
+          }
+        ],
+        "83o": [
+          {
+            "action": "fold",
+            "frequency": 99.888901,
+            "ev": null
+          },
+          {
+            "action": "jam",
+            "frequency": 0.111099,
+            "ev": null
+          }
+        ],
+        "73o": [
+          {
+            "action": "fold",
+            "frequency": 99.903315,
+            "ev": null
+          },
+          {
+            "action": "jam",
+            "frequency": 0.096685,
+            "ev": null
+          }
+        ],
+        "63o": [
+          {
+            "action": "fold",
+            "frequency": 99.83763,
+            "ev": null
+          },
+          {
+            "action": "jam",
+            "frequency": 0.16237,
+            "ev": null
+          }
+        ],
+        "53o": [
+          {
+            "action": "fold",
+            "frequency": 99.920567,
+            "ev": null
+          },
+          {
+            "action": "jam",
+            "frequency": 0.079433,
+            "ev": null
+          }
+        ],
+        "43o": [
+          {
+            "action": "fold",
+            "frequency": 99.961383,
+            "ev": null
+          },
+          {
+            "action": "jam",
+            "frequency": 0.038617,
+            "ev": null
+          }
+        ],
+        "32s": [
+          {
+            "action": "fold",
+            "frequency": 99.940413,
+            "ev": null
+          },
+          {
+            "action": "jam",
+            "frequency": 0.059587,
+            "ev": null
+          }
+        ],
+        "A2o": [
+          {
+            "action": "fold",
+            "frequency": 0.047891,
+            "ev": null
+          },
+          {
+            "action": "jam",
+            "frequency": 99.952109,
+            "ev": null
+          }
+        ],
+        "K2o": [
+          {
+            "action": "fold",
+            "frequency": 0.825358,
+            "ev": null
+          },
+          {
+            "action": "jam",
+            "frequency": 99.174642,
+            "ev": null
+          }
+        ],
+        "Q2o": [
+          {
+            "action": "fold",
+            "frequency": 52.499666,
+            "ev": null
+          },
+          {
+            "action": "jam",
+            "frequency": 47.500334,
+            "ev": null
+          }
+        ],
+        "J2o": [
+          {
+            "action": "fold",
+            "frequency": 98.313767,
+            "ev": null
+          },
+          {
+            "action": "jam",
+            "frequency": 1.686233,
+            "ev": null
+          }
+        ],
+        "T2o": [
+          {
+            "action": "fold",
+            "frequency": 99.720175,
+            "ev": null
+          },
+          {
+            "action": "jam",
+            "frequency": 0.279825,
+            "ev": null
+          }
+        ],
+        "92o": [
+          {
+            "action": "fold",
+            "frequency": 99.703818,
+            "ev": null
+          },
+          {
+            "action": "jam",
+            "frequency": 0.296182,
+            "ev": null
+          }
+        ],
+        "82o": [
+          {
+            "action": "fold",
+            "frequency": 99.81527,
+            "ev": null
+          },
+          {
+            "action": "jam",
+            "frequency": 0.18473,
+            "ev": null
+          }
+        ],
+        "72o": [
+          {
+            "action": "fold",
+            "frequency": 99.856854,
+            "ev": null
+          },
+          {
+            "action": "jam",
+            "frequency": 0.143146,
+            "ev": null
+          }
+        ],
+        "62o": [
+          {
+            "action": "fold",
+            "frequency": 99.942116,
+            "ev": null
+          },
+          {
+            "action": "jam",
+            "frequency": 0.057884,
+            "ev": null
+          }
+        ],
+        "52o": [
+          {
+            "action": "fold",
+            "frequency": 99.971362,
+            "ev": null
+          },
+          {
+            "action": "jam",
+            "frequency": 0.028638,
+            "ev": null
+          }
+        ],
+        "42o": [
+          {
+            "action": "fold",
+            "frequency": 99.966466,
+            "ev": null
+          },
+          {
+            "action": "jam",
+            "frequency": 0.033534,
+            "ev": null
+          }
+        ],
+        "32o": [
+          {
+            "action": "fold",
+            "frequency": 99.969009,
+            "ev": null
+          },
+          {
+            "action": "jam",
+            "frequency": 0.030991,
+            "ev": null
+          }
+        ]
+      },
+      "childNodeIds": [],
+      "query": {
+        "datasetId": "solver-experimental-6a62393e944f6db2",
+        "gameType": "MTT",
+        "model": "ChipEV",
+        "format": "heads-up-preflop-poc",
+        "players": 2,
+        "stack": 10,
+        "hero": "SB",
+        "scenario": "bvb",
+        "villain": "BB",
+        "openSize": 10
+      },
+      "provenance": {
+        "datasetId": "solver-experimental-6a62393e944f6db2",
+        "datasetVersion": "0.1.0",
+        "sourceType": "internal-solve",
+        "trustLevel": "experimental",
+        "sourceLabel": "Preflop Lab Solver — Hold'em POC Experimental",
+        "isExact": false,
+        "frequencyPrecision": "estimated",
+        "evAvailable": false,
+        "methodology": "Chance-sampled CFR structural proof at combo level with explicit card removal and a Level 0 equity approximation continuation provider.",
+        "license": "Preflop Lab original solver output; no third-party strategy data.",
+        "status": "published",
+        "notes": "Experimental only. This is not an 8-max solve, not a postflop-coupled solution and not GTO/Verified."
+      }
+    }
+  ]
+}

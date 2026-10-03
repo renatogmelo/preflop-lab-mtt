@@ -259,3 +259,18 @@ Concluir a evolução vertical do Preflop Lab para uma plataforma de estudo MTT 
 - Today's Training V2 com diversidade e mastery calibrado por evidência/trust.
 - Decisões persistem `datasetVersion` em coluna dedicada; versões antigas não são reclassificadas.
 - 36 testes verdes, incluindo 2.500 casos gerados, catálogo completo, workflow, golden, E2E lógico, performance e contratos visuais estruturais.
+
+## Phase 3 ? funda??o do Preflop Lab Solver
+
+- Core isolado em TypeScript estrito, vers?o 0.1.0, com fronteira pronta para futura implementa??o nativa ap?s profiling.
+- Vanilla CFR, CFR+ e DCFR implementados sobre uma interface de jogo extensivo.
+- Kuhn validado contra valor conhecido, best response exato, exploitability e NashConv.
+- Deck 52, 1.326 combos, 169 classes, weighted ranges e card removal.
+- Betting engine com stacks assim?tricos, blinds, ante/BBA, min-raise, all-in e reopening.
+- Hold'em POC heads-up push/fold em n?vel de combo, com 5 milh?es de amostras e 2.652 infosets.
+- Checkpoint/resume, solve identity, artefatos brutos, benchmark, valida??o e CLI.
+- Primeiro StrategyDataset do solver instalado como Experimental e exclu?do do auto-resolution.
+- Continuation Level 0 e exploitability Hold'em continuam pendentes; Verified permanece 0.
+- Corre??o adicional: walk do BB n?o consulta mais um node RFI imposs?vel.
+- 48 testes verdes ap?s build, typecheck e lint.
+- Detalhes em SOLVER_PROGRESS.md e SOLVER_VALIDATION.md.

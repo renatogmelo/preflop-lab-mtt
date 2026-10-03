@@ -1,0 +1,45 @@
+{
+  "measuredAt": "2026-10-03",
+  "environment": "Windows, Node.js single-threaded reference implementation",
+  "game": "Kuhn Poker",
+  "iterationsPerAlgorithm": 20000,
+  "results": [
+    {
+      "algorithm": "vanilla-cfr",
+      "runtimeMs": 2076.8705,
+      "iterationsPerSecond": 9629.8734,
+      "nodesPerSecond": 1059286.0749,
+      "infosets": 12,
+      "exploitability": 0.0015038135722164059,
+      "nashConv": 0.0030076271444328118,
+      "heapDeltaBytes": 2358928,
+      "checkpointBytes": 2297
+    },
+    {
+      "algorithm": "cfr-plus",
+      "runtimeMs": 2036.7641,
+      "iterationsPerSecond": 9819.4975,
+      "nodesPerSecond": 1080144.7256,
+      "infosets": 12,
+      "exploitability": 0.0010753389918977813,
+      "nashConv": 0.0021506779837955625,
+      "heapDeltaBytes": 1505184,
+      "checkpointBytes": 2070
+    },
+    {
+      "algorithm": "dcfr",
+      "runtimeMs": 1928.1574,
+      "iterationsPerSecond": 10372.5972,
+      "nodesPerSecond": 1140985.6892,
+      "infosets": 12,
+      "exploitability": 0.00093679960592008,
+      "nashConv": 0.00187359921184016,
+      "heapDeltaBytes": 5261016,
+      "checkpointBytes": 2380
+    }
+  ],
+  "notes": [
+    "Runtime and heap deltas are environment-dependent observations, not contractual limits.",
+    "All three algorithms use the same exact Kuhn game and exact deterministic best-response evaluator."
+  ]
+}

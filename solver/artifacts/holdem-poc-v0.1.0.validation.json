@@ -1,0 +1,46 @@
+{
+  "id": "validation:6a62393e944f6db2",
+  "solveId": "6a62393e944f6db2",
+  "valid": true,
+  "eligibleForVerified": false,
+  "checks": [
+    {
+      "id": "combo-count",
+      "status": "pass",
+      "detail": "Both players retain all 1,326 real hole-card combinations."
+    },
+    {
+      "id": "frequency-integrity",
+      "status": "pass",
+      "detail": "Every combo strategy is finite and sums to one."
+    },
+    {
+      "id": "card-removal",
+      "status": "pass",
+      "detail": "Chance sampling rejects every private-card collision."
+    },
+    {
+      "id": "deterministic-seed",
+      "status": "pass",
+      "detail": "Seed 20261003 is explicit and checkpointed."
+    },
+    {
+      "id": "exploitability",
+      "status": "not-applicable",
+      "detail": "No defensible best-response evaluator exists yet for the approximate Hold'em continuation model.",
+      "value": null
+    },
+    {
+      "id": "continuation-classification",
+      "status": "pass",
+      "detail": "Level 0 equity approximation is explicitly classified as development-only and blocked from Verified.",
+      "value": "strength-proxy-v1"
+    }
+  ],
+  "knownLimitations": [
+    "Heads-up structural proof of concept, not an 8-max solution.",
+    "Showdown continuation uses a Level 0 strength/equity approximation rather than solved postflop values.",
+    "Chance-sampled CFR does not currently expose a valid exploitability or NashConv calculation for this poker model.",
+    "The result is Experimental and is ineligible for Verified status."
+  ]
+}
