@@ -129,8 +129,23 @@ export function createChanceSampleSchedule(
     for (let sample = 0; sample < sampleCount; sample += 1) unitPoints.push(stream.next());
   } else if (mode === "stratified") {
     for (let sample = 0; sample < sampleCount; sample += 1) unitPoints.push((sample + stream.next()) / sampleCount);
+    for (let index = unitPoints.length - 1; index > 0; index -= 1) {
+      const selected = stream.integer(index + 1);
+      [unitPoints[index], unitPoints[selected]] = [unitPoints[selected], unitPoints[index]];
+    }
   } else {
-    for (let sample = 0; sample < sampleCount; sample += 1) unitPoints.push((sample + 0.5) / sampleCount);
+    const radicalInverseBaseTwo = (value: number) => {
+      let remaining = value;
+      let fraction = 0.5;
+      let result = 0;
+      while (remaining > 0) {
+        result += (remaining % 2) * fraction;
+        remaining = Math.floor(remaining / 2);
+        fraction *= 0.5;
+      }
+      return result;
+    };
+    for (let sample = 0; sample < sampleCount; sample += 1) unitPoints.push(radicalInverseBaseTwo(sample + 1));
   }
   const dealIndices = unitPoints.map((point) => dealAt(distribution, point));
   return finalize(mode, masterSeed, distribution, dealIndices, unitPoints, ledger);
