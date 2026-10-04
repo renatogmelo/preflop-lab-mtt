@@ -26,7 +26,7 @@ The final Gate D point at alpha `0.05` was:
 
 - baseline commit: `893d62720ca465153030ba5d3dcff25403f8f979`;
 - implementation/source commit: `033aa3089ec85ac3ca9110cd9b2258b7d6c7df06`;
-- final publication commit: recorded in the follow-up provenance commit after artifacts and documentation are committed;
+- final publication commit: `c194832118a421426efd4bc4ebef4751e71cf7b3`;
 - solver version: `0.5.0`;
 - game hash: `bfd3615d6ee13da1`;
 - primary artifact SHA-256: `9864c47baee02cc15d33d1bd3d2ee3e5d8659b1697df1b808d8621a0a4fe98ed`;
