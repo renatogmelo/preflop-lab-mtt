@@ -101,3 +101,15 @@ O valor de equilíbrio do jogador zero é `−1/18 ≈ −0.0555556`. Kuhn admit
 ## Hold'em POC
 
 O POC usa chance-sampled CFR sobre 1.326 combos para cada jogador. Deals com cartas compartilhadas são rejeitados. O jogo é push/fold e a continuação de call vem de `EquityApproximationProvider`; logo ele resolve o jogo aproximado declarado, não NLHE completo.
+
+## Auditoria matem?tica da Fase 4
+
+O traversal completo preserva a fatora??o de reach. No update de `i`, regrets usam `chanceReach ? reach(oponente)`; average strategy usa `chanceReach ? reach(i)`. Chance ? expandida e normalizada. Alternating updates executam um traversal por jogador.
+
+O novo BR n?o escolhe a??o por estado oculto. Para cada infoset, soma o valor de cada a??o em todos os estados compat?veis ponderados apenas pelo reach contrafactual de chance e oponente; infosets mais profundos s?o resolvidos primeiro. Em pol?tica uniforme, reproduz exatamente Kuhn `11/12` e Leduc `4,747222222222222` de NashConv.
+
+Leduc usa seis cartas f?sicas observ?veis, ante 1, dois raises m?ximos, sizes 2/4 e player 0 primeiro nas duas streets. A pol?tica uniforme d? EV P0 `?0,078125`; o valor publicado usado como refer?ncia ? `?0,085606`.
+
+O POC V2 usa chance sampling com deals uniformes compat?veis. Como chance ? amostrada da distribui??o natural, n?o h? importance weight adicional no estimador de regret. H? dois traversals alternados e strategy sum ponderado pelo reach pr?prio. Ainda falta compara??o formal contra traversal completo em uma vers?o reduzida, portanto suas m?tricas de exploitability permanecem `null`.
+
+Equity ? `(wins + ties/2)/trials`; sampling registra seed e erro padr?o. Ela n?o ? continuation GTO. No Level 2, utilities v?m de estrat?gia m?dia do subgame e s?o medidas por BR/NashConv gen?ricos.

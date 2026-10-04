@@ -34,6 +34,7 @@ export type DcfrParameters = {
 export type SolverConfiguration = {
   algorithm: AlgorithmName;
   seed: number;
+  exactMetrics?: boolean;
   dcfr?: DcfrParameters;
   cfrPlusAveragingDelay?: number;
 };

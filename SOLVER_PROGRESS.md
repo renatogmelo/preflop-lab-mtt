@@ -72,3 +72,34 @@ Não iniciado. `Verified` permanece 0.
 5. Substituir o proxy por continuation Level 1 e depois Level 2.
 6. Selecionar um cenário pequeno e definir threshold pré-solve.
 7. Reproduzir, revisar, comparar e somente então avaliar primeiro candidato Verified.
+
+## PHASE 4 AUDIT ? 2026-10-03
+
+### Invent?rio encontrado
+
+O core possu?a Vanilla CFR, CFR+, DCFR, checkpoint, Kuhn, cards/ranges, betting engine, POC push/fold e `strength-proxy-v1`. Os 48 testes anteriores cobriam invariantes, mas best response/NashConv eram capacidades opcionais do jogo e a implementa??o exata vivia dentro de Kuhn. O POC Hold'em tinha update chance-sampled pr?prio, uma decis?o por jogador e nenhuma m?trica estrat?gica defens?vel.
+
+### D?bitos encontrados
+
+- acoplamento de m?tricas a `KuhnPoker.bestResponseValue`;
+- nenhuma public chance/multi-street depois de Kuhn;
+- nenhum evaluator Hold'em real;
+- continuation Level 0 confundia nome de equity com strength proxy;
+- nenhum range hash/cache de continuation;
+- nenhuma ?rvore HU al?m de push/fold;
+- profiling apenas global e nenhum BR Hold'em.
+
+### Entregue nesta fase
+
+- `BestResponseEvaluator`, `StrategyEvaluator` e `NashConvEvaluator` gen?ricos;
+- Leduc compat?vel com OpenSpiel: 9.457 n?s/936 infosets e oracle uniforme reproduzido;
+- ?rvore compilada reutilizada pelo CFR;
+- hand evaluator, equity engine e board chance;
+- Hold'em Preflop V2 configur?vel com limp/raise/re-raise/jam e inspector de ranges;
+- continuation API, range hash, cache e providers Level 0/1/2;
+- primeiro subgame flop?turn?river resolvido com showdown real;
+- ValidationSuite nos cinco n?veis e golden artifact versionado.
+
+### Estado dos milestones
+
+Milestone 1 Leduc: conclu?do para a variante declarada. Milestone 2 V2: estrutural/solve amostral conclu?dos, BR exato ainda pendente. Milestone 3 Postflop: conclu?do no subgame fixo declarado. Milestone 4 provider: interface/cache e consumo de artifact implementados para o estado fixo. Milestone 5: compara??o de utilities conclu?da; compara??o de estrat?gia preflop completa pendente. `Verified = 0`.

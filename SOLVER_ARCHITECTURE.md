@@ -73,3 +73,13 @@ Infoset IDs incluem jogador, informação privada e histórico observável. Kuhn
 ## Evolução nativa
 
 Portar para Rust somente após profiling e manter testes diferenciais contra esta implementação. Prioridades futuras: arrays compactos, arena de infosets, checkpoint binário versionado, traversal paralela determinística e, apenas depois, SIMD. GPU/cluster não fazem parte da versão 0.1.0.
+
+## Architecture 0.2.0 ? public chance e continuation
+
+`compileGameTree` materializa jogos pequenos uma vez; CFR e suas variantes percorrem essa representa??o imut?vel. Avalia??o foi separada em `StrategyEvaluator`, `BestResponseEvaluator` e `NashConvEvaluator`. O BR ? exato para jogos finitos two-player zero-sum com perfect recall: resolve infosets de baixo para cima e pesa estados por reach de chance + oponente, excluindo reach pr?prio.
+
+`LeducPoker` usa o mesmo `ExtensiveGame` e prova private/public chance, duas rodadas, card removal, fold/showdown e 936 infosets. `PostflopHoldemSubgame` usa cards Hold'em reais, turn/river chance, betting abstraction e showdown exato.
+
+Continuation agora tem `ContinuationRequest/Result`, providers separados, range hash quantizado a 1e-9 e cache compat?vel apenas com Level 2. Abstractions e configura??o participam do hash; um valor n?o pode ser reutilizado em outro board/pote/stack/range.
+
+Hold'em Preflop V2 permanece chance-sampled e separado do traversal tabular completo. Isso evita materializar ~1,6 milh?o de deals privados ? ?rvore, mas exige futuro BR amostrado validado e depois BR exato/limitado antes de qualquer promo??o.

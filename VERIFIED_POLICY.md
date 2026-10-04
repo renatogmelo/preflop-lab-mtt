@@ -44,3 +44,9 @@ Não existe um número universal. Cada manifesto de validação deve justificar 
 ## Estado do POC 0.1.0
 
 O dataset `solver-experimental-6a62393e944f6db2` falha eligibility por Level 0 continuation e ausência de best response Hold'em. Ele permanece `Experimental`, é excluído da resolução automática e não conta como cobertura Verified.
+
+## Estado ap?s a Fase 4
+
+`Verified` permanece zero. Leduc valida o motor, n?o produz dados NLHE. O subgame Level 2 ? eleg?vel como evid?ncia matem?tica do cen?rio exato, mas n?o como dataset de treino: ranges s?o degenerados, board ? fixo e abstraction limita apostas. Hold'em V2 ainda n?o possui BR/NashConv e usa Level 0 no benchmark de cobertura.
+
+Nenhum artefato da Fase 4 deve entrar no Trainer/Academy. Ele pertence somente ao Solver Lab at? que acoplamento, BR, sampling, cobertura e revis?o independente cumpram todos os crit?rios desta pol?tica.

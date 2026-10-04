@@ -1,0 +1,22 @@
+{
+  "leduc": {
+    "informationSets": 936,
+    "nodes": 9457,
+    "expectedPlayerZeroValue": -0.085606,
+    "valueTolerance": 0.005,
+    "maximumExploitabilityAt2000": 0.05,
+    "uniformNashConv": 4.747222222222222
+  },
+  "holdemPreflopV2": {
+    "nodesPerDeal": 51,
+    "decisionNodesPerDeal": 16,
+    "terminalNodesPerDeal": 35,
+    "estimatedInfosets": 21216
+  },
+  "postflopSubgame": {
+    "nodes": 17958,
+    "informationSets": 8012,
+    "chanceNodes": 46,
+    "maximumExploitabilityAt200": 0.0001
+  }
+}

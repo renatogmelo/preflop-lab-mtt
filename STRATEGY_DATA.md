@@ -125,3 +125,9 @@ O exporter do solver preserva no dataset:
 - continuation model, abstra??o e validation report id.
 
 Todo output nasce `Experimental`. O POC `solver-experimental-6a62393e944f6db2` est? instalado para inspe??o expl?cita, mas ? exclu?do do auto-resolution e n?o altera a cobertura MTT 8-max atual.
+
+## Phase 4 solver artifacts
+
+O Hold'em Preflop V2 preserva estrat?gia por combo e hist?rico p?blico, mas permanece fora do `StrategyRepository`: usa continuation Level 0 e n?o possui exploitability. O range inspector calcula pesos condicionais por `prior ? strategy reach`, normaliza e aplica blockers exatos; ele n?o cria ranges por filtros heur?sticos.
+
+Continuation artifacts s?o evid?ncia t?cnica separada, n?o StrategyDataset. S? uma futura exporta??o que cumpra `VERIFIED_POLICY.md` poder? alimentar treino normal. Experimental continua opt-in e exclu?do da resolu??o autom?tica.

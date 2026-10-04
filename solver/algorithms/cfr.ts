@@ -12,6 +12,8 @@ import {
 } from "../core/types";
 import { hashValue } from "../core/stable";
 import { SOLVER_VERSION } from "../core/version";
+import { NashConvEvaluator } from "../evaluation/best-response";
+import { compileGameTree, type CompiledNode } from "../tree/compiled";
 
 type InfoSetState<Action extends string> = {
   actions: Action[];
@@ -55,11 +57,15 @@ export class CfrSolver<State, Action extends string> implements SolverAlgorithm 
   readonly gameDefinitionHash: string;
   readonly configurationHash: string;
   readonly solveId: string;
+  private readonly nashConvEvaluator: NashConvEvaluator<State, Action>;
+  private readonly compiledRoot: CompiledNode<Action>;
 
   constructor(
     protected readonly game: ExtensiveGame<State, Action>,
     readonly configuration: SolverConfiguration,
   ) {
+    this.nashConvEvaluator = new NashConvEvaluator(game);
+    this.compiledRoot = compileGameTree(game).root;
     this.gameDefinitionHash = hashValue(game.definition);
     this.configurationHash = hashValue(configuration);
     this.solveId = hashValue({
@@ -168,13 +174,64 @@ export class CfrSolver<State, Action extends string> implements SolverAlgorithm 
     return nodeUtility;
   }
 
+  protected traverseCompiled(
+    node: CompiledNode<Action>,
+    updatingPlayer: Player,
+    playerReach: [number, number],
+    chanceReach: number,
+    averageWeight: number,
+  ): number {
+    this.nodesVisited += 1;
+    if (node.kind === "terminal") return node.utilities[updatingPlayer];
+    if (node.kind === "chance") {
+      return node.outcomes.reduce(
+        (result, outcome) => result + outcome.probability * this.traverseCompiled(
+          outcome.child,
+          updatingPlayer,
+          playerReach,
+          chanceReach * outcome.probability,
+          averageWeight,
+        ),
+        0,
+      );
+    }
+
+    const actor = node.player;
+    const info = this.infoSet(node.informationSet, node.actions);
+    const strategy = strategyFromRegrets(info.regrets);
+    const actionUtilities = node.children.map((child, index) => {
+      const nextReach: [number, number] = [...playerReach];
+      nextReach[actor] *= strategy[index];
+      return this.traverseCompiled(child, updatingPlayer, nextReach, chanceReach, averageWeight);
+    });
+    const nodeUtility = actionUtilities.reduce(
+      (sum, utility, index) => sum + strategy[index] * utility,
+      0,
+    );
+
+    if (actor === updatingPlayer) {
+      const counterfactualReach = chanceReach * playerReach[actor === 0 ? 1 : 0];
+      const ownReach = chanceReach * playerReach[actor];
+      info.regrets = info.regrets.map((regret, index) => {
+        const next = regret + counterfactualReach * (actionUtilities[index] - nodeUtility);
+        return this.configuration.algorithm === "cfr-plus" ? Math.max(0, next) : next;
+      });
+      info.strategySum = info.strategySum.map(
+        (sum, index) => sum + averageWeight * ownReach * strategy[index],
+      );
+      assertFinite(info.regrets, `${node.informationSet} regrets`);
+      assertFinite(info.strategySum, `${node.informationSet} strategy sums`);
+    }
+    return nodeUtility;
+  }
+
   iterate() {
     if (!this.startedAt) this.startedAt = Date.now();
     const nextIteration = this.iterationCount + 1;
     this.discountDcfr(nextIteration);
     const averageWeight = this.averagingWeight(nextIteration);
-    this.traverse(this.game.initialState(), 0, [1, 1], 1, averageWeight);
-    this.traverse(this.game.initialState(), 1, [1, 1], 1, averageWeight);
+    this.traverseCompiled(this.compiledRoot, 0, [1, 1], 1, averageWeight);
+    this.traverseCompiled(this.compiledRoot, 1, [1, 1], 1, averageWeight);
     this.iterationCount = nextIteration;
   }
 
@@ -197,9 +254,9 @@ export class CfrSolver<State, Action extends string> implements SolverAlgorithm 
 
   protected convergencePoint(): ConvergencePoint {
     const strategy = this.averageStrategy();
-    const nashConv = this.game.bestResponseValue
-      ? this.game.bestResponseValue(0, strategy) + this.game.bestResponseValue(1, strategy)
-      : null;
+    const nashConv = this.configuration.exactMetrics === false
+      ? null
+      : this.nashConvEvaluator.evaluate(strategy).nashConv;
     const positiveRegrets = [...this.infosets.values()].flatMap((info) => info.regrets.map((value) => Math.max(0, value)));
     const point: ConvergencePoint = {
       iteration: this.iterationCount,

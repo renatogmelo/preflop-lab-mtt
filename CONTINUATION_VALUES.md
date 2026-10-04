@@ -31,3 +31,15 @@ Subgames postflop resolvidos ou solução acoplada, com card removal, ranges con
 ## Estado atual
 
 O problema matemático permanece aberto para Hold'em profissional. O POC comprova infraestrutura, não uma estratégia GTO. A prioridade para o primeiro candidato Verified é escolher um único cenário pequeno e substituir Level 0 por continuação defensável antes de escalar cobertura.
+
+## Phase 4 ? providers concretos
+
+- `StrengthProxyProvider`: Level 0, for?a das hole cards, Experimental.
+- `EquityProvider`: Level 1, enumera??o exata ou sampling determin?stico, Experimental porque ignora betting/realiza??o.
+- `RealizationModelProvider`: Level 1, exige fatores e metodologia expl?citos, Experimental.
+- `SubgameSolverProvider`: Level 2, consome utilities de um artifact estrat?gico resolvido.
+- `CachedSolvedContinuationProvider`: cacheia somente Level 2 pelo hash completo do request.
+
+Level 2 significa utility derivada de ?rvore estrat?gica expl?cita com chance, betting, showdown, convergence e BR documentados. O primeiro artifact cumpre isso apenas para `AsAh vs KdKc` no flop `2s3d4c` e abstraction declarada. N?o pode ser extrapolado para outro range ou board.
+
+A compara??o da fase prova que o strength proxy pode errar materialmente. Ela n?o autoriza substituir um range geral pelo subgame fixo. Consulte `PREFLOP_POSTFLOP_COUPLING.md`.

@@ -98,3 +98,15 @@ Passaram: combo count, frequency integrity, card-removal, seed/checkpoint e expo
 13. Continuation: Level 0, bloqueador de Verified.
 14. Dataset: `solver-experimental-6a62393e944f6db2`.
 15. Roadmap: Leduc → BR escalável → NLHE tree → 8-max conditioning → Level 2 → um candidato Verified.
+
+## Phase 4 validation 0.2.0
+
+O artefato can?nico ? `solver/artifacts/phase4-validation-v0.2.0.json`; os thresholds versionados est?o em `tests/golden/phase4-v0.2.0.json`.
+
+- Leduc: 9.457 n?s, 936 infosets; oracle uniforme id?ntico ao OpenSpiel.
+- 2.000 itera??es: Vanilla `EV ?0,087226 / expl 0,013544`; CFR+ `?0,085979 / 0,034451`; DCFR `?0,086083 / 0,032495`.
+- Hold'em V2: 51 n?s/deal, 21.216 infosets potenciais, 5.000 amostras, 20.776 infosets visitados; BR indispon?vel.
+- Postflop: 17.958 n?s, 8.012 infosets, 46 chance nodes; DCFR 200, EV P0 `+1,64848551`, exploitability `0,0000010427`.
+- Proxy/Equity/Solved no mesmo estado: `+0,05171429 / +1,64848485 / +1,64848551` para P0.
+
+Os resultados de Hold'em continuam Experimental. O subgame valida a arquitetura, n?o ranges gerais nem todos os boards.

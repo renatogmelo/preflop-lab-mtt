@@ -1,6 +1,6 @@
 {
   "name": "preflop-lab",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": true,
   "engines": {
     "node": ">=22.13.0"
@@ -17,7 +17,8 @@
     "solver": "node --import tsx solver/cli/index.ts",
     "solver:kuhn": "node --import tsx solver/cli/index.ts solve solver/configs/kuhn-dcfr.json",
     "solver:holdem": "node --import tsx solver/cli/index.ts solve solver/configs/holdem-poc.json",
-    "solver:benchmark": "node --import tsx solver/cli/index.ts benchmark"
+    "solver:benchmark": "node --import tsx solver/cli/index.ts benchmark",
+    "solver:phase4": "node --import tsx solver/benchmarks/phase4.ts"
   },
   "dependencies": {
     "drizzle-orm": "0.45.2",
