@@ -36,3 +36,9 @@ Range weights are quantized at 1e-9. This tolerance removes insignificant floati
 - No raises in the main experiment reduce strategic expressiveness.
 - Twenty DCFR iterations left the reference subgame at 0.541129 NashConv and 0.270565 exploitability.
 - All outputs remain Experimental.
+
+## Phase 6 freeze
+
+`phase6-reference-game-v1` preserves exactly the Phase 5 laboratory: flop `8h 7d 2c`, 46 compatible private deals, two representative future-board outcomes, one bet size per street, no raises and no jams. Hash: `bfd3615d6ee13da1`.
+
+The faster engine does not increase board coverage or action complexity. It solves this abstract game more deeply; it does not make the abstraction equivalent to NLHE. Expansion is blocked until seed stability and outer coupling pass.

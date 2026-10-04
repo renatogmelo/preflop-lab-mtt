@@ -55,3 +55,9 @@ Nenhum artefato da Fase 4 deve entrar no Trainer/Academy. Ele pertence somente a
 ## Phase 5 decision
 
 Verified remains zero. Phase 5 artifacts are Experimental because the reference postflop solve has 0.270565 exploitability, future boards are bucketed, only one flop is covered, solved-provider seed variance is material, and the outer loop did not converge. Passing structural tests or computing Hold'em BR does not override these blockers.
+
+## Phase 6 enforcement
+
+The Phase 6 artifact declares `trust = Experimental` and `verifiedDatasets = 0`. Internal exact best response, low exploitability and deterministic reproduction are necessary but not sufficient for Verified. The current candidate is blocked by strict finite-solve policy, material seed variance, non-converged coupling, severe board/range/action abstraction, absence of external-reference comparison and absence of independent review.
+
+The golden test asserts that Verified remains zero and that the Phase 5 artifact SHA-256 is unchanged. No Phase 6 strategy is wired into the Trainer or default StrategyRepository.

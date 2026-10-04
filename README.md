@@ -55,3 +55,7 @@ As migrations estão em `drizzle/0000_superb_robbie_robertson.sql` e `drizzle/00
 - [TRAINER_AUDIT.md](./TRAINER_AUDIT.md)
 - [ACADEMY_AUDIT.md](./ACADEMY_AUDIT.md)
 - [DATASET_COVERAGE.md](./DATASET_COVERAGE.md)
+
+## Solver research status - Phase 6
+
+The frozen 46-deal postflop laboratory now has an indexed CFR engine, convergence harness, exact compiled best response, seed studies, coupling diagnostics and reproducible checkpoints. The result is intentionally not product data: inner exploitability reached `0.010074`, but Solved seed stability and outer fixed-point gates failed. All generated strategies remain Experimental and Verified remains zero. See `PHASE6_REPORT.md`.

@@ -55,3 +55,9 @@ ContinuationResult now separates:
 A finite CFR solve is never called exact merely because public cards were enumerated.
 
 The first weighted-range solved continuation used 46 compatible deals, a fixed flop and a two-bucket future-board abstraction. At 20 DCFR iterations it had 0.270565 exploitability. It produced a 0.636867 weighted strategy distance from exact-equity continuation in the reduced preflop game, but the result is not reliable enough for training because convergence and seed stability are insufficient.
+
+## Phase 6 evidence
+
+The three provider pipelines were rerun for seeds 1, 7, 19, 42 and 99 at 10,000 preflop iterations. Mean within-provider distance is Proxy `0.138480`, Equity `0.005514`, Solved `0.126345`. Equity-vs-Solved weighted distance is `0.653360`, producing the explicitly nonstandard Preflop Lab diagnostic `ProviderSeparationRatio = 5.171253`.
+
+Provider separation is larger than measured seed noise, but Solved is not seed-stable and neither provider has external truth validation. Continuation outputs remain Experimental and are not eligible as default Trainer answers.

@@ -136,3 +136,13 @@ Outer coupling applies explicit damping:
 updated = alpha * solved + (1-alpha) * previous.
 
 Convergence requires independent thresholds for preflop strategy, conditional ranges and continuation utilities.
+
+## Phase 6 convergence diagnostics
+
+DCFR discount scales and CFR+ delayed linear averaging are now exported pure functions and covered by formula tests. The selected reduced-game configuration is DCFR `(alpha=2, beta=0, gamma=3)`.
+
+For strategies sigma and sigma', four deltas are retained: raw max action-probability change; max change among infosets above the active reach threshold; reach-weighted absolute change; and probability-mass-weighted change. Raw maximum is not a whole-strategy convergence measure.
+
+Counterfactual action EV is computed on the exact compiled reduced tree using opponent/chance reach. The diagnostic stores action probabilities, action EVs, strategy EV, counterfactual regret, reach and the EV spread among materially mixed actions. At finite iteration budgets, positive-probability actions need not have exactly equal EV.
+
+Exploitability is `NashConv / 2` for the two-player zero-sum reference game. Phase 6 never sums exploitability, seed variance and abstraction error into one scalar uncertainty.

@@ -290,3 +290,15 @@ Concluir a evolução vertical do Preflop Lab para uma plataforma de estudo MTT 
 - Coupling ran three outer iterations with alpha=0.6 and did not converge; final preflop delta was 0.511634.
 - Reference postflop exploitability remained 0.270565. All outputs remain Experimental; Verified remains zero.
 - Detailed evidence: PHASE5_REPORT.md and PHASE5_PERFORMANCE.md.
+
+## PHASE 6 - CONVERGENCE, STABILITY AND COUPLING
+
+Completed experimentally on 2026-10-04. The inner frozen solver is now fast and auditable, but the end-to-end pipeline is not yet reliable enough to scale.
+
+- Inner result: exploitability `0.010074` at 5,000 iterations.
+- Performance: `9.90x` indexed traversal speedup; compiled BR `117.40x`.
+- Seed stability: Solved mean distance `0.126345` - failed.
+- Provider signal: PSR `5.171253` - passed as a diagnostic only.
+- Coupling: no fixed point; alpha 0.6/1 diverged - failed.
+- Decision: Phase 7 blocked; Verified remains 0; product-facing training data unchanged.
+Validation final: TypeScript, lint, build de producao e 82/82 testes aprovados.

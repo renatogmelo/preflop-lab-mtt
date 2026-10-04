@@ -98,3 +98,9 @@ New boundaries:
 - coupling/engine.ts owns fixed-point outer iterations and damping.
 
 The coupled flow is Preflop solve -> joint range conditioning -> postflop solve -> pairwise continuation evaluation -> damped utility update -> preflop re-solve. Inner and outer convergence are reported separately.
+
+## Phase 6 indexed execution path
+
+The object-oriented `GameDefinition` remains the source of truth and the differential oracle. `compileGameTree` creates a stable indexed representation once; `IndexedCfrSolver` stores regrets and strategy sums in typed f64 arrays and specializes the common two-action loop. `CompiledNashConvEvaluator` and compiled strategy/reach diagnostics reuse the same tree.
+
+This is an execution optimization, not a new game definition. The artifact records the selected engine. Object and indexed paths must remain exactly equivalent in tests. Profiling assigns 85.5% of current measured time to traversal/regret matching/infoset lookup; Rust is deferred until a larger declared scale gate proves TypeScript insufficient.

@@ -163,3 +163,17 @@ Baseline audited: `a9f3f8fe530f32a34020698299c9c522c41f1bc3` (solver `0.3.0`). T
 ### Phase 6 controls
 
 The main game definition, ranges, fixed flop, board buckets and betting abstraction will not change. Phase 6 will add convergence histories, reach-aware diagnostics, counterfactual action EV, deterministic resume tests, profiling, algorithm/parameter/seed studies and fixed-point controls without overwriting Phase 5 evidence.
+
+## PHASE 6 RESULT - 2026-10-04
+
+- Implemented indexed Float64 CFR, compiled EV/best response, reach-aware deltas, counterfactual per-action EVs, checkpoint/resume, explicit runtime/memory gates and experiment manifests.
+- Frozen reference: `phase6-reference-game-v1`, hash `bfd3615d6ee13da1`, 46 deals, 11,179 nodes and 2,032 infosets.
+- Selected DCFR 2/0/3 reached exploitability `0.010074` and reach-weighted delta `0.003723` at 5,000 iterations in 7.870 s.
+- Indexed traversal measured `9.90x` the object-tree oracle; strategies/checkpoints remain differential-identical.
+- Five-seed Solved distance improved from `0.203640` to `0.126345` but fails the `<0.1` stability gate.
+- Equity-vs-Solved distance is `0.653360`; ProviderSeparationRatio is `5.171253`.
+- No coupling alpha converged. Alpha 0.25 was least unstable; alpha 0.6 and 1.0 diverged.
+- Stop gate: A pass, B fail, C pass, D fail. Phase 7 expansion is blocked.
+- All strategic outputs remain Experimental; Verified remains zero.
+- Full evidence: `PHASE6_REPORT.md`, `PHASE6_CONVERGENCE.md`, `PHASE6_COUPLING.md`, `PHASE6_PERFORMANCE.md`, and `SOLVER_ERROR_BUDGET.md`.
+- Final repository validation: TypeScript, lint, production build and 82/82 tests passed on 2026-10-04.

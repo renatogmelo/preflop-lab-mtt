@@ -39,3 +39,9 @@ O caminho defensável é validar primeiro subgames enumerados, depois chance sam
 ## Phase 5 executed coupling experiment
 
 The architecture was executed for three outer iterations with damping alpha 0.6. Final deltas were 0.511634 (preflop strategy), 0.596181 (conditional range) and 1.225452 (continuation utility). The postflop strategy delta remained 1.0 and the loop did not converge. The result demonstrates the pipeline but blocks any promotion to training data.
+
+## Phase 6 fixed-point result
+
+The outer loop now supports fixed/incrementing preflop seeds, configurable cache quantization, runtime stop, divergence and period-two detection, all-metric convergence passes and patience. Every iteration records continuation history and all postflop artifacts.
+
+Grid result: alpha 0.25 and 0.4 exhausted ten iterations without a pass; alpha 0.6 diverged at six; alpha 1.0 diverged at four. Alpha 0.25 was least unstable but ended with preflop/range/utility/postflop deltas `0.152837 / 0.164987 / 0.356127 / 0.9999998`. No fixed point exists in the tested budget. See `PHASE6_COUPLING.md`.

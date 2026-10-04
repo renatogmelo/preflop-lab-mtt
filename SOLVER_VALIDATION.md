@@ -135,3 +135,9 @@ Structural, card, chance-normalization, zero-sum, strategy-normalization and rep
 The main provider comparison used three seeds per provider. Exact reduced-preflop mean exploitability was 0.002270 (proxy), 0.001664 (equity) and 0.024244 (solved). The solved model remained materially seed-sensitive.
 
 Coupling validation executed three outer iterations with damping 0.6. It did not converge. This failure is preserved in the golden artifact and report.
+
+## Phase 6 validation addendum - 0.4.0
+
+The indexed solver is validated against the object-tree implementation as an oracle: average strategy and complete infoset checkpoint state are identical in the frozen reference test. Compiled EV and best response match the dynamic implementation; optimized hand evaluation matches the reference across 1,000 random seven-card samples; 250 -> 500 checkpoint resume matches a continuous 500-iteration run.
+
+The 5,000-iteration reduced-game result has exploitability `0.010074`, but the strict converged-approximation policy is not satisfied because the limit is `0.01` and Solved seed distance is `0.126345`. Coupling did not converge. These checks validate implementation invariants, not professional poker accuracy. External solver comparison and independent review are still missing; Verified remains zero.

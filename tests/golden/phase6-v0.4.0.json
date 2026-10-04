@@ -1,0 +1,51 @@
+{
+  "schemaVersion": 1,
+  "phase": 6,
+  "trust": "Experimental",
+  "verifiedDatasets": 0,
+  "sourceCommit": "b0e8c5b814e92c71e7c3fae5d17935c087dcdc80",
+  "reference": {
+    "id": "phase6-reference-game-v1",
+    "hash": "bfd3615d6ee13da1",
+    "compatiblePrivateDeals": 46,
+    "nodes": 11179,
+    "informationSets": 2032
+  },
+  "inner": {
+    "selectedCandidate": "dcfr-strongerPositive",
+    "iterations": 5000,
+    "exploitability": 0.010074038382492982,
+    "nashConv": 0.020148076764985964,
+    "reachWeightedStrategyDelta": 0.00372313486812125,
+    "rawMaximumStrategyDelta": 0.13829208504385404,
+    "strategyHash": "26bd84ac63a3c7b8"
+  },
+  "seedStabilityMean": {
+    "proxy": 0.13847996858617545,
+    "equity": 0.005513894366923471,
+    "solved": 0.12634462685258566
+  },
+  "provider": {
+    "equityVsSolvedDistance": 0.6533599734854593,
+    "separationRatio": 5.171252547587766
+  },
+  "coupling": {
+    "bestAlpha": 0.25,
+    "converged": false,
+    "outerIterations": 10,
+    "preflopStrategyDelta": 0.15283666502711069,
+    "conditionalRangeDelta": 0.1649872330765344,
+    "continuationUtilityDelta": 0.35612724654577455,
+    "postflopStrategyDelta": 0.999999774580564
+  },
+  "stopGatePhase7": {
+    "A_innerConverges": true,
+    "B_seedsStable": false,
+    "C_providerSignalExceedsNoise": true,
+    "D_couplingFixedPoint": false
+  },
+  "phase5Artifact": {
+    "gitBlob": "c5422498fe73048650f78072fe3519be184d4a4b",
+    "sha256": "c8ac6007d46277da2fa4ddfbf3e5506dbf80be99f03405d0544636322c32a850"
+  }
+}

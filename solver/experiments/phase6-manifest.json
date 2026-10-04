@@ -1,0 +1,160 @@
+{
+  "schemaVersion": 1,
+  "phase": 6,
+  "sourceCommit": "b0e8c5b814e92c71e7c3fae5d17935c087dcdc80",
+  "solverVersion": "0.4.0",
+  "referenceGameId": "phase6-reference-game-v1",
+  "referenceGameHash": "bfd3615d6ee13da1",
+  "startedAt": "2026-10-04T14:59:43.688Z",
+  "finishedAt": "2026-10-04T15:07:24.646Z",
+  "experiments": [
+    {
+      "id": "phase6-run-002-global-performance-object",
+      "category": "harness",
+      "status": "failed",
+      "failure": "The second full run completed, but artifact serialization referenced the Node global performance object instead of the measured performanceProfile.",
+      "resolution": "Serialize performanceProfile through explicit object properties and rerun the complete matrix."
+    },
+    {
+      "id": "phase6-run-001-invalid-quantization-fixture",
+      "category": "harness",
+      "status": "failed",
+      "failure": "The first full run used 1 + 4e-9 for an already unit-weight combo; WeightedRange correctly rejected the invalid input before artifacts were written.",
+      "resolution": "Use 1 - 4e-9 so the cache-quantization control remains inside the declared [0, 1] domain."
+    },
+    {
+      "id": "object-tree-baseline",
+      "category": "performance",
+      "status": "completed",
+      "resultHash": "8ae2b79766af6e73"
+    },
+    {
+      "id": "algorithm-vanilla",
+      "category": "algorithm-shootout",
+      "status": "completed",
+      "resultHash": "34997e9d44701d39"
+    },
+    {
+      "id": "algorithm-cfrPlus",
+      "category": "algorithm-shootout",
+      "status": "completed",
+      "resultHash": "172e1f410d5b25d5"
+    },
+    {
+      "id": "algorithm-dcfr",
+      "category": "algorithm-shootout",
+      "status": "completed",
+      "resultHash": "995d1a2690f3b33a"
+    },
+    {
+      "id": "cfr-plus-delay100",
+      "category": "cfr-plus-averaging",
+      "status": "completed",
+      "resultHash": "83f0f749f03a4b9d"
+    },
+    {
+      "id": "cfr-plus-delay500",
+      "category": "cfr-plus-averaging",
+      "status": "completed",
+      "resultHash": "51ecccd88cc875ac"
+    },
+    {
+      "id": "dcfr-lowerDiscount",
+      "category": "dcfr-parameters",
+      "status": "completed",
+      "resultHash": "32ae65b05ce29dac"
+    },
+    {
+      "id": "dcfr-strongerPositive",
+      "category": "dcfr-parameters",
+      "status": "completed",
+      "resultHash": "a833d74b2f1085f7"
+    },
+    {
+      "id": "dcfr-negativeDecay",
+      "category": "dcfr-parameters",
+      "status": "completed",
+      "resultHash": "4944610f432a406b"
+    },
+    {
+      "id": "selected-5000",
+      "category": "inner-convergence",
+      "status": "completed",
+      "resultHash": "53bb8c83424bd89f",
+      "notes": "Selected at 2,500: dcfr-strongerPositive"
+    },
+    {
+      "id": "final-range-artifact",
+      "category": "postflop-solve",
+      "status": "completed",
+      "resultHash": "368598a7e95dddd3"
+    },
+    {
+      "id": "provider-proxy-five-seeds",
+      "category": "provider-seed-study",
+      "status": "completed",
+      "resultHash": "0665ce488ac8ac04"
+    },
+    {
+      "id": "provider-equity-five-seeds",
+      "category": "provider-seed-study",
+      "status": "completed",
+      "resultHash": "3e23d72e671826a2"
+    },
+    {
+      "id": "provider-solved-five-seeds",
+      "category": "provider-seed-study",
+      "status": "completed",
+      "resultHash": "82a5d9b2b0dc291e"
+    },
+    {
+      "id": "coupling-alpha-0.25",
+      "category": "coupling-grid",
+      "status": "completed",
+      "resultHash": "cdd8ed45941e1ee9"
+    },
+    {
+      "id": "coupling-alpha-0.4",
+      "category": "coupling-grid",
+      "status": "completed",
+      "resultHash": "e9e6406a0ddc84fe"
+    },
+    {
+      "id": "coupling-alpha-0.6",
+      "category": "coupling-grid",
+      "status": "completed",
+      "resultHash": "d8f2081db4016709"
+    },
+    {
+      "id": "coupling-alpha-1",
+      "category": "coupling-ablation",
+      "status": "completed",
+      "resultHash": "7f3e3bae1309899a"
+    },
+    {
+      "id": "frozen-continuation",
+      "category": "ablation",
+      "status": "completed",
+      "resultHash": "2167bf7aff2300ee"
+    },
+    {
+      "id": "frozen-range-five-seeds",
+      "category": "ablation",
+      "status": "completed",
+      "resultHash": "9498959a8c994b7e"
+    },
+    {
+      "id": "range-hash-quantization",
+      "category": "cache-diagnostic",
+      "status": "completed",
+      "resultHash": "caaa420e9b9c91fa"
+    },
+    {
+      "id": "performance-profile",
+      "category": "performance",
+      "status": "completed",
+      "resultHash": "b3aab1f9cbdfed55"
+    }
+  ],
+  "includesNegativeResults": true
+}
