@@ -50,3 +50,8 @@ O dataset `solver-experimental-6a62393e944f6db2` falha eligibility por Level 0 c
 `Verified` permanece zero. Leduc valida o motor, n?o produz dados NLHE. O subgame Level 2 ? eleg?vel como evid?ncia matem?tica do cen?rio exato, mas n?o como dataset de treino: ranges s?o degenerados, board ? fixo e abstraction limita apostas. Hold'em V2 ainda n?o possui BR/NashConv e usa Level 0 no benchmark de cobertura.
 
 Nenhum artefato da Fase 4 deve entrar no Trainer/Academy. Ele pertence somente ao Solver Lab at? que acoplamento, BR, sampling, cobertura e revis?o independente cumpram todos os crit?rios desta pol?tica.
+
+
+## Phase 5 decision
+
+Verified remains zero. Phase 5 artifacts are Experimental because the reference postflop solve has 0.270565 exploitability, future boards are bucketed, only one flop is covered, solved-provider seed variance is material, and the outer loop did not converge. Passing structural tests or computing Hold'em BR does not override these blockers.

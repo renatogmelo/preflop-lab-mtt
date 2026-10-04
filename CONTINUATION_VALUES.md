@@ -43,3 +43,15 @@ O problema matemático permanece aberto para Hold'em profissional. O POC comprov
 Level 2 significa utility derivada de ?rvore estrat?gica expl?cita com chance, betting, showdown, convergence e BR documentados. O primeiro artifact cumpre isso apenas para `AsAh vs KdKc` no flop `2s3d4c` e abstraction declarada. N?o pode ser extrapolado para outro range ou board.
 
 A compara??o da fase prova que o strength proxy pode errar materialmente. Ela n?o autoriza substituir um range geral pelo subgame fixo. Consulte `PREFLOP_POSTFLOP_COUPLING.md`.
+
+
+## Phase 5 semantics and evidence
+
+ContinuationResult now separates:
+
+- chanceResolution: exact-enumeration, sampled, abstracted or not-applicable;
+- strategicSolution: unvalidated, approximate-equilibrium, converged-approximation or validated.
+
+A finite CFR solve is never called exact merely because public cards were enumerated.
+
+The first weighted-range solved continuation used 46 compatible deals, a fixed flop and a two-bucket future-board abstraction. At 20 DCFR iterations it had 0.270565 exploitability. It produced a 0.636867 weighted strategy distance from exact-equity continuation in the reduced preflop game, but the result is not reliable enough for training because convergence and seed stability are insufficient.

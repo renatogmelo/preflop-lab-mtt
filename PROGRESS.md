@@ -274,3 +274,19 @@ Concluir a evolução vertical do Preflop Lab para uma plataforma de estudo MTT 
 - Corre??o adicional: walk do BB n?o consulta mais um node RFI imposs?vel.
 - 48 testes verdes ap?s build, typecheck e lint.
 - Detalhes em SOLVER_PROGRESS.md e SOLVER_VALIDATION.md.
+
+
+## Phase 5 - strategic continuation and coupling
+
+- Repository baseline: 9a8a11c; solver version advanced to 0.3.0.
+- Hold'em V2 training can sample explicit weighted physical-combo ranges.
+- A separate exact evaluation traversal now reports strategy EV, BR values, NashConv and exploitability for computationally tractable reduced games.
+- Weighted-range postflop chance uses product weights, card-collision rejection and board blockers.
+- Conditional ranges are immutable Bayesian snapshots derived from the complete joint reach.
+- The new range postflop engine supports flop/turn/river decisions, jam and one optional raise per street.
+- Strategy comparison includes L1, L2, maximum delta, weighted mean delta and Jensen-Shannon divergence.
+- The first Proxy/Equity/Solved experiment ran three seeds each. Equity-vs-Solved weighted distance was 0.636867.
+- Sampled-vs-enumerated distance fell to 0.176883 at 4,000 iterations but was not monotonic.
+- Coupling ran three outer iterations with alpha=0.6 and did not converge; final preflop delta was 0.511634.
+- Reference postflop exploitability remained 0.270565. All outputs remain Experimental; Verified remains zero.
+- Detailed evidence: PHASE5_REPORT.md and PHASE5_PERFORMANCE.md.

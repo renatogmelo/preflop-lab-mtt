@@ -131,3 +131,8 @@ Todo output nasce `Experimental`. O POC `solver-experimental-6a62393e944f6db2` e
 O Hold'em Preflop V2 preserva estrat?gia por combo e hist?rico p?blico, mas permanece fora do `StrategyRepository`: usa continuation Level 0 e n?o possui exploitability. O range inspector calcula pesos condicionais por `prior ? strategy reach`, normaliza e aplica blockers exatos; ele n?o cria ranges por filtros heur?sticos.
 
 Continuation artifacts s?o evid?ncia t?cnica separada, n?o StrategyDataset. S? uma futura exporta??o que cumpra `VERIFIED_POLICY.md` poder? alimentar treino normal. Experimental continua opt-in e exclu?do da resolu??o autom?tica.
+
+
+## Phase 5 Experimental dataset
+
+datasets/solver-experimental/preflop-lab-solver-experimental-v0.3.0.json records the reduced-game mean solved-provider strategy, methodology, hashes, provider distances, seed variance, coupling metrics and limitations. It is evidence for Solver Lab only, is not installed into normal Trainer resolution and does not change Verified or Curated coverage.

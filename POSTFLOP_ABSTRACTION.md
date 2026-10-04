@@ -1,0 +1,38 @@
+# Postflop Abstraction - Phase 5
+
+Status: Experimental. This document defines the game that was solved; it does not claim full-game GTO Hold'em.
+
+## Strategic scope
+
+- Heads-up Hold'em.
+- Fixed flop.
+- Weighted physical-combo ranges for both players.
+- Private deals use weight(P0 combo) x weight(P1 combo), reject collisions and board blockers, then normalize.
+- Flop, turn and river can contain decisions.
+- The engine supports check, bet, fold, call, jam and at most one raise per street.
+- The main Phase 5 experiment disabled raises and jams to keep the first audit tractable.
+
+## Main experiment abstraction
+
+- Flop: check or bet 33% pot.
+- Turn: check or bet 50% pot.
+- River: check or bet 100% pot.
+- Raises: disabled in the main artifact; one raise is exercised by tests.
+- Future boards: BucketedBoardProvider(2). Available physical cards are deterministically partitioned into two buckets. One real representative card is used per bucket and its chance weight is the bucket size divided by the number of available cards.
+- Board availability is recomputed after the actual private deal and after each public card.
+
+This board abstraction changes the game. It is not exact enumeration and is always labeled abstracted.
+
+## Hash and cache identity
+
+The artifact/cache identity includes board, pot, stacks, acting player, position, action history, both quantized ranges, betting abstraction, algorithm configuration and solver version.
+
+Range weights are quantized at 1e-9. This tolerance removes insignificant floating-point noise while preserving all strategically material differences in the current experiments. Tests cover range, board, stack and abstraction cache misses.
+
+## Known limitations
+
+- Only one fixed flop is used by the main comparison.
+- Two representative future-card outcomes are not enough for professional strategy output.
+- No raises in the main experiment reduce strategic expressiveness.
+- Twenty DCFR iterations left the reference subgame at 0.541129 NashConv and 0.270565 exploitability.
+- All outputs remain Experimental.

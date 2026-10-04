@@ -18,7 +18,8 @@ export class StrengthProxyProvider implements StrategicContinuationProvider {
     return {
       utilities,
       model: this.id,
-      confidence: "modeled",
+      chanceResolution: { method: "abstracted", description: "No public-card chance model is used." },
+      strategicSolution: { status: "unvalidated" },
       metadata: {
         equityProxy,
         warning: "Hole-card strength heuristic only; no boards or postflop strategy are modeled.",

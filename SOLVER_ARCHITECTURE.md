@@ -83,3 +83,18 @@ Portar para Rust somente após profiling e manter testes diferenciais contra est
 Continuation agora tem `ContinuationRequest/Result`, providers separados, range hash quantizado a 1e-9 e cache compat?vel apenas com Level 2. Abstractions e configura??o participam do hash; um valor n?o pode ser reutilizado em outro board/pote/stack/range.
 
 Hold'em Preflop V2 permanece chance-sampled e separado do traversal tabular completo. Isso evita materializar ~1,6 milh?o de deals privados ? ?rvore, mas exige futuro BR amostrado validado e depois BR exato/limitado antes de qualquer promo??o.
+
+
+## Architecture 0.3.0 - weighted ranges and coupling
+
+New boundaries:
+
+- cards/private-chance.ts owns normalized compatible private deals;
+- evaluation/holdem-preflop.ts separates exact evaluation traversal from sampled training;
+- ranges/conditional.ts owns immutable Bayesian snapshots;
+- game/range-postflop-subgame.ts owns weighted-range strategic continuation;
+- comparison/strategy-distance.ts owns formal strategy diffs;
+- continuation/cache.ts hashes every strategic input;
+- coupling/engine.ts owns fixed-point outer iterations and damping.
+
+The coupled flow is Preflop solve -> joint range conditioning -> postflop solve -> pairwise continuation evaluation -> damped utility update -> preflop re-solve. Inner and outer convergence are reported separately.

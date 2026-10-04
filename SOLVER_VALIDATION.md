@@ -110,3 +110,28 @@ O artefato can?nico ? `solver/artifacts/phase4-validation-v0.2.0.json`; os thres
 - Proxy/Equity/Solved no mesmo estado: `+0,05171429 / +1,64848485 / +1,64848551` para P0.
 
 Os resultados de Hold'em continuam Experimental. O subgame valida a arquitetura, n?o ranges gerais nem todos os boards.
+
+
+## Phase 5 validation 0.3.0
+
+Artifact: solver/artifacts/phase5-strategic-coupling-v0.3.0.json.
+
+Preflop exact evaluation enumerates 46 compatible private deals. BR policies are selected once per information set, and tests verify that keys contain only the acting player's private combo plus public history.
+
+Weighted-range postflop validation:
+
+| Metric | Result |
+|---|---:|
+| Nodes | 11,179 |
+| Infosets | 2,032 |
+| Chance nodes | 967 |
+| DCFR iterations | 20 |
+| P0 EV | +0.129798 |
+| NashConv | 0.541129 |
+| Exploitability | 0.270565 |
+
+Structural, card, chance-normalization, zero-sum, strategy-normalization and reproducibility checks passed. Convergence is insufficient for professional use.
+
+The main provider comparison used three seeds per provider. Exact reduced-preflop mean exploitability was 0.002270 (proxy), 0.001664 (equity) and 0.024244 (solved). The solved model remained materially seed-sensitive.
+
+Coupling validation executed three outer iterations with damping 0.6. It did not converge. This failure is preserved in the golden artifact and report.

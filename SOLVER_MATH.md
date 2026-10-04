@@ -113,3 +113,26 @@ Leduc usa seis cartas f?sicas observ?veis, ante 1, dois raises m?ximos, sizes 2/
 O POC V2 usa chance sampling com deals uniformes compat?veis. Como chance ? amostrada da distribui??o natural, n?o h? importance weight adicional no estimador de regret. H? dois traversals alternados e strategy sum ponderado pelo reach pr?prio. Ainda falta compara??o formal contra traversal completo em uma vers?o reduzida, portanto suas m?tricas de exploitability permanecem `null`.
 
 Equity ? `(wins + ties/2)/trials`; sampling registra seed e erro padr?o. Ela n?o ? continuation GTO. No Level 2, utilities v?m de estrat?gia m?dia do subgame e s?o medidas por BR/NashConv gen?ricos.
+
+
+## Phase 5 range chance and coupling
+
+For weighted ranges R0 and R1, private chance is:
+
+P(h0,h1) proportional to w0(h0) * w1(h1)
+
+only for disjoint combos that do not intersect the board. The remaining mass is normalized exactly.
+
+Conditional range snapshots use the complete joint posterior:
+
+P(h0,h1 | history) proportional to P(h0,h1) * product_t sigma(a_t | I_t(h_actor))
+
+Marginals are derived after this joint update, preserving blocker correlations.
+
+Reduced-game Hold'em BR reuses the generic counterfactual algorithm. Training may sample chance, while evaluation enumerates all compatible deals.
+
+Outer coupling applies explicit damping:
+
+updated = alpha * solved + (1-alpha) * previous.
+
+Convergence requires independent thresholds for preflop strategy, conditional ranges and continuation utilities.

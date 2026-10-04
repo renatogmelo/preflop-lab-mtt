@@ -1,5 +1,6 @@
-import { enumerateHoleCombos, type HoleCombo, type SolverCard } from "../cards/cards";
+﻿import { enumerateHoleCombos, type HoleCombo, type SolverCard } from "../cards/cards";
 import { WeightedRange } from "../cards/range";
+import { privateDealDistribution, samplePrivateDeal } from "../cards/private-chance";
 import type { StrategicContinuationProvider } from "../continuation/engine";
 import { DeterministicRandom } from "../core/random";
 import { hashValue } from "../core/stable";
@@ -28,6 +29,8 @@ export type HoldemPreflopV2Configuration = {
   bbThreeBetTo: number[];
   sbFourBetTo: number[];
   maximumRaises: number;
+  limpAllowed?: boolean;
+  jamAllowed?: boolean;
   continuationBoard: SolverCard[];
   continuationAbstractionId: string;
 };
@@ -50,7 +53,7 @@ export type RangeInspectionRow = {
   normalizedWeight: number;
 };
 
-function actionId(action: BettingAction) {
+export function holdemPreflopActionId(action: BettingAction) {
   if (action.type === "raise") return `raise:${action.raiseTo}`;
   return action.type;
 }
@@ -66,7 +69,7 @@ function averageStrategy(state: RegretState) {
   return total > 1e-15 ? state.strategySum.map((value) => value / total) : regretStrategy(state.regrets);
 }
 
-function huDefinition(configuration: HoldemPreflopV2Configuration): GameDefinition {
+export function createHoldemPreflopV2Definition(configuration: HoldemPreflopV2Configuration): GameDefinition {
   return {
     id: configuration.id,
     game: "NLHE",
@@ -84,10 +87,40 @@ function huDefinition(configuration: HoldemPreflopV2Configuration): GameDefiniti
       openRaiseTo: configuration.sbOpenRaiseTo,
       threeBetTo: configuration.bbThreeBetTo,
       fourBetTo: configuration.sbFourBetTo,
-      jamAllowed: true,
+      jamAllowed: configuration.jamAllowed ?? true,
       maximumRaisesPerRound: configuration.maximumRaises,
     },
   };
+}
+
+export function holdemPreflopRaiseTargets(configuration: HoldemPreflopV2Configuration, state: BettingState) {
+  if (state.raises >= configuration.maximumRaises) return [];
+  const voluntary = state.history.filter((event) => ["fold", "check", "call", "raise", "all-in"].includes(event.action));
+  if (state.raises === 0 && voluntary.length === 0) return configuration.sbOpenRaiseTo;
+  if (state.raises === 0) return configuration.bbVsLimpRaiseTo;
+  if (state.raises === 1 && state.actingPlayerId === "BB") return configuration.bbThreeBetTo;
+  if (state.raises === 1 && state.actingPlayerId === "SB") return configuration.sbFourBetTo;
+  return configuration.sbFourBetTo;
+}
+
+export function holdemPreflopLegalActions(configuration: HoldemPreflopV2Configuration, state: BettingState) {
+  let actions = legalBettingActions(state, holdemPreflopRaiseTargets(configuration, state));
+  if (state.raises >= configuration.maximumRaises) actions = actions.filter((action) => action.type !== "raise" && action.type !== "all-in");
+  if (configuration.jamAllowed === false) actions = actions.filter((action) => action.type !== "all-in");
+  const voluntary = state.history.filter((event) => ["fold", "check", "call", "raise", "all-in"].includes(event.action));
+  if (configuration.limpAllowed === false && state.actingPlayerId === "SB" && voluntary.length === 0) {
+    actions = actions.filter((action) => action.type !== "call");
+  }
+  return actions;
+}
+
+export function holdemPreflopInformationSet(state: BettingState, combo: HoleCombo) {
+  const actor = state.actingPlayerId;
+  const publicHistory = state.history
+    .filter((event) => ["fold", "check", "call", "raise", "all-in"].includes(event.action))
+    .map((event) => event.action === "raise" ? `${event.playerId}:raise:${event.raiseTo}` : `${event.playerId}:${event.action}`)
+    .join(",") || "root";
+  return `${actor}|${combo.id}|${publicHistory}`;
 }
 
 export class HoldemPreflopV2Solver {
@@ -104,13 +137,23 @@ export class HoldemPreflopV2Solver {
   constructor(
     readonly configuration: HoldemPreflopV2Configuration,
     readonly continuation: StrategicContinuationProvider,
+    readonly dealRanges: [WeightedRange, WeightedRange] | null = null,
   ) {
-    this.definition = huDefinition(configuration);
+    this.definition = createHoldemPreflopV2Definition(configuration);
     this.random = new DeterministicRandom(configuration.seed);
-    this.solveId = hashValue({ definition: this.definition, configuration, continuation: continuation.id });
+    this.solveId = hashValue({
+      definition: this.definition,
+      configuration,
+      continuation: continuation.id,
+      dealRanges: dealRanges?.map((range) => range.entries().map(({ combo, weight }) => [combo.id, weight])),
+    });
   }
 
   private sampleDeal(): [HoleCombo, HoleCombo] {
+    if (this.dealRanges) {
+      const distribution = privateDealDistribution(this.dealRanges[0], this.dealRanges[1], this.configuration.continuationBoard);
+      return samplePrivateDeal(distribution, this.random.next());
+    }
     const first = this.combos[this.random.integer(this.combos.length)];
     let second = this.combos[this.random.integer(this.combos.length)];
     const blocked = new Set([first.first.id, first.second.id]);
@@ -119,32 +162,19 @@ export class HoldemPreflopV2Solver {
   }
 
   private raiseTargets(state: BettingState) {
-    if (state.raises >= this.configuration.maximumRaises) return [];
-    const voluntary = state.history.filter((event) => ["fold", "check", "call", "raise", "all-in"].includes(event.action));
-    if (state.raises === 0 && voluntary.length === 0) return this.configuration.sbOpenRaiseTo;
-    if (state.raises === 0) return this.configuration.bbVsLimpRaiseTo;
-    if (state.raises === 1 && state.actingPlayerId === "BB") return this.configuration.bbThreeBetTo;
-    if (state.raises === 1 && state.actingPlayerId === "SB") return this.configuration.sbFourBetTo;
-    return this.configuration.sbFourBetTo;
+    return holdemPreflopRaiseTargets(this.configuration, state);
   }
 
   private legal(state: BettingState) {
-    const actions = legalBettingActions(state, this.raiseTargets(state));
-    if (state.raises >= this.configuration.maximumRaises) return actions.filter((action) => action.type !== "raise" && action.type !== "all-in");
-    return actions;
+    return holdemPreflopLegalActions(this.configuration, state);
   }
 
   private key(state: BettingState, combo: HoleCombo) {
-    const actor = state.actingPlayerId;
-    const publicHistory = state.history
-      .filter((event) => ["fold", "check", "call", "raise", "all-in"].includes(event.action))
-      .map((event) => event.action === "raise" ? `${event.playerId}:raise:${event.raiseTo}` : `${event.playerId}:${event.action}`)
-      .join(",") || "root";
-    return `${actor}|${combo.id}|${publicHistory}`;
+    return holdemPreflopInformationSet(state, combo);
   }
 
   private info(key: string, actions: BettingAction[]) {
-    const ids = actions.map(actionId);
+    const ids = actions.map(holdemPreflopActionId);
     const existing = this.infosets.get(key);
     if (existing) {
       if (existing.actions.join("|") !== ids.join("|")) throw new Error(`Preflop V2 infoset ${key} changed legal actions.`);
@@ -177,7 +207,7 @@ export class HoldemPreflopV2Solver {
         contributions,
         actingPlayer: 0,
         inPositionPlayer: 0,
-        actionHistory: state.history.map((event) => actionId(event.action === "raise" ? { type: "raise", raiseTo: event.raiseTo! } : { type: event.action as BettingAction["type"] } as BettingAction)),
+        actionHistory: state.history.map((event) => holdemPreflopActionId(event.action === "raise" ? { type: "raise", raiseTo: event.raiseTo! } : { type: event.action as BettingAction["type"] } as BettingAction)),
       },
       ranges,
       context: { abstractionId: this.configuration.continuationAbstractionId },
@@ -284,15 +314,16 @@ export class HoldemPreflopV2Solver {
 
   inspectRange(player: 0 | 1, publicActions: string[], blockedCards: SolverCard[] = []): RangeInspectionRow[] {
     const blocked = new Set(blockedCards.map((card) => card.id));
-    const compatible = this.combos.filter((combo) => !blocked.has(combo.first.id) && !blocked.has(combo.second.id));
-    const rows = compatible.map((combo) => {
+    const source = this.dealRanges?.[player] ?? WeightedRange.uniform(this.combos);
+    const compatible = source.entries().filter(({ combo, weight }) => weight > 0 && !blocked.has(combo.first.id) && !blocked.has(combo.second.id));
+    const rows = compatible.map(({ combo, weight }) => {
       let state = createPreflopBettingState(this.definition);
       let actionProbability = 1;
       publicActions.forEach((selected) => {
         if (state.complete) throw new Error("Range inspection path continues after a terminal node.");
         const actor = state.actingPlayerId === "SB" ? 0 : 1;
         const actions = this.legal(state);
-        const chosen = actions.find((action) => actionId(action) === selected);
+        const chosen = actions.find((action) => holdemPreflopActionId(action) === selected);
         if (!chosen) throw new Error(`Action ${selected} is illegal on the inspected path.`);
         if (actor === player) {
           const key = this.key(state, combo);
@@ -302,7 +333,7 @@ export class HoldemPreflopV2Solver {
         }
         state = applyBettingAction(state, chosen);
       });
-      return { combo: combo.notation, canonical: combo.canonical, priorReach: 1, actionProbability, conditionalWeight: actionProbability, normalizedWeight: 0 };
+      return { combo: combo.notation, canonical: combo.canonical, priorReach: weight, actionProbability, conditionalWeight: weight * actionProbability, normalizedWeight: 0 };
     });
     const total = rows.reduce((sum, row) => sum + row.conditionalWeight, 0);
     return rows.map((row) => ({ ...row, normalizedWeight: total > 0 ? row.conditionalWeight / total : 0 }));

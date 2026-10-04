@@ -1,0 +1,628 @@
+{
+  "schemaVersion": 1,
+  "id": "preflop-lab-solver-experimental-v0.3.0",
+  "name": "Preflop Lab Solver Experimental",
+  "version": "0.3.0",
+  "trustLevel": "experimental",
+  "status": "published",
+  "solverVersion": "0.3.0",
+  "artifactId": "bfd3615d6ee13da1",
+  "methodology": "Original reduced HU CFR experiment with physical combo ranges, exact private-card evaluation, abstracted future boards and iterative preflop-postflop coupling.",
+  "license": "Original Preflop Lab solver output; no third-party commercial ranges.",
+  "strategy": {
+    "SB|50-51|root": {
+      "fold": 0.0004899750897236462,
+      "raise:2": 0.9995100249102764
+    },
+    "BB|44-45|SB:raise:2": {
+      "fold": 0.40585232770809293,
+      "call": 0.594147672291907
+    },
+    "SB|46-49|root": {
+      "fold": 0.5145000003408255,
+      "raise:2": 0.48549999965917445
+    },
+    "BB|37-38|SB:raise:2": {
+      "fold": 0.63155774359736,
+      "call": 0.36844225640263994
+    },
+    "SB|47-51|root": {
+      "fold": 0.6610359066485169,
+      "raise:2": 0.3389640933514831
+    },
+    "BB|42-48|SB:raise:2": {
+      "fold": 0.9833129979670855,
+      "call": 0.01668700203291455
+    },
+    "BB|37-41|SB:raise:2": {
+      "fold": 0.9986701741024541,
+      "call": 0.0013298258975459655
+    },
+    "SB|42-43|root": {
+      "fold": 0.900436038416812,
+      "raise:2": 0.09956396158318792
+    },
+    "SB|19-23|root": {
+      "fold": 0.011673467610722016,
+      "raise:2": 0.9883265323892779
+    },
+    "BB|14-18|SB:raise:2": {
+      "fold": 0.0010817239912716276,
+      "call": 0.9989182760087284
+    },
+    "SB|31-39|root": {
+      "fold": 0.2944128722016719,
+      "raise:2": 0.7055871277983282
+    },
+    "BB|28-32|SB:raise:2": {
+      "fold": 0.9389533467085536,
+      "call": 0.061046653291446394
+    },
+    "SB|12-48|root": {
+      "fold": 0.1000536343265333,
+      "raise:2": 0.8999463656734666
+    },
+    "BB|9-49|SB:raise:2": {
+      "fold": 0.9512577619016848,
+      "call": 0.04874223809831527
+    }
+  },
+  "strategyHash": "b06c30b0130e280c",
+  "metrics": {
+    "providerDistances": {
+      "proxyVsEquity": {
+        "l1": 11.127367789719798,
+        "l2": 3.1064743635154373,
+        "maxAbsoluteDelta": 0.9978365520174568,
+        "meanAbsoluteDelta": 0.3974059924899928,
+        "weightedMeanAbsoluteDelta": 0.7948119849799856,
+        "jensenShannonDivergence": 0.3489940290776668,
+        "comparedProbabilities": 28,
+        "largestShifts": [
+          {
+            "informationSet": "BB|14-18|SB:raise:2",
+            "action": "call",
+            "left": 0.0010817239912716276,
+            "right": 0.9989182760087284,
+            "absoluteDelta": 0.9978365520174568
+          },
+          {
+            "informationSet": "BB|14-18|SB:raise:2",
+            "action": "fold",
+            "left": 0.9989182760087284,
+            "right": 0.0010817239912716276,
+            "absoluteDelta": 0.9978365520174568
+          },
+          {
+            "informationSet": "BB|42-48|SB:raise:2",
+            "action": "call",
+            "left": 0.998802273703025,
+            "right": 0.0011977262969750525,
+            "absoluteDelta": 0.99760454740605
+          },
+          {
+            "informationSet": "BB|42-48|SB:raise:2",
+            "action": "fold",
+            "left": 0.0011977262969750525,
+            "right": 0.998802273703025,
+            "absoluteDelta": 0.99760454740605
+          },
+          {
+            "informationSet": "BB|37-41|SB:raise:2",
+            "action": "call",
+            "left": 0.9982765421300365,
+            "right": 0.0018682246370658486,
+            "absoluteDelta": 0.9964083174929707
+          },
+          {
+            "informationSet": "BB|37-41|SB:raise:2",
+            "action": "fold",
+            "left": 0.0017234578699635904,
+            "right": 0.9981317753629342,
+            "absoluteDelta": 0.9964083174929705
+          },
+          {
+            "informationSet": "SB|19-23|root",
+            "action": "fold",
+            "left": 0.9971713337040137,
+            "right": 0.002861849263049883,
+            "absoluteDelta": 0.9943094844409638
+          },
+          {
+            "informationSet": "SB|19-23|root",
+            "action": "raise:2",
+            "left": 0.002828666295986295,
+            "right": 0.9971381507369501,
+            "absoluteDelta": 0.9943094844409638
+          },
+          {
+            "informationSet": "BB|28-32|SB:raise:2",
+            "action": "call",
+            "left": 0.21558906282351775,
+            "right": 0.998051050816917,
+            "absoluteDelta": 0.7824619879933993
+          },
+          {
+            "informationSet": "BB|28-32|SB:raise:2",
+            "action": "fold",
+            "left": 0.7844109371764822,
+            "right": 0.0019489491830829736,
+            "absoluteDelta": 0.7824619879933993
+          },
+          {
+            "informationSet": "SB|12-48|root",
+            "action": "fold",
+            "left": 0.37976888181955143,
+            "right": 0.0049554629754217676,
+            "absoluteDelta": 0.37481341884412966
+          },
+          {
+            "informationSet": "SB|12-48|root",
+            "action": "raise:2",
+            "left": 0.6202311181804486,
+            "right": 0.9950445370245782,
+            "absoluteDelta": 0.37481341884412955
+          },
+          {
+            "informationSet": "SB|31-39|root",
+            "action": "fold",
+            "left": 0.3012733565002422,
+            "right": 0.008160767707064573,
+            "absoluteDelta": 0.2931125887931776
+          },
+          {
+            "informationSet": "SB|31-39|root",
+            "action": "raise:2",
+            "left": 0.6987266434997578,
+            "right": 0.9918392322929354,
+            "absoluteDelta": 0.2931125887931776
+          },
+          {
+            "informationSet": "BB|9-49|SB:raise:2",
+            "action": "call",
+            "left": 0.17804035585880804,
+            "right": 0.059490444214360845,
+            "absoluteDelta": 0.1185499116444472
+          },
+          {
+            "informationSet": "BB|9-49|SB:raise:2",
+            "action": "fold",
+            "left": 0.821959644141192,
+            "right": 0.9405095557856392,
+            "absoluteDelta": 0.11854991164444717
+          },
+          {
+            "informationSet": "SB|46-49|root",
+            "action": "fold",
+            "left": 0.0035719026158535483,
+            "right": 0.0008928152896388984,
+            "absoluteDelta": 0.00267908732621465
+          },
+          {
+            "informationSet": "SB|46-49|root",
+            "action": "raise:2",
+            "left": 0.9964280973841465,
+            "right": 0.9991071847103611,
+            "absoluteDelta": 0.00267908732621458
+          },
+          {
+            "informationSet": "BB|37-38|SB:raise:2",
+            "action": "fold",
+            "left": 0.0005713683594825215,
+            "right": 0.002444817774244398,
+            "absoluteDelta": 0.0018734494147618764
+          },
+          {
+            "informationSet": "BB|37-38|SB:raise:2",
+            "action": "call",
+            "left": 0.9994286316405174,
+            "right": 0.9975551822257556,
+            "absoluteDelta": 0.001873449414761863
+          }
+        ]
+      },
+      "proxyVsSolved": {
+        "l1": 15.280336850882446,
+        "l2": 3.4966610694308637,
+        "maxAbsoluteDelta": 0.9978365520174568,
+        "meanAbsoluteDelta": 0.5457263161029445,
+        "weightedMeanAbsoluteDelta": 1.091452632205889,
+        "jensenShannonDivergence": 0.44053719101845834,
+        "comparedProbabilities": 28,
+        "largestShifts": [
+          {
+            "informationSet": "BB|14-18|SB:raise:2",
+            "action": "call",
+            "left": 0.0010817239912716276,
+            "right": 0.9989182760087284,
+            "absoluteDelta": 0.9978365520174568
+          },
+          {
+            "informationSet": "BB|14-18|SB:raise:2",
+            "action": "fold",
+            "left": 0.9989182760087284,
+            "right": 0.0010817239912716276,
+            "absoluteDelta": 0.9978365520174568
+          },
+          {
+            "informationSet": "BB|37-41|SB:raise:2",
+            "action": "call",
+            "left": 0.9982765421300365,
+            "right": 0.0013298258975459655,
+            "absoluteDelta": 0.9969467162324905
+          },
+          {
+            "informationSet": "BB|37-41|SB:raise:2",
+            "action": "fold",
+            "left": 0.0017234578699635904,
+            "right": 0.9986701741024541,
+            "absoluteDelta": 0.9969467162324904
+          },
+          {
+            "informationSet": "SB|19-23|root",
+            "action": "fold",
+            "left": 0.9971713337040137,
+            "right": 0.011673467610722018,
+            "absoluteDelta": 0.9854978660932917
+          },
+          {
+            "informationSet": "SB|19-23|root",
+            "action": "raise:2",
+            "left": 0.002828666295986295,
+            "right": 0.988326532389278,
+            "absoluteDelta": 0.9854978660932917
+          },
+          {
+            "informationSet": "BB|42-48|SB:raise:2",
+            "action": "call",
+            "left": 0.998802273703025,
+            "right": 0.01668700203291455,
+            "absoluteDelta": 0.9821152716701105
+          },
+          {
+            "informationSet": "BB|42-48|SB:raise:2",
+            "action": "fold",
+            "left": 0.0011977262969750525,
+            "right": 0.9833129979670855,
+            "absoluteDelta": 0.9821152716701105
+          },
+          {
+            "informationSet": "SB|42-43|root",
+            "action": "fold",
+            "left": 0.0006949432991827543,
+            "right": 0.9004360384168121,
+            "absoluteDelta": 0.8997410951176293
+          },
+          {
+            "informationSet": "SB|42-43|root",
+            "action": "raise:2",
+            "left": 0.9993050567008172,
+            "right": 0.09956396158318793,
+            "absoluteDelta": 0.8997410951176292
+          },
+          {
+            "informationSet": "SB|47-51|root",
+            "action": "fold",
+            "left": 0.00069175904510781,
+            "right": 0.6610359066485169,
+            "absoluteDelta": 0.6603441476034091
+          },
+          {
+            "informationSet": "SB|47-51|root",
+            "action": "raise:2",
+            "left": 0.9993082409548922,
+            "right": 0.3389640933514831,
+            "absoluteDelta": 0.6603441476034091
+          },
+          {
+            "informationSet": "BB|37-38|SB:raise:2",
+            "action": "call",
+            "left": 0.9994286316405174,
+            "right": 0.36844225640263994,
+            "absoluteDelta": 0.6309863752378775
+          },
+          {
+            "informationSet": "BB|37-38|SB:raise:2",
+            "action": "fold",
+            "left": 0.0005713683594825215,
+            "right": 0.63155774359736,
+            "absoluteDelta": 0.6309863752378775
+          },
+          {
+            "informationSet": "SB|46-49|root",
+            "action": "fold",
+            "left": 0.0035719026158535483,
+            "right": 0.5145000003408255,
+            "absoluteDelta": 0.510928097724972
+          },
+          {
+            "informationSet": "SB|46-49|root",
+            "action": "raise:2",
+            "left": 0.9964280973841465,
+            "right": 0.48549999965917445,
+            "absoluteDelta": 0.510928097724972
+          },
+          {
+            "informationSet": "BB|44-45|SB:raise:2",
+            "action": "call",
+            "left": 0.9995037169517381,
+            "right": 0.594147672291907,
+            "absoluteDelta": 0.4053560446598311
+          },
+          {
+            "informationSet": "BB|44-45|SB:raise:2",
+            "action": "fold",
+            "left": 0.0004962830482619598,
+            "right": 0.40585232770809293,
+            "absoluteDelta": 0.405356044659831
+          },
+          {
+            "informationSet": "SB|12-48|root",
+            "action": "fold",
+            "left": 0.37976888181955143,
+            "right": 0.1000536343265333,
+            "absoluteDelta": 0.2797152474930181
+          },
+          {
+            "informationSet": "SB|12-48|root",
+            "action": "raise:2",
+            "left": 0.6202311181804486,
+            "right": 0.8999463656734666,
+            "absoluteDelta": 0.279715247493018
+          }
+        ]
+      },
+      "equityVsSolved": {
+        "l1": 8.916138042158416,
+        "l2": 2.4632077473734877,
+        "maxAbsoluteDelta": 0.9370043975254706,
+        "meanAbsoluteDelta": 0.3184335015056577,
+        "weightedMeanAbsoluteDelta": 0.6368670030113154,
+        "jensenShannonDivergence": 0.22639236393836917,
+        "comparedProbabilities": 28,
+        "largestShifts": [
+          {
+            "informationSet": "BB|28-32|SB:raise:2",
+            "action": "call",
+            "left": 0.998051050816917,
+            "right": 0.061046653291446394,
+            "absoluteDelta": 0.9370043975254706
+          },
+          {
+            "informationSet": "BB|28-32|SB:raise:2",
+            "action": "fold",
+            "left": 0.0019489491830829736,
+            "right": 0.9389533467085536,
+            "absoluteDelta": 0.9370043975254706
+          },
+          {
+            "informationSet": "SB|42-43|root",
+            "action": "raise:2",
+            "left": 0.9976621462114047,
+            "right": 0.09956396158318793,
+            "absoluteDelta": 0.8980981846282168
+          },
+          {
+            "informationSet": "SB|42-43|root",
+            "action": "fold",
+            "left": 0.002337853788595383,
+            "right": 0.9004360384168121,
+            "absoluteDelta": 0.8980981846282167
+          },
+          {
+            "informationSet": "SB|47-51|root",
+            "action": "raise:2",
+            "left": 0.9987459506155718,
+            "right": 0.3389640933514831,
+            "absoluteDelta": 0.6597818572640888
+          },
+          {
+            "informationSet": "SB|47-51|root",
+            "action": "fold",
+            "left": 0.0012540493844282307,
+            "right": 0.6610359066485169,
+            "absoluteDelta": 0.6597818572640887
+          },
+          {
+            "informationSet": "BB|37-38|SB:raise:2",
+            "action": "call",
+            "left": 0.9975551822257556,
+            "right": 0.36844225640263994,
+            "absoluteDelta": 0.6291129258231156
+          },
+          {
+            "informationSet": "BB|37-38|SB:raise:2",
+            "action": "fold",
+            "left": 0.002444817774244398,
+            "right": 0.63155774359736,
+            "absoluteDelta": 0.6291129258231156
+          },
+          {
+            "informationSet": "SB|46-49|root",
+            "action": "fold",
+            "left": 0.0008928152896388984,
+            "right": 0.5145000003408255,
+            "absoluteDelta": 0.5136071850511866
+          },
+          {
+            "informationSet": "SB|46-49|root",
+            "action": "raise:2",
+            "left": 0.9991071847103611,
+            "right": 0.48549999965917445,
+            "absoluteDelta": 0.5136071850511866
+          },
+          {
+            "informationSet": "BB|44-45|SB:raise:2",
+            "action": "call",
+            "left": 0.9976743682941416,
+            "right": 0.594147672291907,
+            "absoluteDelta": 0.40352669600223456
+          },
+          {
+            "informationSet": "BB|44-45|SB:raise:2",
+            "action": "fold",
+            "left": 0.0023256317058584584,
+            "right": 0.40585232770809293,
+            "absoluteDelta": 0.40352669600223445
+          },
+          {
+            "informationSet": "SB|31-39|root",
+            "action": "fold",
+            "left": 0.008160767707064573,
+            "right": 0.2944128722016719,
+            "absoluteDelta": 0.2862521044946073
+          },
+          {
+            "informationSet": "SB|31-39|root",
+            "action": "raise:2",
+            "left": 0.9918392322929354,
+            "right": 0.7055871277983282,
+            "absoluteDelta": 0.28625210449460714
+          },
+          {
+            "informationSet": "SB|12-48|root",
+            "action": "fold",
+            "left": 0.0049554629754217676,
+            "right": 0.1000536343265333,
+            "absoluteDelta": 0.09509817135111154
+          },
+          {
+            "informationSet": "SB|12-48|root",
+            "action": "raise:2",
+            "left": 0.9950445370245782,
+            "right": 0.8999463656734666,
+            "absoluteDelta": 0.09509817135111154
+          },
+          {
+            "informationSet": "BB|42-48|SB:raise:2",
+            "action": "fold",
+            "left": 0.998802273703025,
+            "right": 0.9833129979670855,
+            "absoluteDelta": 0.0154892757359395
+          },
+          {
+            "informationSet": "BB|42-48|SB:raise:2",
+            "action": "call",
+            "left": 0.0011977262969750525,
+            "right": 0.01668700203291455,
+            "absoluteDelta": 0.015489275735939497
+          },
+          {
+            "informationSet": "BB|9-49|SB:raise:2",
+            "action": "call",
+            "left": 0.059490444214360845,
+            "right": 0.04874223809831527,
+            "absoluteDelta": 0.010748206116045572
+          },
+          {
+            "informationSet": "BB|9-49|SB:raise:2",
+            "action": "fold",
+            "left": 0.9405095557856392,
+            "right": 0.9512577619016848,
+            "absoluteDelta": 0.010748206116045544
+          }
+        ]
+      }
+    },
+    "seedVariance": {
+      "proxy": {
+        "distance": {
+          "mean": 0.1514755020645059,
+          "standardDeviation": 0.03253714195659259,
+          "minimum": 0.10933247713331411,
+          "maximum": 0.18854615504738886
+        },
+        "sbRaise": {
+          "mean": 0.844539485723275,
+          "standardDeviation": 0.02444951052385448,
+          "minimum": 0.8102689260352537,
+          "maximum": 0.8656514980559546
+        }
+      },
+      "equity": {
+        "distance": {
+          "mean": 0.016040754478799334,
+          "standardDeviation": 0.007362881942494062,
+          "minimum": 0.00562989932644277,
+          "maximum": 0.02141534764292562
+        },
+        "sbRaise": {
+          "mean": 0.9978786321979599,
+          "standardDeviation": 0.0007516443566612434,
+          "minimum": 0.9968237811826429,
+          "maximum": 0.9985197276663144
+        }
+      },
+      "solved": {
+        "distance": {
+          "mean": 0.20364028890206679,
+          "standardDeviation": 0.04719308706754133,
+          "minimum": 0.13691918689550642,
+          "maximum": 0.23841579952294342
+        },
+        "sbRaise": {
+          "mean": 0.6037146850766054,
+          "standardDeviation": 0.014046536412373528,
+          "minimum": 0.583849920227775,
+          "maximum": 0.613680472616
+        }
+      }
+    },
+    "coupling": {
+      "converged": false,
+      "outerMetrics": [
+        {
+          "outerIteration": 1,
+          "preflopStrategyDelta": 0.9796605225800897,
+          "conditionalRangeDelta": null,
+          "continuationUtilityDelta": null,
+          "postflopStrategyDelta": null,
+          "preflopNashConv": 0.0440034253193322,
+          "preflopExploitability": 0.0220017126596661,
+          "postflopNashConv": 0.7688479543424338,
+          "postflopExploitability": 0.3844239771712169,
+          "dampingAlpha": 0.6,
+          "cacheHit": false,
+          "runtimeMs": 8171.342700000008
+        },
+        {
+          "outerIteration": 2,
+          "preflopStrategyDelta": 0.7732773651269998,
+          "conditionalRangeDelta": 0.8443394229393067,
+          "continuationUtilityDelta": 2.59798510427345,
+          "postflopStrategyDelta": 1,
+          "preflopNashConv": 0.04216582021736766,
+          "preflopExploitability": 0.02108291010868383,
+          "postflopNashConv": 1.068493990514992,
+          "postflopExploitability": 0.534246995257496,
+          "dampingAlpha": 0.6,
+          "cacheHit": false,
+          "runtimeMs": 8050.599099999992
+        },
+        {
+          "outerIteration": 3,
+          "preflopStrategyDelta": 0.5116335238183447,
+          "conditionalRangeDelta": 0.5961808432091513,
+          "continuationUtilityDelta": 1.2254518362320017,
+          "postflopStrategyDelta": 1,
+          "preflopNashConv": 0.01512250464545957,
+          "preflopExploitability": 0.007561252322729785,
+          "postflopNashConv": 1.1905901521020368,
+          "postflopExploitability": 0.5952950760510184,
+          "dampingAlpha": 0.6,
+          "cacheHit": false,
+          "runtimeMs": 8311.611699999994
+        }
+      ]
+    }
+  },
+  "limitations": [
+    "Experimental reduced HU game; not 8-max and not a professional full-game range.",
+    "One fixed flop is used in preflop comparison.",
+    "Future boards use a deterministic three-outcome abstraction that changes the solved game.",
+    "No postflop raises are present in the main experiment, although the engine and tests support one raise.",
+    "Finite CFR iterations produce approximate equilibria, never mathematical exactness.",
+    "No independent external solver validation has been performed.",
+    "Per-action preflop counterfactual EVs are not exported."
+  ]
+}

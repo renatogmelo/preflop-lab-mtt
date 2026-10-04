@@ -31,10 +31,29 @@ export type ContinuationRequest = {
   };
 };
 
+export type ChanceResolution = {
+  method: "exact-enumeration" | "sampled" | "abstracted" | "not-applicable";
+  outcomes?: number;
+  seed?: number | null;
+  description?: string;
+};
+
+export type StrategicSolution = {
+  status: "approximate-equilibrium" | "converged-approximation" | "unvalidated" | "validated";
+  algorithm?: string;
+  iterations?: number;
+  nashConv?: number | null;
+  exploitability?: number | null;
+  averageRegret?: number | null;
+  strategyDelta?: number | null;
+  convergenceHistory?: unknown[];
+};
+
 export type ContinuationResult = {
   utilities: [number, number];
   model: string;
-  confidence: "exact" | "sampled" | "modeled";
+  chanceResolution: ChanceResolution;
+  strategicSolution: StrategicSolution;
   metadata: Record<string, unknown>;
   computationId: string;
 };
@@ -91,7 +110,12 @@ export class EquityProvider implements StrategicContinuationProvider {
     return {
       utilities: utilityFromEquity(equity, request.state),
       model: this.id,
-      confidence: "method" in result && result.method === "exact-enumeration" ? "exact" : "sampled",
+      chanceResolution: {
+        method: "method" in result && result.method === "exact-enumeration" ? "exact-enumeration" : "sampled",
+        outcomes: "trials" in result ? result.trials : undefined,
+        seed: "seed" in result ? result.seed : this.options.seed ?? null,
+      },
+      strategicSolution: { status: "unvalidated" },
       metadata: { ...result, warning: "Equity is not a GTO continuation value." },
       computationId,
     };
@@ -120,7 +144,8 @@ export class RealizationModelProvider implements StrategicContinuationProvider {
     return {
       utilities: [utility, -utility],
       model: this.id,
-      confidence: "modeled",
+      chanceResolution: { method: "abstracted", description: "Realization factors are a documented utility abstraction." },
+      strategicSolution: { status: "unvalidated" },
       metadata: { factors: this.factors, methodology: this.methodology, equityComputationId: baseline.computationId },
       computationId: hashValue({ provider: this.id, request: continuationRequestHash(request), baseline: baseline.computationId }),
     };
@@ -133,6 +158,12 @@ export type SolvedContinuation = {
   exploitability: number;
   nashConv: number;
   iterations: number;
+  averageRegret?: number | null;
+  strategyDelta?: number | null;
+  convergenceHistory?: unknown[];
+  chanceResolution?: ChanceResolution;
+  strategicStatus?: StrategicSolution["status"];
+  algorithm?: string;
   metadata?: Record<string, unknown>;
 };
 
@@ -149,7 +180,17 @@ export class SubgameSolverProvider implements StrategicContinuationProvider {
     return {
       utilities: solved.utilities,
       model: this.id,
-      confidence: "exact",
+      chanceResolution: solved.chanceResolution ?? { method: "abstracted" },
+      strategicSolution: {
+        status: solved.strategicStatus ?? "approximate-equilibrium",
+        algorithm: solved.algorithm,
+        iterations: solved.iterations,
+        nashConv: solved.nashConv,
+        exploitability: solved.exploitability,
+        averageRegret: solved.averageRegret,
+        strategyDelta: solved.strategyDelta,
+        convergenceHistory: solved.convergenceHistory,
+      },
       metadata: {
         artifactId: solved.artifactId,
         exploitability: solved.exploitability,

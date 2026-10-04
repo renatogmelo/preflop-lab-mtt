@@ -34,3 +34,8 @@ O caminho defensável é validar primeiro subgames enumerados, depois chance sam
 - Level 1 `equity-provider-v1`: equity real, mas sem estratégia futura, Experimental.
 - Level 2 `solved-subgame-provider-v0`: subgame estratégico real, mas restrito ao cenário/abstraction exatos, ainda Experimental.
 - Integração completa de ranges preflop dinâmicos com todos os flops: pendente.
+
+
+## Phase 5 executed coupling experiment
+
+The architecture was executed for three outer iterations with damping alpha 0.6. Final deltas were 0.511634 (preflop strategy), 0.596181 (conditional range) and 1.225452 (continuation utility). The postflop strategy delta remained 1.0 and the loop did not converge. The result demonstrates the pipeline but blocks any promotion to training data.

@@ -103,3 +103,26 @@ O core possu?a Vanilla CFR, CFR+, DCFR, checkpoint, Kuhn, cards/ranges, betting 
 ### Estado dos milestones
 
 Milestone 1 Leduc: conclu?do para a variante declarada. Milestone 2 V2: estrutural/solve amostral conclu?dos, BR exato ainda pendente. Milestone 3 Postflop: conclu?do no subgame fixo declarado. Milestone 4 provider: interface/cache e consumo de artifact implementados para o estado fixo. Milestone 5: compara??o de utilities conclu?da; compara??o de estrat?gia preflop completa pendente. `Verified = 0`.
+
+
+## Phase 5 - reduced Hold'em strategic validation
+
+Completed:
+
+- exact reduced-game Hold'em V2 evaluation and infoset-safe best response;
+- 46-deal weighted physical-combo postflop subgame;
+- private chance, board blockers and conditional Bayesian range snapshots;
+- configurable three-street betting abstraction;
+- strategy-distance and multi-seed comparison artifacts;
+- sampled-vs-enumerated comparison;
+- iterative coupling with explicit damping and outer-loop metrics;
+- first Preflop Lab Solver Experimental v0.3.0 dataset.
+
+Measured limitations:
+
+- postflop NashConv 0.541129 and exploitability 0.270565 at 20 DCFR iterations;
+- solved-provider within-seed strategy distance mean 0.203640;
+- coupling did not converge in three outer iterations;
+- fixed flop and bucketed future boards remain abstractions.
+
+Next milestone is convergence and variance reduction in this same small game, not 8-max expansion.

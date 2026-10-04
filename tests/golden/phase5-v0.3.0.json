@@ -1,0 +1,22 @@
+{
+  "note": "Regression baseline for the declared Experimental Phase 5 abstraction; not a claim of theoretical poker truth.",
+  "privateDeals": 46,
+  "rangeSubgame": {
+    "nodes": 11179,
+    "informationSets": 2032,
+    "chanceNodes": 967,
+    "maximumExploitabilityAt20": 0.35
+  },
+  "comparison": {
+    "minimumEquityVsSolvedWeightedDistance": 0.5,
+    "maximumEquityVsSolvedWeightedDistance": 0.8,
+    "minimumProxyVsSolvedWeightedDistance": 0.9
+  },
+  "sampledVsEnumerated": {
+    "maximumFinalWeightedDistanceAt4000": 0.25
+  },
+  "coupling": {
+    "outerIterations": 3,
+    "expectedConverged": false
+  }
+}
