@@ -1,12 +1,13 @@
 import { CfrPlus, Dcfr, VanillaCfr } from "../algorithms/cfr";
+import { IndexedCfrSolver } from "../algorithms/indexed-cfr";
 import { createHoldemDeck, type HoleCombo, type SolverCard } from "../cards/cards";
 import { compareHoldemHands } from "../cards/hand-evaluator";
 import { privateDealDistribution, type PrivateDealOutcome } from "../cards/private-chance";
 import { WeightedRange } from "../cards/range";
 import { hashValue } from "../core/stable";
-import type { AlgorithmName, BehavioralStrategy, ExtensiveGame, Player, SolveMetrics } from "../core/types";
-import { StrategyEvaluator } from "../evaluation/best-response";
-import { compileGameTree } from "../tree/compiled";
+import type { AlgorithmName, BehavioralStrategy, DcfrParameters, ExtensiveGame, Player, SolveMetrics } from "../core/types";
+import { evaluateCompiledNode } from "../evaluation/compiled-analysis";
+import { compileGameTree, type CompiledGameTree } from "../tree/compiled";
 import { ValidationSuite, type ValidationReport } from "../validation/suite";
 
 export type RangePostflopStreet = "flop" | "turn" | "river";
@@ -387,6 +388,9 @@ export type RangePostflopSolveConfiguration = {
   metricInterval: number;
   seed: number;
   exactMetrics?: boolean;
+  dcfr?: DcfrParameters;
+  cfrPlusAveragingDelay?: number;
+  engine?: "object-tree" | "indexed-tree";
 };
 
 export type RangePostflopArtifact = {
@@ -404,36 +408,77 @@ export type RangePostflopArtifact = {
   tree: ReturnType<RangePostflopHoldemSubgame["estimateTree"]>;
   convergence: SolveMetrics;
   utilities: [number, number];
+  pairUtilities: Array<{ pairKey: string; playerZeroComboId: string; playerOneComboId: string; utilities: [number, number] }>;
   strategy: BehavioralStrategy;
   validation: ValidationReport;
   runtime: {
+    compileMs: number;
     solveMs: number;
+    strategyEvaluationMs: number;
+    totalMs: number;
     iterationsPerSecond: number;
     approximateHeapDeltaBytes: number;
   };
   trust: "Experimental";
 };
 
-function createSolver(game: RangePostflopHoldemSubgame, configuration: RangePostflopSolveConfiguration) {
+function createSolver(
+  game: RangePostflopHoldemSubgame,
+  configuration: RangePostflopSolveConfiguration,
+  compiled: CompiledGameTree<RangePostflopAction>,
+) {
   const common = { seed: configuration.seed, exactMetrics: configuration.exactMetrics ?? true };
-  if (configuration.algorithm === "vanilla-cfr") return new VanillaCfr(game, common);
-  if (configuration.algorithm === "cfr-plus") return new CfrPlus(game, { ...common, cfrPlusAveragingDelay: 0 });
-  return new Dcfr(game, { ...common, dcfr: { alpha: 1.5, beta: 0, gamma: 2 } });
+  if (configuration.engine === "indexed-tree") return new IndexedCfrSolver(game, {
+    algorithm: configuration.algorithm,
+    seed: configuration.seed,
+    exactMetrics: configuration.exactMetrics ?? true,
+    dcfr: configuration.dcfr,
+    cfrPlusAveragingDelay: configuration.cfrPlusAveragingDelay,
+    engine: "indexed-tree",
+  }, compiled);
+  if (configuration.algorithm === "vanilla-cfr") return new VanillaCfr(game, common, compiled);
+  if (configuration.algorithm === "cfr-plus") return new CfrPlus(game, {
+    ...common,
+    cfrPlusAveragingDelay: configuration.cfrPlusAveragingDelay ?? 0,
+  }, compiled);
+  return new Dcfr(game, {
+    ...common,
+    dcfr: configuration.dcfr ?? { alpha: 1.5, beta: 0, gamma: 2 },
+  }, compiled);
 }
 
 export function solveRangePostflopSubgame(
   definition: RangePostflopSubgameDefinition,
   configuration: RangePostflopSolveConfiguration,
 ): RangePostflopArtifact {
+  const totalStarted = performance.now();
   const game = new RangePostflopHoldemSubgame(definition);
-  const tree = game.estimateTree();
+  const compileStarted = performance.now();
+  const compiled = compileGameTree(game);
+  const compileMs = performance.now() - compileStarted;
+  const tree = compiled.statistics;
   const heapBefore = process.memoryUsage().heapUsed;
   const started = performance.now();
-  const solver = createSolver(game, configuration);
+  const solver = createSolver(game, configuration, compiled);
   const result = solver.solve({ maxIterations: configuration.iterations, metricInterval: configuration.metricInterval });
   const solveMs = performance.now() - started;
   const heapAfter = process.memoryUsage().heapUsed;
-  const utilities = new StrategyEvaluator(game).evaluate(result.strategy);
+  const evaluationStarted = performance.now();
+  const utilities = evaluateCompiledNode(compiled.root, result.strategy);
+  const strategyEvaluationMs = performance.now() - evaluationStarted;
+  if (compiled.root.kind !== "chance") throw new Error("Range postflop compiled root must be private chance.");
+  const pairUtilities = game.privateDeals.map((deal, index) => {
+    const outcome = compiled.root.kind === "chance"
+      ? compiled.root.outcomes.find((candidate) => candidate.action === `private:${index}`)
+      : undefined;
+    if (!outcome) throw new Error("Compiled postflop tree is missing a private deal branch.");
+    return {
+      pairKey: deal.playerZero.id + "|" + deal.playerOne.id,
+      playerZeroComboId: deal.playerZero.id,
+      playerOneComboId: deal.playerOne.id,
+      utilities: evaluateCompiledNode(outcome.child, result.strategy),
+    };
+  });
   const rangeHashes = definition.ranges.map((range) => hashValue(
     range.entries().filter(({ weight }) => weight > 0).map(({ combo, weight }) => [combo.id, weight]),
   )) as [string, string];
@@ -463,10 +508,14 @@ export function solveRangePostflopSubgame(
     tree,
     convergence: result.metrics,
     utilities,
+    pairUtilities,
     strategy: result.strategy,
     validation,
     runtime: {
+      compileMs,
       solveMs,
+      strategyEvaluationMs,
+      totalMs: performance.now() - totalStarted,
       iterationsPerSecond: configuration.iterations / Math.max(0.001, solveMs / 1000),
       approximateHeapDeltaBytes: Math.max(0, heapAfter - heapBefore),
     },

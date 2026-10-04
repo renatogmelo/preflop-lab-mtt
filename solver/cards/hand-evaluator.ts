@@ -114,13 +114,48 @@ export function compareHandRanks(left: HandRank, right: HandRank) {
   return 0;
 }
 
-export function evaluateHoldemHand(cards: SolverCard[]): HandRank {
+export function evaluateHoldemHandReference(cards: SolverCard[]): HandRank {
   if (cards.length < 5 || cards.length > 7 || new Set(cards.map((card) => card.id)).size !== cards.length) {
     throw new Error("Hold'em evaluation requires five to seven unique cards.");
   }
   return combinations(cards, 5)
     .map(rankFive)
     .reduce((best, candidate) => compareHandRanks(candidate, best) > 0 ? candidate : best);
+}
+
+const FIVE_CARD_INDEXES = new Map<number, number[][]>();
+
+function fiveCardIndexes(length: number) {
+  const existing = FIVE_CARD_INDEXES.get(length);
+  if (existing) return existing;
+  const result: number[][] = [];
+  const visit = (start: number, selected: number[]) => {
+    if (selected.length === 5) {
+      result.push([...selected]);
+      return;
+    }
+    for (let index = start; index <= length - (5 - selected.length); index += 1) {
+      selected.push(index);
+      visit(index + 1, selected);
+      selected.pop();
+    }
+  };
+  visit(0, []);
+  FIVE_CARD_INDEXES.set(length, result);
+  return result;
+}
+
+export function evaluateHoldemHand(cards: SolverCard[]): HandRank {
+  if (cards.length < 5 || cards.length > 7 || new Set(cards.map((card) => card.id)).size !== cards.length) {
+    throw new Error("Hold'em evaluation requires five to seven unique cards.");
+  }
+  let best: HandRank | null = null;
+  for (const indexes of fiveCardIndexes(cards.length)) {
+    const candidate = rankFive(indexes.map((index) => cards[index]));
+    if (best === null || compareHandRanks(candidate, best) > 0) best = candidate;
+  }
+  if (best === null) throw new Error("Hold'em evaluator produced no five-card candidates.");
+  return best;
 }
 
 export function compareHoldemHands(left: SolverCard[], right: SolverCard[]) {

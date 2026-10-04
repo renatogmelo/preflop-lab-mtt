@@ -17,7 +17,7 @@ export type ContinuationArtifactIdentity = {
   solverVersion?: string;
 };
 
-export function continuationArtifactKey(identity: ContinuationArtifactIdentity) {
+export function continuationArtifactKey(identity: ContinuationArtifactIdentity, rangeWeightQuantization = 1e-9) {
   return hashValue({
     board: identity.board.map((card) => card.id),
     pot: identity.pot,
@@ -25,7 +25,7 @@ export function continuationArtifactKey(identity: ContinuationArtifactIdentity) 
     actingPlayer: identity.actingPlayer,
     position: identity.position,
     actionHistory: identity.actionHistory,
-    ranges: identity.ranges.map(rangeHash),
+    ranges: identity.ranges.map((range) => rangeHash(range, rangeWeightQuantization)),
     bettingAbstraction: identity.bettingAbstraction,
     algorithmConfiguration: identity.algorithmConfiguration,
     solverVersion: identity.solverVersion ?? SOLVER_VERSION,
@@ -37,8 +37,12 @@ export class ContinuationArtifactCache<T> {
   private hits = 0;
   private misses = 0;
 
+  constructor(readonly rangeWeightQuantization = 1e-9) {
+    if (!(rangeWeightQuantization > 0) || !Number.isFinite(rangeWeightQuantization)) throw new Error("Cache quantization must be a positive finite number.");
+  }
+
   getOrCreate(identity: ContinuationArtifactIdentity, create: () => T) {
-    const key = continuationArtifactKey(identity);
+    const key = continuationArtifactKey(identity, this.rangeWeightQuantization);
     const existing = this.artifacts.get(key);
     if (existing !== undefined) {
       this.hits += 1;
@@ -61,7 +65,7 @@ export class ContinuationArtifactCache<T> {
       hits: this.hits,
       misses: this.misses,
       hitRate: requests ? this.hits / requests : 0,
-      rangeWeightQuantization: 1e-9,
+      rangeWeightQuantization: this.rangeWeightQuantization,
     };
   }
 }

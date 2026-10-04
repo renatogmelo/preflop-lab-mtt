@@ -73,19 +73,42 @@ function finalize(scores: number[], method: EquityResult["method"], seed: number
 }
 
 export class EquityEngine {
+  private readonly comboCache = new Map<string, EquityResult>();
+  private cacheHits = 0;
+  private cacheMisses = 0;
+
   comboEquity(hero: HoleCombo, villain: HoleCombo, board: SolverCard[] = [], options: EquityOptions = {}): EquityResult {
     if (board.length > 5) throw new Error("A Hold'em board cannot contain more than five cards.");
     const dead = [hero.first, hero.second, villain.first, villain.second, ...board];
     assertUnique(dead);
+    const effectiveOptions = {
+      exactThreshold: options.exactThreshold ?? 250_000,
+      samples: options.samples ?? 100_000,
+      seed: options.seed ?? 20261003,
+    };
+    const cacheKey = [
+      hero.id,
+      villain.id,
+      [...board].map((card) => card.id).sort((left, right) => left - right).join("-"),
+      effectiveOptions.exactThreshold,
+      effectiveOptions.samples,
+      effectiveOptions.seed,
+    ].join("|");
+    const cached = this.comboCache.get(cacheKey);
+    if (cached) {
+      this.cacheHits += 1;
+      return cached;
+    }
+    this.cacheMisses += 1;
     const deadIds = new Set(dead.map((card) => card.id));
     const deck = createHoldemDeck().filter((card) => !deadIds.has(card.id));
     const missing = 5 - board.length;
     const possible = chooseCount(deck.length, missing);
-    const exactThreshold = options.exactThreshold ?? 250_000;
-    const seed = options.seed ?? 20261003;
+    const exactThreshold = effectiveOptions.exactThreshold;
+    const seed = effectiveOptions.seed;
     const runouts = possible <= exactThreshold
       ? enumerateRunouts(deck, missing)
-      : sampledRunouts(deck, missing, Math.min(options.samples ?? 100_000, possible), seed);
+      : sampledRunouts(deck, missing, Math.min(effectiveOptions.samples, possible), seed);
     const scores = runouts.map((runout) => {
       const completeBoard = [...board, ...runout];
       const comparison = compareHoldemHands(
@@ -94,7 +117,25 @@ export class EquityEngine {
       );
       return comparison > 0 ? 1 : comparison < 0 ? 0 : 0.5;
     });
-    return finalize(scores, possible <= exactThreshold ? "exact-enumeration" : "deterministic-sampling", possible <= exactThreshold ? null : seed);
+    const result = finalize(scores, possible <= exactThreshold ? "exact-enumeration" : "deterministic-sampling", possible <= exactThreshold ? null : seed);
+    this.comboCache.set(cacheKey, result);
+    return result;
+  }
+
+  cacheMetrics() {
+    const requests = this.cacheHits + this.cacheMisses;
+    return {
+      entries: this.comboCache.size,
+      hits: this.cacheHits,
+      misses: this.cacheMisses,
+      hitRate: requests ? this.cacheHits / requests : 0,
+    };
+  }
+
+  clearCache() {
+    this.comboCache.clear();
+    this.cacheHits = 0;
+    this.cacheMisses = 0;
   }
 
   rangeEquity(heroRange: WeightedRange, villainRange: WeightedRange, board: SolverCard[] = [], options: EquityOptions = {}) {

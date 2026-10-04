@@ -1,14 +1,12 @@
-import { privateDealDistribution } from "../cards/private-chance";
 import { WeightedRange } from "../cards/range";
 import { ContinuationArtifactCache } from "../continuation/cache";
 import type { ContinuationRequest, ContinuationResult, StrategicContinuationProvider } from "../continuation/engine";
 import { hashValue } from "../core/stable";
 import type { BehavioralStrategy } from "../core/types";
-import { StrategyEvaluator } from "../evaluation/best-response";
 import { HoldemPreflopEvaluationGame, HoldemPreflopStrategyEvaluator } from "../evaluation/holdem-preflop";
 import { applyBettingAction, createPreflopBettingState } from "../game/betting";
 import { createHoldemPreflopV2Definition, holdemPreflopActionId, holdemPreflopLegalActions, HoldemPreflopV2Solver, type HoldemPreflopV2Configuration } from "../game/holdem-preflop-v2";
-import { RangePostflopHoldemSubgame, solveRangePostflopSubgame, type FutureBoardProvider, type RangePostflopAbstraction, type RangePostflopArtifact, type RangePostflopSolveConfiguration } from "../game/range-postflop-subgame";
+import { solveRangePostflopSubgame, type FutureBoardProvider, type RangePostflopAbstraction, type RangePostflopArtifact, type RangePostflopSolveConfiguration } from "../game/range-postflop-subgame";
 import { conditionalRangeL1, deriveConditionalRangeSnapshots, weightedRangeFromSnapshot, type ConditionalRangeSnapshot } from "../ranges/conditional";
 import { strategyDistance } from "../comparison/strategy-distance";
 import type { SolverCard } from "../cards/cards";
@@ -73,7 +71,18 @@ export type CoupledSolverConfiguration = {
   postflopSolve: RangePostflopSolveConfiguration;
   outerIterations: number;
   dampingAlpha: number;
-  convergence: { preflopStrategyDelta: number; conditionalRangeDelta: number; continuationUtilityDelta: number };
+  preflopSeedMode?: "fixed" | "incrementing";
+  maximumRuntimeMs?: number;
+  stopOnOscillation?: boolean;
+  divergenceWindow?: number;
+  rangeHashQuantization?: number;
+  convergence: {
+    preflopStrategyDelta: number;
+    conditionalRangeDelta: number;
+    continuationUtilityDelta: number;
+    postflopStrategyDelta?: number;
+    patience?: number;
+  };
 };
 
 function terminalState(configuration: HoldemPreflopV2Configuration, history: string[]) {
@@ -87,26 +96,11 @@ function terminalState(configuration: HoldemPreflopV2Configuration, history: str
   return state;
 }
 
-function evaluatePairs(artifact: RangePostflopArtifact, config: CoupledSolverConfiguration, pot: number, stacks: [number, number]) {
-  const values = new Map<string, [number, number]>();
-  for (const deal of privateDealDistribution(config.ranges[0], config.ranges[1], config.flop)) {
-    const game = new RangePostflopHoldemSubgame({
-      id: "pair-evaluation:" + deal.playerZero.id + ":" + deal.playerOne.id,
-      ranges: [
-        new WeightedRange([{ combo: deal.playerZero, weight: 1 }]),
-        new WeightedRange([{ combo: deal.playerOne, weight: 1 }]),
-      ],
-      flop: config.flop,
-      pot,
-      stacks,
-      firstPlayer: 1,
-      abstraction: config.postflopAbstraction,
-      boardProvider: config.boardProvider,
-      rangeSource: { description: "Pairwise evaluation under the range-solved strategy." },
-    });
-    values.set(pairKey(deal.playerZero.id, deal.playerOne.id), new StrategyEvaluator(game).evaluate(artifact.strategy));
-  }
-  return values;
+function evaluatePairs(artifact: RangePostflopArtifact) {
+  return new Map(artifact.pairUtilities.map((entry) => [
+    entry.pairKey,
+    entry.utilities,
+  ] as [string, [number, number]]));
 }
 
 function damp(previous: ReadonlyMap<string, [number, number]> | null, solved: ReadonlyMap<string, [number, number]>, alpha: number) {
@@ -120,6 +114,25 @@ function damp(previous: ReadonlyMap<string, [number, number]> | null, solved: Re
   return result;
 }
 
+export function detectDivergence(values: number[], window = 3, minimumIncrease = 1e-6) {
+  if (values.length < window || window < 2) return false;
+  const recent = values.slice(-window);
+  return recent.slice(1).every((value, index) => value > recent[index] + minimumIncrease);
+}
+
+export function detectPeriodTwoOscillation(values: number[], tolerance = 1e-6, minimumAmplitude = tolerance * 4) {
+  if (values.length < 4) return { detected: false, period: null, amplitude: 0 };
+  const recent = values.slice(-4);
+  const recurrence = Math.max(Math.abs(recent[2] - recent[0]), Math.abs(recent[3] - recent[1]));
+  const amplitude = Math.max(Math.abs(recent[1] - recent[0]), Math.abs(recent[2] - recent[1]), Math.abs(recent[3] - recent[2]));
+  return { detected: recurrence <= tolerance && amplitude >= minimumAmplitude, period: recurrence <= tolerance && amplitude >= minimumAmplitude ? 2 : null, amplitude };
+}
+
+export function satisfiesConvergencePatience(passes: boolean[], patience: number) {
+  if (!Number.isInteger(patience) || patience <= 0) throw new Error("Convergence patience must be a positive integer.");
+  return passes.length >= patience && passes.slice(-patience).every(Boolean);
+}
+
 function valueDelta(previous: ReadonlyMap<string, [number, number]> | null, current: ReadonlyMap<string, [number, number]>) {
   if (!previous) return null;
   let result = 0;
@@ -131,10 +144,11 @@ function valueDelta(previous: ReadonlyMap<string, [number, number]> | null, curr
 }
 
 export class CoupledPreflopPostflopSolver {
-  readonly cache = new ContinuationArtifactCache<RangePostflopArtifact>();
+  readonly cache: ContinuationArtifactCache<RangePostflopArtifact>;
 
   constructor(readonly configuration: CoupledSolverConfiguration, readonly initialContinuation: StrategicContinuationProvider) {
     if (!(configuration.dampingAlpha > 0 && configuration.dampingAlpha <= 1)) throw new Error("Damping alpha must be in (0, 1].");
+    this.cache = new ContinuationArtifactCache(configuration.rangeHashQuantization ?? 1e-9);
   }
 
   solve() {
@@ -148,6 +162,13 @@ export class CoupledPreflopPostflopSolver {
     let previousValues: Map<string, [number, number]> | null = null;
     const outerMetrics: Array<Record<string, number | boolean | null>> = [];
     const postflopArtifacts: RangePostflopArtifact[] = [];
+    const continuationValueHistory: Array<{ outerIteration: number; values: Array<{ pairKey: string; utilityP0: number }> }> = [];
+    const convergencePasses: boolean[] = [];
+    const instabilityScores: number[] = [];
+    const continuationProbes: number[] = [];
+    const patience = this.configuration.convergence.patience ?? 1;
+    const couplingStarted = performance.now();
+    let stopReason: "iterations" | "converged" | "oscillating" | "diverging" | "runtime" = "iterations";
     let finalSnapshots: [ConditionalRangeSnapshot, ConditionalRangeSnapshot] | null = null;
 
     for (let iteration = 1; iteration <= this.configuration.outerIterations; iteration += 1) {
@@ -191,11 +212,11 @@ export class CoupledPreflopPostflopSolver {
         },
       }, this.configuration.postflopSolve));
       const postflop = cached.value;
-      const solvedValues = evaluatePairs(postflop, this.configuration, pot, stacks);
+      const solvedValues = evaluatePairs(postflop);
       const values = damp(previousValues, solvedValues, this.configuration.dampingAlpha);
       const provider = new PairTableContinuationProvider(values, { pot, stacks }, postflop);
       const next = new HoldemPreflopV2Solver(
-        { ...this.configuration.preflop, seed: this.configuration.preflop.seed + iteration },
+        { ...this.configuration.preflop, seed: this.configuration.preflop.seed + (this.configuration.preflopSeedMode === "fixed" ? 0 : iteration) },
         provider,
         this.configuration.ranges,
       ).solve();
@@ -208,6 +229,25 @@ export class CoupledPreflopPostflopSolver {
         : null;
       const continuationDelta = valueDelta(previousValues, values);
       const postflopDelta = previousPostflop ? strategyDistance(previousPostflop, postflop.strategy).maxAbsoluteDelta : null;
+      const postflopThreshold = this.configuration.convergence.postflopStrategyDelta;
+      const convergencePass = rangeDelta !== null
+        && continuationDelta !== null
+        && (postflopThreshold === undefined || (postflopDelta !== null && postflopDelta <= postflopThreshold))
+        && preflopDelta <= this.configuration.convergence.preflopStrategyDelta
+        && rangeDelta <= this.configuration.convergence.conditionalRangeDelta
+        && continuationDelta <= this.configuration.convergence.continuationUtilityDelta;
+      convergencePasses.push(convergencePass);
+      const score = Math.max(preflopDelta, rangeDelta ?? 0, continuationDelta ?? 0, postflopDelta ?? 0);
+      instabilityScores.push(score);
+      const sortedValues = [...values].sort(([left], [right]) => left.localeCompare(right));
+      const continuationProbe = sortedValues[0]?.[1][0] ?? 0;
+      continuationProbes.push(continuationProbe);
+      const oscillation = detectPeriodTwoOscillation(continuationProbes, 1e-5, 1e-4);
+      const diverging = detectDivergence(instabilityScores, this.configuration.divergenceWindow ?? 3);
+      continuationValueHistory.push({
+        outerIteration: iteration,
+        values: sortedValues.map(([key, utility]) => ({ pairKey: key, utilityP0: utility[0] })),
+      });
       outerMetrics.push({
         outerIteration: iteration,
         preflopStrategyDelta: preflopDelta,
@@ -220,6 +260,15 @@ export class CoupledPreflopPostflopSolver {
         postflopExploitability: postflop.convergence.exploitability,
         dampingAlpha: this.configuration.dampingAlpha,
         cacheHit: cached.cacheHit,
+        convergencePass,
+        consecutivePasses: [...convergencePasses].reverse().findIndex((value) => !value) < 0
+          ? convergencePasses.length
+          : [...convergencePasses].reverse().findIndex((value) => !value),
+        oscillating: oscillation.detected,
+        oscillationPeriod: oscillation.period,
+        oscillationAmplitude: oscillation.amplitude,
+        diverging,
+        continuationProbe,
         runtimeMs: performance.now() - started,
       });
       postflopArtifacts.push(postflop);
@@ -229,19 +278,26 @@ export class CoupledPreflopPostflopSolver {
       previousPostflop = postflop.strategy;
       previousValues = values;
       finalSnapshots = snapshots;
-      if (rangeDelta !== null && continuationDelta !== null
-        && preflopDelta <= this.configuration.convergence.preflopStrategyDelta
-        && rangeDelta <= this.configuration.convergence.conditionalRangeDelta
-        && continuationDelta <= this.configuration.convergence.continuationUtilityDelta) break;
+      if (satisfiesConvergencePatience(convergencePasses, patience)) {
+        stopReason = "converged";
+        break;
+      }
+      if (diverging) {
+        stopReason = "diverging";
+        break;
+      }
+      if (oscillation.detected && this.configuration.stopOnOscillation) {
+        stopReason = "oscillating";
+        break;
+      }
+      if (this.configuration.maximumRuntimeMs !== undefined
+        && performance.now() - couplingStarted >= this.configuration.maximumRuntimeMs) {
+        stopReason = "runtime";
+        break;
+      }
     }
 
-    const last = outerMetrics.at(-1);
-    const converged = Boolean(last
-      && last.conditionalRangeDelta !== null
-      && last.continuationUtilityDelta !== null
-      && Number(last.preflopStrategyDelta) <= this.configuration.convergence.preflopStrategyDelta
-      && Number(last.conditionalRangeDelta) <= this.configuration.convergence.conditionalRangeDelta
-      && Number(last.continuationUtilityDelta) <= this.configuration.convergence.continuationUtilityDelta);
+    const converged = stopReason === "converged";
     return {
       id: "coupled-solve:" + hashValue({ outerMetrics, finalPreflop: preflop.id }),
       trust: "Experimental" as const,
@@ -249,8 +305,11 @@ export class CoupledPreflopPostflopSolver {
       conditionalRanges: finalSnapshots,
       postflopArtifacts,
       outerMetrics,
+      continuationValueHistory,
       cache: this.cache.metrics(),
       converged,
+      stopReason,
+      convergencePatience: patience,
       convergenceCriteria: this.configuration.convergence,
       dampingAlpha: this.configuration.dampingAlpha,
       limitation: "Approximate equilibrium of the declared reduced HU abstractions; not full-game GTO Hold'em.",

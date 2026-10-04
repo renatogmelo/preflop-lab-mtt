@@ -37,6 +37,7 @@ export type SolverConfiguration = {
   exactMetrics?: boolean;
   dcfr?: DcfrParameters;
   cfrPlusAveragingDelay?: number;
+  engine?: "object-tree" | "indexed-tree";
 };
 
 export type ConvergencePoint = {

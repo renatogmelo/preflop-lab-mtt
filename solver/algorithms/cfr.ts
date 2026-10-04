@@ -12,8 +12,8 @@ import {
 } from "../core/types";
 import { hashValue } from "../core/stable";
 import { SOLVER_VERSION } from "../core/version";
-import { NashConvEvaluator } from "../evaluation/best-response";
-import { compileGameTree, type CompiledNode } from "../tree/compiled";
+import { CompiledNashConvEvaluator } from "../evaluation/compiled-analysis";
+import { compileGameTree, type CompiledGameTree, type CompiledNode } from "../tree/compiled";
 
 type InfoSetState<Action extends string> = {
   actions: Action[];
@@ -21,7 +21,23 @@ type InfoSetState<Action extends string> = {
   strategySum: number[];
 };
 
-const DEFAULT_DCFR = { alpha: 1.5, beta: 0, gamma: 2 };
+export const DEFAULT_DCFR = { alpha: 1.5, beta: 0, gamma: 2 };
+
+export function dcfrDiscountScales(nextIteration: number, parameters = DEFAULT_DCFR) {
+  if (!Number.isInteger(nextIteration) || nextIteration <= 0) throw new Error("DCFR iteration must be a positive integer.");
+  const positivePower = Math.pow(nextIteration, parameters.alpha);
+  const negativePower = Math.pow(nextIteration, parameters.beta);
+  return {
+    positive: positivePower / (positivePower + 1),
+    negative: negativePower / (negativePower + 1),
+    strategy: Math.pow((nextIteration - 1) / nextIteration, parameters.gamma),
+  };
+}
+
+export function cfrPlusAveragingWeight(nextIteration: number, delay = 0) {
+  if (!Number.isInteger(nextIteration) || nextIteration <= 0) throw new Error("CFR+ iteration must be a positive integer.");
+  return Math.max(0, nextIteration - delay);
+}
 
 function assertFinite(values: number[], label: string) {
   if (values.some((value) => !Number.isFinite(value))) {
@@ -57,15 +73,18 @@ export class CfrSolver<State, Action extends string> implements SolverAlgorithm 
   readonly gameDefinitionHash: string;
   readonly configurationHash: string;
   readonly solveId: string;
-  private readonly nashConvEvaluator: NashConvEvaluator<State, Action>;
+  private readonly nashConvEvaluator: CompiledNashConvEvaluator<Action>;
+  readonly compiledTree: CompiledGameTree<Action>;
   private readonly compiledRoot: CompiledNode<Action>;
 
   constructor(
     protected readonly game: ExtensiveGame<State, Action>,
     readonly configuration: SolverConfiguration,
+    compiledTree?: CompiledGameTree<Action>,
   ) {
-    this.nashConvEvaluator = new NashConvEvaluator(game);
-    this.compiledRoot = compileGameTree(game).root;
+    this.compiledTree = compiledTree ?? compileGameTree(game);
+    this.compiledRoot = this.compiledTree.root;
+    this.nashConvEvaluator = new CompiledNashConvEvaluator(this.compiledRoot);
     this.gameDefinitionHash = hashValue(game.definition);
     this.configurationHash = hashValue(configuration);
     this.solveId = hashValue({
@@ -104,10 +123,10 @@ export class CfrSolver<State, Action extends string> implements SolverAlgorithm 
 
   protected discountDcfr(nextIteration: number) {
     if (this.configuration.algorithm !== "dcfr") return;
-    const { alpha, beta, gamma } = this.configuration.dcfr ?? DEFAULT_DCFR;
-    const positiveScale = Math.pow(nextIteration, alpha) / (Math.pow(nextIteration, alpha) + 1);
-    const negativeScale = Math.pow(nextIteration, beta) / (Math.pow(nextIteration, beta) + 1);
-    const strategyScale = Math.pow((nextIteration - 1) / nextIteration, gamma);
+    const scales = dcfrDiscountScales(nextIteration, this.configuration.dcfr ?? DEFAULT_DCFR);
+    const positiveScale = scales.positive;
+    const negativeScale = scales.negative;
+    const strategyScale = scales.strategy;
     this.infosets.forEach((state) => {
       state.regrets = state.regrets.map((value) => value * (value >= 0 ? positiveScale : negativeScale));
       state.strategySum = state.strategySum.map((value) => value * strategyScale);
@@ -116,8 +135,7 @@ export class CfrSolver<State, Action extends string> implements SolverAlgorithm 
 
   protected averagingWeight(nextIteration: number) {
     if (this.configuration.algorithm !== "cfr-plus") return 1;
-    const delay = this.configuration.cfrPlusAveragingDelay ?? 0;
-    return Math.max(0, nextIteration - delay);
+    return cfrPlusAveragingWeight(nextIteration, this.configuration.cfrPlusAveragingDelay ?? 0);
   }
 
   protected traverse(
@@ -360,19 +378,19 @@ export class CfrSolver<State, Action extends string> implements SolverAlgorithm 
 }
 
 export class VanillaCfr<State, Action extends string> extends CfrSolver<State, Action> {
-  constructor(game: ExtensiveGame<State, Action>, configuration: Omit<SolverConfiguration, "algorithm"> = { seed: 1 }) {
-    super(game, { ...configuration, algorithm: "vanilla-cfr" });
+  constructor(game: ExtensiveGame<State, Action>, configuration: Omit<SolverConfiguration, "algorithm"> = { seed: 1 }, compiledTree?: CompiledGameTree<Action>) {
+    super(game, { ...configuration, algorithm: "vanilla-cfr" }, compiledTree);
   }
 }
 
 export class CfrPlus<State, Action extends string> extends CfrSolver<State, Action> {
-  constructor(game: ExtensiveGame<State, Action>, configuration: Omit<SolverConfiguration, "algorithm"> = { seed: 1 }) {
-    super(game, { ...configuration, algorithm: "cfr-plus" });
+  constructor(game: ExtensiveGame<State, Action>, configuration: Omit<SolverConfiguration, "algorithm"> = { seed: 1 }, compiledTree?: CompiledGameTree<Action>) {
+    super(game, { ...configuration, algorithm: "cfr-plus" }, compiledTree);
   }
 }
 
 export class Dcfr<State, Action extends string> extends CfrSolver<State, Action> {
-  constructor(game: ExtensiveGame<State, Action>, configuration: Omit<SolverConfiguration, "algorithm"> = { seed: 1 }) {
-    super(game, { dcfr: DEFAULT_DCFR, ...configuration, algorithm: "dcfr" });
+  constructor(game: ExtensiveGame<State, Action>, configuration: Omit<SolverConfiguration, "algorithm"> = { seed: 1 }, compiledTree?: CompiledGameTree<Action>) {
+    super(game, { dcfr: DEFAULT_DCFR, ...configuration, algorithm: "dcfr" }, compiledTree);
   }
 }

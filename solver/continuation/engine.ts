@@ -67,11 +67,12 @@ export interface StrategicContinuationProvider {
 
 const RANGE_QUANTIZATION = 1e-9;
 
-export function rangeHash(range: WeightedRange) {
+export function rangeHash(range: WeightedRange, quantization = RANGE_QUANTIZATION) {
+  if (!(quantization > 0) || !Number.isFinite(quantization)) throw new Error("Range hash quantization must be a positive finite number.");
   return hashValue(range.entries()
     .filter((entry) => entry.weight > 0)
     .sort((left, right) => left.combo.id.localeCompare(right.combo.id))
-    .map((entry) => [entry.combo.id, Math.round(entry.weight / RANGE_QUANTIZATION) * RANGE_QUANTIZATION]));
+    .map((entry) => [entry.combo.id, Math.round(entry.weight / quantization) * quantization]));
 }
 
 export function continuationRequestHash(request: ContinuationRequest) {

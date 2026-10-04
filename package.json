@@ -1,6 +1,6 @@
 {
   "name": "preflop-lab",
-  "version": "0.2.0",
+  "version": "0.4.0",
   "private": true,
   "engines": {
     "node": ">=22.13.0"
@@ -19,7 +19,8 @@
     "solver:holdem": "node --import tsx solver/cli/index.ts solve solver/configs/holdem-poc.json",
     "solver:benchmark": "node --import tsx solver/cli/index.ts benchmark",
     "solver:phase4": "node --import tsx solver/benchmarks/phase4.ts",
-    "solver:phase5": "node --import tsx solver/benchmarks/phase5.ts"
+    "solver:phase5": "node --import tsx solver/benchmarks/phase5.ts",
+    "solver:phase6": "node --import tsx solver/benchmarks/phase6.ts"
   },
   "dependencies": {
     "drizzle-orm": "0.45.2",

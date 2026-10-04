@@ -32,7 +32,12 @@ export type CompiledTreeStatistics = {
   maximumDepth: number;
 };
 
-export function compileGameTree<State, Action extends string>(game: ExtensiveGame<State, Action>) {
+export type CompiledGameTree<Action extends string> = {
+  root: CompiledNode<Action>;
+  statistics: CompiledTreeStatistics;
+};
+
+export function compileGameTree<State, Action extends string>(game: ExtensiveGame<State, Action>): CompiledGameTree<Action> {
   const informationSets = new Set<string>();
   const statistics: CompiledTreeStatistics = {
     nodes: 0,

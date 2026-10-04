@@ -126,3 +126,40 @@ Measured limitations:
 - fixed flop and bucketed future boards remain abstractions.
 
 Next milestone is convergence and variance reduction in this same small game, not 8-max expansion.
+
+
+## PHASE 6 AUDIT - 2026-10-04
+
+Baseline audited: `a9f3f8fe530f32a34020698299c9c522c41f1bc3` (solver `0.3.0`). The Phase 5 artifact is preserved unchanged.
+
+### Frozen reference game
+
+- 46 compatible weighted private deals on flop `8h 7d 2c`;
+- 11,179 nodes, 2,032 information sets, 967 chance nodes and 4,508 terminals;
+- HU 10bb preflop with SB fold/raise-to-2 and BB fold/call;
+- postflop bets fixed at 33% flop, 50% turn and 100% river;
+- no raises or jams in the principal experiment;
+- deterministic two-outcome future-board abstraction;
+- formal Phase 6 identity: `phase6-reference-game-v1`.
+
+### Numerical state found
+
+- inner DCFR at 20 iterations: NashConv `0.541129`, exploitability `0.270565`, maximum strategy delta `1.0`;
+- solved-provider within-provider seed distance: `0.203640` across only three seeds;
+- equity-vs-solved weighted strategy distance: `0.636867`;
+- coupling alpha `0.6`, three outer iterations, final deltas `0.511634 / 0.596181 / 1.225452 / 1.0`, not converged;
+- all Hold'em outputs are `Experimental`; `Verified = 0`.
+
+### Implementation findings
+
+- CFR, CFR+ and DCFR share the same compiled object tree and exact infoset-safe BR evaluator;
+- CFR+ clips cumulative regrets and uses delayed linear averaging; DCFR applies separate positive/negative regret and strategy-sum discounts before each iteration;
+- exact BR currently rebuilds an evaluation tree for each player and checkpoint, which is a likely wall-clock hot path;
+- maximum strategy delta gives full weight to newly visited and near-zero-reach information sets, so `1.0` is not sufficient evidence that the trunk itself moved by 100 percentage points;
+- exact equity recreates runouts and evaluates repeated showdowns without a cross-request matchup cache;
+- the outer loop has one-shot thresholds but no convergence patience, oscillation detector or divergence state;
+- continuation-result semantics correctly distinguish exact private chance from abstracted future boards and finite strategic approximation.
+
+### Phase 6 controls
+
+The main game definition, ranges, fixed flop, board buckets and betting abstraction will not change. Phase 6 will add convergence histories, reach-aware diagnostics, counterfactual action EV, deterministic resume tests, profiling, algorithm/parameter/seed studies and fixed-point controls without overwriting Phase 5 evidence.

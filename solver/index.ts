@@ -1,4 +1,5 @@
 export * from "./algorithms/cfr";
+export * from "./algorithms/indexed-cfr";
 export * from "./cards/cards";
 export * from "./cards/equity";
 export * from "./cards/hand-evaluator";
@@ -11,7 +12,9 @@ export * from "./continuation/subgame-solver";
 export * from "./core/types";
 export * from "./core/version";
 export * from "./evaluation/best-response";
+export * from "./evaluation/compiled-analysis";
 export * from "./evaluation/holdem-preflop";
+export * from "./experiments/convergence";
 export * from "./game/betting";
 export * from "./game/definition";
 export * from "./game/holdem-poc";

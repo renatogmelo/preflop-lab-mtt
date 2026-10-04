@@ -17,7 +17,8 @@ import {
   holdemPreflopLegalActions,
   type HoldemPreflopV2Configuration,
 } from "../game/holdem-preflop-v2";
-import { BestResponseEvaluator, StrategyEvaluator } from "./best-response";
+import { CompiledBestResponseEvaluator, counterfactualActionDiagnostics, evaluateCompiledNode } from "./compiled-analysis";
+import { compileGameTree } from "../tree/compiled";
 
 type PreflopEvaluationAction = `deal:${number}` | string;
 type PreflopEvaluationState = {
@@ -151,17 +152,22 @@ export class HoldemPreflopEvaluationGame implements ExtensiveGame<PreflopEvaluat
 }
 
 export class HoldemPreflopStrategyEvaluator {
-  constructor(readonly game: HoldemPreflopEvaluationGame) {}
+  readonly compiled;
+
+  constructor(readonly game: HoldemPreflopEvaluationGame) {
+    this.compiled = compileGameTree(game);
+  }
 
   evaluate(strategy: BehavioralStrategy): HoldemPreflopEvaluationMetrics {
     const totalStart = performance.now();
     const strategyStart = performance.now();
-    const utilities = new StrategyEvaluator(this.game).evaluate(strategy);
+    const utilities = evaluateCompiledNode(this.compiled.root, strategy);
     const strategyEvaluationMs = performance.now() - strategyStart;
     if (Math.abs(utilities[0] + utilities[1]) > 1e-8) throw new Error("Hold'em preflop evaluation must be zero-sum.");
     const brStart = performance.now();
-    const first = new BestResponseEvaluator(this.game).evaluate(0, strategy);
-    const second = new BestResponseEvaluator(this.game).evaluate(1, strategy);
+    const evaluator = new CompiledBestResponseEvaluator(this.compiled.root);
+    const first = evaluator.evaluate(0, strategy);
+    const second = evaluator.evaluate(1, strategy);
     const bestResponseEvaluationMs = performance.now() - brStart;
     const nashConv = first.value + second.value;
     return {
@@ -177,5 +183,12 @@ export class HoldemPreflopStrategyEvaluator {
       chanceOutcomes: this.game.deals.length,
       chanceResolution: "exact-enumeration",
     };
+  }
+
+  counterfactualActionEvs(strategy: BehavioralStrategy) {
+    return [
+      ...counterfactualActionDiagnostics(this.compiled.root, strategy, 0),
+      ...counterfactualActionDiagnostics(this.compiled.root, strategy, 1),
+    ];
   }
 }
