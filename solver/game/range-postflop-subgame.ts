@@ -62,14 +62,15 @@ export class BucketedBoardProvider implements FutureBoardProvider {
   }
 
   outcomes(available: SolverCard[]) {
-    if (available.length <= this.maximumOutcomes) {
-      return available.map((card) => ({ card, probability: 1 / available.length, representedCards: 1 }));
+    const canonical = [...available].sort((left, right) => left.id - right.id);
+    if (canonical.length <= this.maximumOutcomes) {
+      return canonical.map((card) => ({ card, probability: 1 / canonical.length, representedCards: 1 }));
     }
     const buckets: SolverCard[][] = Array.from({ length: this.maximumOutcomes }, () => []);
-    available.forEach((card, index) => buckets[index % buckets.length].push(card));
+    canonical.forEach((card, index) => buckets[index % buckets.length].push(card));
     return buckets.map((bucket) => ({
       card: bucket[Math.floor(bucket.length / 2)],
-      probability: bucket.length / available.length,
+      probability: bucket.length / canonical.length,
       representedCards: bucket.length,
     }));
   }

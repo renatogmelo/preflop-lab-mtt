@@ -1,0 +1,71 @@
+{
+  "schemaVersion": 1,
+  "phase": "6.5",
+  "solverVersion": "0.5.0",
+  "baselineCommit": "893d62720ca465153030ba5d3dcff25403f8f979",
+  "referenceGameId": "phase6-reference-game-v1",
+  "referenceGameHash": "bfd3615d6ee13da1",
+  "trust": "Experimental",
+  "verifiedDatasets": 0,
+  "frozenScope": {
+    "privateDeals": 46,
+    "flop": ["8h", "7d", "2c"],
+    "postflopNodes": 11179,
+    "postflopInfosets": 2032,
+    "expandGame": false
+  },
+  "predeclaredGates": {
+    "A": { "metric": "inner exploitability", "operator": "<", "threshold": 0.02 },
+    "B0": { "metric": "Solved mean cross-seed strategy distance", "operator": "<", "threshold": 0.1, "official": true },
+    "B1": { "operator": "<", "threshold": 0.05 },
+    "B2": { "operator": "<", "threshold": 0.02 },
+    "B3": { "operator": "<", "threshold": 0.01 },
+    "B4": { "operator": "<", "threshold": 0.005 },
+    "C": { "metric": "ProviderSeparationRatio", "operator": ">", "threshold": 1 },
+    "D": {
+      "allDeltasOperator": "<=",
+      "threshold": 0.02,
+      "postflopMetric": "reachWeightedStrategyDelta",
+      "consecutivePasses": 3
+    }
+  },
+  "seedMatrix": [1, 7, 19, 42, 99],
+  "samplingModes": ["iid", "fixed-crn", "stratified", "quasi-deterministic", "exact"],
+  "sampleBudgets": [100, 250, 500, 1000, 2500, 5000, 10000],
+  "exactBudgets": [20, 50, 100, 250, 500, 1000, 2500, 5000],
+  "providers": ["proxy", "equity", "solved"],
+  "targetHands": ["T9s", "QQ", "AKs", "JJ", "AKo"],
+  "sensitivityEpsilons": [0.0001, 0.001, 0.01, 0.05],
+  "dampingAlphas": [0.05, 0.1, 0.15, 0.2, 0.25, 0.4],
+  "outerBudgets": [10, 25, 50, 100],
+  "checkpointComparison": { "continuous": 20, "checkpointAt": 10, "resumeTo": 20 },
+  "expectedArtifacts": [
+    "solver/artifacts/phase6-5-deterministic-fixed-point-v0.5.0.json",
+    "tests/golden/phase6-5-v0.5.0.json",
+    "PHASE6_5_REPORT.md",
+    "PHASE6_5_SAMPLING.md",
+    "PHASE6_5_FIXED_POINT.md",
+    "PHASE6_5_SENSITIVITY.md"
+  ],
+  "knownFailuresBeforeRun": [
+    {
+      "id": "phase6-gate-b-seed-stability",
+      "status": "open",
+      "observed": 0.126345,
+      "threshold": 0.1
+    },
+    {
+      "id": "phase6-gate-d-fixed-point",
+      "status": "open",
+      "observedBestAlpha": 0.25,
+      "finalDeltas": [0.15283666502711069, 0.1649872330765344, 0.35612724654577455, 0.999999774580564]
+    }
+  ],
+  "resultPolicy": {
+    "recordAllFailures": true,
+    "changeThresholdsAfterRun": false,
+    "phase7RequiresAllABCD": true,
+    "promotionForbidden": true
+  },
+  "runs": []
+}

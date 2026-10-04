@@ -58,7 +58,8 @@ export class HoldemPreflopEvaluationGame implements ExtensiveGame<PreflopEvaluat
     readonly continuation: StrategicContinuationProvider,
     readonly board: SolverCard[] = configuration.continuationBoard,
   ) {
-    this.deals = privateDealDistribution(ranges[0], ranges[1], board);
+    this.deals = privateDealDistribution(ranges[0], ranges[1], board)
+      .sort((left, right) => `${left.playerZero.id}|${left.playerOne.id}`.localeCompare(`${right.playerZero.id}|${right.playerOne.id}`));
     this.gameDefinition = createHoldemPreflopV2Definition(configuration);
     this.definition = {
       game: this.gameDefinition,

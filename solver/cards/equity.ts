@@ -1,6 +1,6 @@
 import { createHoldemDeck, type HoleCombo, type SolverCard } from "./cards";
 import { WeightedRange } from "./range";
-import { DeterministicRandom } from "../core/random";
+import { RandomnessLedger } from "../core/randomness";
 import { compareHoldemHands } from "./hand-evaluator";
 
 export type EquityOptions = {
@@ -47,8 +47,7 @@ export function enumerateRunouts(deck: SolverCard[], count: number): SolverCard[
   return result;
 }
 
-function sampledRunouts(deck: SolverCard[], count: number, samples: number, seed: number) {
-  const random = new DeterministicRandom(seed);
+function sampledRunouts(deck: SolverCard[], count: number, samples: number, random: { integer(maxExclusive: number): number }) {
   const result: SolverCard[][] = [];
   for (let sample = 0; sample < samples; sample += 1) {
     const available = [...deck];
@@ -76,6 +75,7 @@ export class EquityEngine {
   private readonly comboCache = new Map<string, EquityResult>();
   private cacheHits = 0;
   private cacheMisses = 0;
+  private readonly randomness = new Map<number, RandomnessLedger>();
 
   comboEquity(hero: HoleCombo, villain: HoleCombo, board: SolverCard[] = [], options: EquityOptions = {}): EquityResult {
     if (board.length > 5) throw new Error("A Hold'em board cannot contain more than five cards.");
@@ -108,7 +108,16 @@ export class EquityEngine {
     const seed = effectiveOptions.seed;
     const runouts = possible <= exactThreshold
       ? enumerateRunouts(deck, missing)
-      : sampledRunouts(deck, missing, Math.min(effectiveOptions.samples, possible), seed);
+      : sampledRunouts(
+        deck,
+        missing,
+        Math.min(effectiveOptions.samples, possible),
+        (() => {
+          const ledger = this.randomness.get(seed) ?? new RandomnessLedger(seed);
+          this.randomness.set(seed, ledger);
+          return ledger.stream(`equity-runout:${cacheKey}`, "Deterministic Hold'em equity runout sampling.");
+        })(),
+      );
     const scores = runouts.map((runout) => {
       const completeBoard = [...board, ...runout];
       const comparison = compareHoldemHands(
@@ -132,6 +141,10 @@ export class EquityEngine {
     };
   }
 
+  randomnessLedger() {
+    return [...this.randomness.values()].flatMap((ledger) => ledger.entries())
+      .sort((left, right) => left.streamId.localeCompare(right.streamId));
+  }
   clearCache() {
     this.comboCache.clear();
     this.cacheHits = 0;

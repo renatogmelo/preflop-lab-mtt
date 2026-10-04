@@ -177,3 +177,34 @@ The main game definition, ranges, fixed flop, board buckets and betting abstract
 - All strategic outputs remain Experimental; Verified remains zero.
 - Full evidence: `PHASE6_REPORT.md`, `PHASE6_CONVERGENCE.md`, `PHASE6_COUPLING.md`, `PHASE6_PERFORMANCE.md`, and `SOLVER_ERROR_BUDGET.md`.
 - Final repository validation: TypeScript, lint, production build and 82/82 tests passed on 2026-10-04.
+
+## PHASE 6.5 AUDIT - 2026-10-04
+
+Baseline audited: `893d62720ca465153030ba5d3dcff25403f8f979` (solver `0.4.0`). Phase 5 and Phase 6 artifacts remain immutable evidence.
+
+### Frozen scope and evidence
+
+- the experiment remains `phase6-reference-game-v1`, hash `bfd3615d6ee13da1`;
+- the private chance model remains the same 46 weighted compatible deals on `8h 7d 2c`;
+- the postflop game remains 11,179 nodes / 2,032 infosets with the same betting and future-board abstractions;
+- all Hold'em output remains `Experimental`; `Verified = 0`;
+- Phase 6 gates were A pass, B fail, C pass and D fail, so Phase 7 stays blocked.
+
+### Root cause found
+
+- `HoldemPreflopV2Solver` samples one private deal per iteration from a single mutable RNG stream;
+- the exact 46-deal chance tree already exists in `HoldemPreflopEvaluationGame`, but was used only for evaluation, not training;
+- coupling therefore mixed a stochastic preflop response with a solved postflop response, obscuring whether Gate B/D failures came from sampling noise or the fixed-point map itself;
+- the current coupling metric uses unweighted maximum postflop strategy movement and only detects period two on one continuation probe;
+- no subsystem RNG ledger, fixed chance schedule, deal-coverage report, sensitivity Jacobian, generalized cycle detector or resumable outer-loop checkpoint exists;
+- damping is applied to continuation utilities; those damped utilities must remain distinct from raw solved utilities in every artifact and convergence test.
+
+### Phase 6.5 controls frozen before implementation
+
+- add exact preflop traversal over all 46 weighted deals and retain sampled traversal as a differential subject;
+- derive deterministic RNG streams from `masterSeed + subsystemId` and account for every draw in a randomness ledger;
+- compare IID, fixed-CRN, stratified/quasi-deterministic and exact modes on seeds `1, 7, 19, 42, 99`;
+- preserve the official Gate B threshold `< 0.10` and report stricter `< 0.05 / 0.02 / 0.01 / 0.005` tiers;
+- predeclare Gate D as all required deltas `<= 0.02`, using reach-weighted postflop strategy delta for three consecutive outer iterations;
+- test damping alphas `0.05, 0.10, 0.15, 0.20, 0.25` plus `0.40` control, without changing the frozen game;
+- do not recommend Phase 7 unless A, B, C and D all pass after revalidation.

@@ -1,8 +1,9 @@
-﻿import { enumerateHoleCombos, type HoleCombo, type SolverCard } from "../cards/cards";
+import { enumerateHoleCombos, type HoleCombo, type SolverCard } from "../cards/cards";
 import { WeightedRange } from "../cards/range";
-import { privateDealDistribution, samplePrivateDeal } from "../cards/private-chance";
+import { privateDealDistribution, type PrivateDealOutcome } from "../cards/private-chance";
 import type { StrategicContinuationProvider } from "../continuation/engine";
-import { DeterministicRandom } from "../core/random";
+import { RandomnessLedger } from "../core/randomness";
+import { createChanceSampleSchedule, type ChanceSampleSchedule, type ChanceSamplingMode } from "../sampling/chance-schedule";
 import { hashValue } from "../core/stable";
 import { estimateComputeBudget } from "../core/resources";
 import {
@@ -33,6 +34,7 @@ export type HoldemPreflopV2Configuration = {
   jamAllowed?: boolean;
   continuationBoard: SolverCard[];
   continuationAbstractionId: string;
+  chanceSampling?: { mode: ChanceSamplingMode; masterSeed?: number };
 };
 
 export type HoldemPreflopV2Metric = {
@@ -127,7 +129,10 @@ export class HoldemPreflopV2Solver {
   readonly combos = enumerateHoleCombos();
   readonly definition: GameDefinition;
   readonly solveId: string;
-  private readonly random: DeterministicRandom;
+  private readonly randomness: RandomnessLedger;
+  private readonly randomStream: ReturnType<RandomnessLedger["stream"]>;
+  private readonly distribution: PrivateDealOutcome[] | null;
+  private readonly chanceSchedule: ChanceSampleSchedule | null;
   private readonly infosets = new Map<string, RegretState>();
   private iteration = 0;
   private startedAt = 0;
@@ -140,7 +145,21 @@ export class HoldemPreflopV2Solver {
     readonly dealRanges: [WeightedRange, WeightedRange] | null = null,
   ) {
     this.definition = createHoldemPreflopV2Definition(configuration);
-    this.random = new DeterministicRandom(configuration.seed);
+    const masterSeed = configuration.chanceSampling?.masterSeed ?? configuration.seed;
+    this.randomness = new RandomnessLedger(masterSeed);
+    this.randomStream = this.randomness.stream("preflop-fallback-private-deal", "Private deals when explicit weighted ranges are absent.");
+    this.distribution = dealRanges
+      ? privateDealDistribution(dealRanges[0], dealRanges[1], this.configuration.continuationBoard)
+        .sort((left, right) => `${left.playerZero.id}|${left.playerOne.id}`.localeCompare(`${right.playerZero.id}|${right.playerOne.id}`))
+      : null;
+    this.chanceSchedule = this.distribution
+      ? createChanceSampleSchedule(
+        this.distribution,
+        configuration.iterations,
+        configuration.chanceSampling?.mode ?? "iid",
+        masterSeed,
+      )
+      : null;
     this.solveId = hashValue({
       definition: this.definition,
       configuration,
@@ -149,16 +168,17 @@ export class HoldemPreflopV2Solver {
     });
   }
 
-  private sampleDeal(): [HoleCombo, HoleCombo] {
-    if (this.dealRanges) {
-      const distribution = privateDealDistribution(this.dealRanges[0], this.dealRanges[1], this.configuration.continuationBoard);
-      return samplePrivateDeal(distribution, this.random.next());
+  private sampleDeal(): { deals: [HoleCombo, HoleCombo]; importanceWeight: number } {
+    if (this.distribution && this.chanceSchedule) {
+      const scheduled = this.chanceSchedule.samples[this.iteration % this.chanceSchedule.samples.length];
+      const outcome = this.distribution[scheduled.dealIndex];
+      return { deals: [outcome.playerZero, outcome.playerOne], importanceWeight: scheduled.importanceWeight };
     }
-    const first = this.combos[this.random.integer(this.combos.length)];
-    let second = this.combos[this.random.integer(this.combos.length)];
+    const first = this.combos[this.randomStream.integer(this.combos.length)];
+    let second = this.combos[this.randomStream.integer(this.combos.length)];
     const blocked = new Set([first.first.id, first.second.id]);
-    while (blocked.has(second.first.id) || blocked.has(second.second.id)) second = this.combos[this.random.integer(this.combos.length)];
-    return [first, second];
+    while (blocked.has(second.first.id) || blocked.has(second.second.id)) second = this.combos[this.randomStream.integer(this.combos.length)];
+    return { deals: [first, second], importanceWeight: 1 };
   }
 
   private raiseTargets(state: BettingState) {
@@ -214,7 +234,7 @@ export class HoldemPreflopV2Solver {
     }).utilities[player];
   }
 
-  private traverse(state: BettingState, deals: [HoleCombo, HoleCombo], updatingPlayer: 0 | 1, reach: [number, number]): number {
+  private traverse(state: BettingState, deals: [HoleCombo, HoleCombo], updatingPlayer: 0 | 1, reach: [number, number], chanceWeight: number): number {
     if (state.complete) return this.terminalUtility(state, deals, updatingPlayer);
     const actor = state.actingPlayerId === "SB" ? 0 : 1;
     const actions = this.legal(state);
@@ -224,22 +244,22 @@ export class HoldemPreflopV2Solver {
     const utilities = actions.map((action, index) => {
       const nextReach: [number, number] = [...reach];
       nextReach[actor] *= strategy[index];
-      return this.traverse(applyBettingAction(state, action), deals, updatingPlayer, nextReach);
+      return this.traverse(applyBettingAction(state, action), deals, updatingPlayer, nextReach, chanceWeight);
     });
     const value = utilities.reduce((sum, utility, index) => sum + strategy[index] * utility, 0);
     if (actor === updatingPlayer) {
       const opponentReach = reach[actor === 0 ? 1 : 0];
-      info.regrets = info.regrets.map((regret, index) => regret + opponentReach * (utilities[index] - value));
-      info.strategySum = info.strategySum.map((sum, index) => sum + reach[actor] * strategy[index]);
+      info.regrets = info.regrets.map((regret, index) => regret + chanceWeight * opponentReach * (utilities[index] - value));
+      info.strategySum = info.strategySum.map((sum, index) => sum + chanceWeight * reach[actor] * strategy[index]);
     }
     return value;
   }
 
   iterate() {
     if (!this.startedAt) this.startedAt = Date.now();
-    const deals = this.sampleDeal();
-    this.traverse(createPreflopBettingState(this.definition), deals, 0, [1, 1]);
-    this.traverse(createPreflopBettingState(this.definition), deals, 1, [1, 1]);
+    const sampled = this.sampleDeal();
+    this.traverse(createPreflopBettingState(this.definition), sampled.deals, 0, [1, 1], sampled.importanceWeight);
+    this.traverse(createPreflopBettingState(this.definition), sampled.deals, 1, [1, 1], sampled.importanceWeight);
     this.iteration += 1;
   }
 
@@ -284,6 +304,17 @@ export class HoldemPreflopV2Solver {
       ])),
       exploitability: null,
       nashConv: null,
+      sampling: this.chanceSchedule ? {
+        mode: this.chanceSchedule.mode,
+        scheduleId: this.chanceSchedule.id,
+        coverage: this.chanceSchedule.coverage,
+        randomnessLedger: this.chanceSchedule.randomnessLedger,
+      } : {
+        mode: "fallback-uniform",
+        scheduleId: null,
+        coverage: null,
+        randomnessLedger: this.randomness.entries(),
+      },
       trust: "Experimental" as const,
     };
   }

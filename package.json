@@ -1,6 +1,6 @@
 {
   "name": "preflop-lab",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "private": true,
   "engines": {
     "node": ">=22.13.0"
@@ -20,7 +20,8 @@
     "solver:benchmark": "node --import tsx solver/cli/index.ts benchmark",
     "solver:phase4": "node --import tsx solver/benchmarks/phase4.ts",
     "solver:phase5": "node --import tsx solver/benchmarks/phase5.ts",
-    "solver:phase6": "node --import tsx solver/benchmarks/phase6.ts"
+    "solver:phase6": "node --import tsx solver/benchmarks/phase6.ts",
+    "solver:phase6-5": "node --import tsx solver/benchmarks/phase6-5.ts"
   },
   "dependencies": {
     "drizzle-orm": "0.45.2",

@@ -24,6 +24,7 @@ export function privateDealDistribution(
       outcomes.push({ playerZero: left.combo, playerOne: right.combo, rawWeight: left.weight * right.weight });
     }
   }
+  outcomes.sort((left, right) => `${left.playerZero.id}|${left.playerOne.id}`.localeCompare(`${right.playerZero.id}|${right.playerOne.id}`));
   const total = outcomes.reduce((sum, outcome) => sum + outcome.rawWeight, 0);
   if (!(total > 0) || !Number.isFinite(total)) throw new Error("Ranges contain no compatible private-card deals.");
   const normalized = outcomes.map((outcome) => ({ ...outcome, probability: outcome.rawWeight / total }));
