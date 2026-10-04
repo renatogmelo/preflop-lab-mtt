@@ -208,3 +208,16 @@ Baseline audited: `893d62720ca465153030ba5d3dcff25403f8f979` (solver `0.4.0`). P
 - predeclare Gate D as all required deltas `<= 0.02`, using reach-weighted postflop strategy delta for three consecutive outer iterations;
 - test damping alphas `0.05, 0.10, 0.15, 0.20, 0.25` plus `0.40` control, without changing the frozen game;
 - do not recommend Phase 7 unless A, B, C and D all pass after revalidation.
+
+## PHASE 6.5 RESULT - 2026-10-04
+
+- Added a subsystem `RandomnessLedger`, fixed CRN, interleaved stratified and quasi-deterministic schedules, coverage metrics and importance weights.
+- Added synchronous exact preflop CFR over all 46 weighted private deals, exact EV/NashConv/action-EV evaluation, order invariance and deterministic checkpoint/resume.
+- Exact 5,000-iteration Solved runs averaged `325.495 ms`; repeated and cross-seed strategy distance is `0`.
+- Quasi-deterministic was the best sampled approximation: mean distance `0.063091` at 5,000 and `0.046900` at 10,000 for seed 19.
+- Exact Equity↔Solved distance is `0.629219`; provider separation remains material after seed noise is removed.
+- Canonical bucket identity passed all 46 deal/order audits; finite-difference sensitivity flagged a possible artificial discontinuity.
+- Damping alpha `0.05` was best, but deterministic coupling failed after 100 outer iterations. Final residuals were preflop RW `0.001211`, range `0.079894`, damped utility `0.053868`, and postflop RW `0.044017`.
+- Continuous outer 20 and 10→resume→20 were strategy-, utility- and trajectory-identical.
+- Final gates: A pass, B pass, C pass, D fail. Phase 7 remains blocked.
+- All strategic output remains Experimental; Verified remains zero.- Final Phase 6.5 validation: TypeScript, lint, production build and 93/93 tests passed on 2026-10-04.

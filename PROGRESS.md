@@ -302,3 +302,9 @@ Completed experimentally on 2026-10-04. The inner frozen solver is now fast and 
 - Coupling: no fixed point; alpha 0.6/1 diverged - failed.
 - Decision: Phase 7 blocked; Verified remains 0; product-facing training data unchanged.
 Validation final: TypeScript, lint, build de producao e 82/82 testes aprovados.
+
+## Phase 6.5 — deterministic pipeline stability
+
+Implemented and measured exact 46-deal preflop traversal, RNG ledgers, fixed/stratified/quasi schedules, sample coverage, exact provider comparison, sensitivity diagnostics, canonical board buckets and deterministic fixed-point checkpoint/resume.
+
+Result: A ✅, B ✅, C ✅, D ❌. Exact seed distance is zero, but coupling did not converge after 100 outer iterations. Board Coverage / Phase 7 is not released. Product-facing poker data remains Experimental and `Verified = 0`.

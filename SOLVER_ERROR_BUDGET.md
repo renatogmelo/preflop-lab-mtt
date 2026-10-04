@@ -24,3 +24,17 @@ These errors are not independent and use different units. Adding exploitability,
 ## Publication policy
 
 A result may be called a converged approximation only when its declared exploitability and reach-weighted movement thresholds pass and deterministic reproduction is demonstrated. `Verified` additionally requires exact game identity, independent reproduction, external reference comparison within declared tolerance, review, immutable provenance and no unresolved critical validation issue. Phase 6 satisfies none of the conditions needed to increase `verifiedDatasets` above zero.
+## Phase 6.5 separated error budget
+
+Errors remain separate; they are not added into a fake scalar uncertainty.
+
+- finite postflop CFR: exploitability `0.017258` at 5,000 iterations;
+- exact preflop seed variance: `0`;
+- finite sampled-preflop error: at 5,000 samples, mean distance `0.163037` IID, `0.163358` fixed CRN, `0.147677` stratified and `0.063091` quasi-deterministic;
+- future-board abstraction: unquantified; exact strategic ablation blocked at projected `5,533,605` nodes above the `2,000,000` safety cap;
+- range→continuation sensitivity: high and epsilon-dependent, slope variation `261.960593`;
+- outer fixed-point residual at iteration 100: range `0.079894`, raw utility `2.660087`, damped utility `0.053868`, postflop reach-weighted strategy `0.044017`;
+- cache quantization: `1e-9`, explicit in identity;
+- external-validation error: unmeasured; no independent solver comparison.
+
+A/B/C pass and D fails. `Verified = 0`.

@@ -141,3 +141,10 @@ Coupling validation executed three outer iterations with damping 0.6. It did not
 The indexed solver is validated against the object-tree implementation as an oracle: average strategy and complete infoset checkpoint state are identical in the frozen reference test. Compiled EV and best response match the dynamic implementation; optimized hand evaluation matches the reference across 1,000 random seven-card samples; 250 -> 500 checkpoint resume matches a continuous 500-iteration run.
 
 The 5,000-iteration reduced-game result has exploitability `0.010074`, but the strict converged-approximation policy is not satisfied because the limit is `0.01` and Solved seed distance is `0.126345`. Coupling did not converge. These checks validate implementation invariants, not professional poker accuracy. External solver comparison and independent review are still missing; Verified remains zero.
+## Phase 6.5 deterministic validation layer
+
+The frozen reference game now has an exact 46-deal training oracle in addition to exact evaluation. Validation covers chance normalization, isolated RNG streams, fixed schedules, importance weights, deal coverage, exact determinism, input-order invariance, sampled-to-exact distance, warm resume, bucket identity, finite-difference sensitivity, damping, convergence patience, period-2/3 cycles and outer checkpoint/resume.
+
+Exact repeated runs and five provenance seeds produce distance `0`. Golden v0.5.0 records the exact oracle, deterministic provider comparison, fixed schedule, coupling trajectory and gate matrix. Golden data is a regression baseline, not poker truth.
+
+Final gates: `A=true`, `B=true`, `C=true`, `D=false`. No dataset is Verified.

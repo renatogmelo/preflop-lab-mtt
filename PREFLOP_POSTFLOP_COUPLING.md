@@ -45,3 +45,10 @@ The architecture was executed for three outer iterations with damping alpha 0.6.
 The outer loop now supports fixed/incrementing preflop seeds, configurable cache quantization, runtime stop, divergence and period-two detection, all-metric convergence passes and patience. Every iteration records continuation history and all postflop artifacts.
 
 Grid result: alpha 0.25 and 0.4 exhausted ten iterations without a pass; alpha 0.6 diverged at six; alpha 1.0 diverged at four. Alpha 0.25 was least unstable but ended with preflop/range/utility/postflop deltas `0.152837 / 0.164987 / 0.356127 / 0.9999998`. No fixed point exists in the tested budget. See `PHASE6_COUPLING.md`.
+## Phase 6.5 deterministic coupling result
+
+The preflop leg now enumerates all 46 private deals exactly, so outer-loop results no longer depend on a preflop sampling seed. Damping alphas `0.05, 0.10, 0.15, 0.20, 0.25, 0.40` were screened under the same frozen map. Alpha `0.05` advanced through budgets 25, 50 and 100.
+
+Gate D requires preflop reach-weighted strategy, conditional-range L1, damped continuation utility and postflop reach-weighted strategy deltas all `<=0.02` for three consecutive iterations. It failed at 100 because the last three non-preflop residuals remained `0.079894`, `0.053868`, and `0.044017`.
+
+No approximate period-2/3 cycle was detected. Checkpoint/resume exactly reproduced the continuous 20-iteration trajectory. Therefore remaining instability belongs to the approximation feedback map, not RNG or resume mechanics.

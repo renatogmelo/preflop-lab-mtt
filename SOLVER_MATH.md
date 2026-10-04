@@ -146,3 +146,10 @@ For strategies sigma and sigma', four deltas are retained: raw max action-probab
 Counterfactual action EV is computed on the exact compiled reduced tree using opponent/chance reach. The diagnostic stores action probabilities, action EVs, strategy EV, counterfactual regret, reach and the EV spread among materially mixed actions. At finite iteration budgets, positive-probability actions need not have exactly equal EV.
 
 Exploitability is `NashConv / 2` for the two-player zero-sum reference game. Phase 6 never sums exploitability, seed variance and abstraction error into one scalar uncertainty.
+## Phase 6.5 exact private chance and fixed point
+
+For private deals `d` with normalized target probability `p(d)`, exact CFR evaluates every deal each iteration. Regret updates use synchronous accumulators so all nodes for one updating player see the same frozen regret policy during the traversal. This removes within-iteration deal-order dependence.
+
+For sampled proposal `q(d)`, the traversal multiplier is the importance weight `w(d)=p(d)/q(d)`. IID and fixed CRN use `q=p`, hence `w=1`. Stratified and quasi schedules use their empirical allocation as `q` and retain coverage/effective-sample-size diagnostics.
+
+The coupled operator is `F(S)=P(D(C(R(S))))`: condition ranges `R`, solve postflop continuation `C`, damp utilities `D`, then solve exact preflop `P`. With raw utility vector `u_k`, the value passed back is `v_k = αu_k + (1-α)v_{k-1}`. Convergence tests `v`, never relabels it as raw `u`, and requires all four residuals at most `0.02` for three consecutive iterations.

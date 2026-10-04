@@ -61,3 +61,13 @@ The first weighted-range solved continuation used 46 compatible deals, a fixed f
 The three provider pipelines were rerun for seeds 1, 7, 19, 42 and 99 at 10,000 preflop iterations. Mean within-provider distance is Proxy `0.138480`, Equity `0.005514`, Solved `0.126345`. Equity-vs-Solved weighted distance is `0.653360`, producing the explicitly nonstandard Preflop Lab diagnostic `ProviderSeparationRatio = 5.171253`.
 
 Provider separation is larger than measured seed noise, but Solved is not seed-stable and neither provider has external truth validation. Continuation outputs remain Experimental and are not eligible as default Trainer answers.
+## Phase 6.5 continuation-value semantics
+
+Pair-table continuation now participates in a deterministic outer map. Each iteration stores both:
+
+- raw solved pair utilities from the postflop subgame;
+- damped pair utilities actually consumed by the next exact preflop solve.
+
+These objects are never mixed. At outer iteration 100, raw maximum movement was `2.660087` while damped movement was `0.053868`; reporting only the damped value would hide the response instability.
+
+Exact provider comparison uses the same frozen preflop tree: Equity↔Solved weighted strategy distance is `0.629219`. This remains Experimental because future boards are abstracted and no external solver has validated the pair utilities.

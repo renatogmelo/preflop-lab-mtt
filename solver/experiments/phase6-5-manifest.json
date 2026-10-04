@@ -9,19 +9,48 @@
   "verifiedDatasets": 0,
   "frozenScope": {
     "privateDeals": 46,
-    "flop": ["8h", "7d", "2c"],
+    "flop": [
+      "8h",
+      "7d",
+      "2c"
+    ],
     "postflopNodes": 11179,
     "postflopInfosets": 2032,
     "expandGame": false
   },
   "predeclaredGates": {
-    "A": { "metric": "inner exploitability", "operator": "<", "threshold": 0.02 },
-    "B0": { "metric": "Solved mean cross-seed strategy distance", "operator": "<", "threshold": 0.1, "official": true },
-    "B1": { "operator": "<", "threshold": 0.05 },
-    "B2": { "operator": "<", "threshold": 0.02 },
-    "B3": { "operator": "<", "threshold": 0.01 },
-    "B4": { "operator": "<", "threshold": 0.005 },
-    "C": { "metric": "ProviderSeparationRatio", "operator": ">", "threshold": 1 },
+    "A": {
+      "metric": "inner exploitability",
+      "operator": "<",
+      "threshold": 0.02
+    },
+    "B0": {
+      "metric": "Solved mean cross-seed strategy distance",
+      "operator": "<",
+      "threshold": 0.1,
+      "official": true
+    },
+    "B1": {
+      "operator": "<",
+      "threshold": 0.05
+    },
+    "B2": {
+      "operator": "<",
+      "threshold": 0.02
+    },
+    "B3": {
+      "operator": "<",
+      "threshold": 0.01
+    },
+    "B4": {
+      "operator": "<",
+      "threshold": 0.005
+    },
+    "C": {
+      "metric": "ProviderSeparationRatio",
+      "operator": ">",
+      "threshold": 1
+    },
     "D": {
       "allDeltasOperator": "<=",
       "threshold": 0.02,
@@ -29,16 +58,76 @@
       "consecutivePasses": 3
     }
   },
-  "seedMatrix": [1, 7, 19, 42, 99],
-  "samplingModes": ["iid", "fixed-crn", "stratified", "quasi-deterministic", "exact"],
-  "sampleBudgets": [100, 250, 500, 1000, 2500, 5000, 10000],
-  "exactBudgets": [20, 50, 100, 250, 500, 1000, 2500, 5000],
-  "providers": ["proxy", "equity", "solved"],
-  "targetHands": ["T9s", "QQ", "AKs", "JJ", "AKo"],
-  "sensitivityEpsilons": [0.0001, 0.001, 0.01, 0.05],
-  "dampingAlphas": [0.05, 0.1, 0.15, 0.2, 0.25, 0.4],
-  "outerBudgets": [10, 25, 50, 100],
-  "checkpointComparison": { "continuous": 20, "checkpointAt": 10, "resumeTo": 20 },
+  "seedMatrix": [
+    1,
+    7,
+    19,
+    42,
+    99
+  ],
+  "samplingModes": [
+    "iid",
+    "fixed-crn",
+    "stratified",
+    "quasi-deterministic",
+    "exact"
+  ],
+  "sampleBudgets": [
+    100,
+    250,
+    500,
+    1000,
+    2500,
+    5000,
+    10000
+  ],
+  "exactBudgets": [
+    20,
+    50,
+    100,
+    250,
+    500,
+    1000,
+    2500,
+    5000
+  ],
+  "providers": [
+    "proxy",
+    "equity",
+    "solved"
+  ],
+  "targetHands": [
+    "T9s",
+    "QQ",
+    "AKs",
+    "JJ",
+    "AKo"
+  ],
+  "sensitivityEpsilons": [
+    0.0001,
+    0.001,
+    0.01,
+    0.05
+  ],
+  "dampingAlphas": [
+    0.05,
+    0.1,
+    0.15,
+    0.2,
+    0.25,
+    0.4
+  ],
+  "outerBudgets": [
+    10,
+    25,
+    50,
+    100
+  ],
+  "checkpointComparison": {
+    "continuous": 20,
+    "checkpointAt": 10,
+    "resumeTo": 20
+  },
   "expectedArtifacts": [
     "solver/artifacts/phase6-5-deterministic-fixed-point-v0.5.0.json",
     "tests/golden/phase6-5-v0.5.0.json",
@@ -58,7 +147,12 @@
       "id": "phase6-gate-d-fixed-point",
       "status": "open",
       "observedBestAlpha": 0.25,
-      "finalDeltas": [0.15283666502711069, 0.1649872330765344, 0.35612724654577455, 0.999999774580564]
+      "finalDeltas": [
+        0.15283666502711069,
+        0.1649872330765344,
+        0.35612724654577455,
+        0.999999774580564
+      ]
     }
   ],
   "resultPolicy": {
@@ -67,5 +161,72 @@
     "phase7RequiresAllABCD": true,
     "promotionForbidden": true
   },
-  "runs": []
+  "runs": [
+    {
+      "id": "gate-a-revalidation",
+      "status": "completed",
+      "resultHash": "c9836c8ab844aace"
+    },
+    {
+      "id": "exact-provider-comparison",
+      "status": "completed",
+      "resultHash": "d38331c0c850c8ec"
+    },
+    {
+      "id": "sample-seed-matrix",
+      "status": "completed",
+      "resultHash": "27a114c1d22a4b3d"
+    },
+    {
+      "id": "sample-efficiency-curves",
+      "status": "completed",
+      "resultHash": "c5063632d3f2649e"
+    },
+    {
+      "id": "bucket-stability",
+      "status": "completed",
+      "resultHash": "29041781cf72078d"
+    },
+    {
+      "id": "range-sensitivity",
+      "status": "completed",
+      "resultHash": "49c2b1e038262fdc"
+    },
+    {
+      "id": "exact-future-card-ablation",
+      "status": "blocked",
+      "failure": "The frozen strategic tree would exceed the Phase 6.5 single-process resource cap; execution would change the risk profile rather than only the experiment."
+    },
+    {
+      "id": "coupling-damping-screen",
+      "status": "completed",
+      "resultHash": "d60cb01534c2f091"
+    },
+    {
+      "id": "coupling-confirmatory",
+      "status": "failed-gate",
+      "resultHash": "637fa03384e85fc7"
+    },
+    {
+      "id": "outer-checkpoint-resume",
+      "status": "completed",
+      "resultHash": "ec93c1260c0d1242"
+    }
+  ],
+  "implementationCommit": "033aa3089ec85ac3ca9110cd9b2258b7d6c7df06",
+  "finishedAt": "2026-10-04T20:10:02.563Z",
+  "finalGates": {
+    "A": true,
+    "B": true,
+    "B_tiers": {
+      "B0_0_10": true,
+      "B1_0_05": true,
+      "B2_0_02": true,
+      "B3_0_01": true,
+      "B4_0_005": true
+    },
+    "C": true,
+    "D": false
+  },
+  "releasePhase7": false
 }
