@@ -6,7 +6,7 @@ import { privateDealDistribution, type PrivateDealOutcome } from "../cards/priva
 import { WeightedRange } from "../cards/range";
 import { hashValue } from "../core/stable";
 import type { AlgorithmName, BehavioralStrategy, DcfrParameters, ExtensiveGame, Player, SolveMetrics } from "../core/types";
-import { evaluateCompiledNode } from "../evaluation/compiled-analysis";
+import { compiledInformationSetReach, evaluateCompiledNode, strategyStability } from "../evaluation/compiled-analysis";
 import { compileGameTree, type CompiledGameTree } from "../tree/compiled";
 import { ValidationSuite, type ValidationReport } from "../validation/suite";
 
@@ -30,64 +30,118 @@ export type RangePostflopAbstraction = {
   jamAllowed: boolean;
 };
 
-export type BoardChanceOutcome = { card: SolverCard; probability: number; representedCards: number };
+export type BoardContinuationModel = "representative-bucket" | "expected-bucket" | "exact-future";
+
+export type BoardChanceOutcome = {
+  card: SolverCard;
+  probability: number;
+  representedCards: number;
+  observation?: string;
+  bucketId?: string;
+};
 
 export interface FutureBoardProvider {
   readonly id: string;
   readonly method: "exact-enumeration" | "sampled" | "abstracted";
-  outcomes(available: SolverCard[], street: "turn" | "river"): BoardChanceOutcome[];
+  readonly boardContinuationModel: BoardContinuationModel;
+  outcomes(available: SolverCard[], street?: "turn" | "river"): BoardChanceOutcome[];
   metadata(): Record<string, unknown>;
 }
 
 export class ExactBoardEnumerationProvider implements FutureBoardProvider {
   readonly id = "exact-board-enumeration-v1";
   readonly method = "exact-enumeration" as const;
+  readonly boardContinuationModel = "exact-future" as const;
 
   outcomes(available: SolverCard[]) {
-    return available.map((card) => ({ card, probability: 1 / available.length, representedCards: 1 }));
+    return [...available].sort((left, right) => left.id - right.id).map((card) => ({
+      card, probability: 1 / available.length, representedCards: 1, observation: String(card.id),
+    }));
   }
 
   metadata() {
-    return { id: this.id, method: this.method };
+    return { id: this.id, method: this.method, boardContinuationModel: this.boardContinuationModel };
   }
+}
+
+function deterministicBoardBuckets(available: SolverCard[], maximumOutcomes: number) {
+  const canonical = [...available].sort((left, right) => left.id - right.id);
+  const count = Math.min(maximumOutcomes, canonical.length);
+  const buckets: SolverCard[][] = Array.from({ length: count }, () => []);
+  canonical.forEach((card, index) => buckets[index % buckets.length].push(card));
+  return buckets;
 }
 
 export class BucketedBoardProvider implements FutureBoardProvider {
   readonly id: string;
   readonly method = "abstracted" as const;
+  readonly boardContinuationModel = "representative-bucket" as const;
 
   constructor(readonly maximumOutcomes: number) {
     if (!Number.isInteger(maximumOutcomes) || maximumOutcomes <= 0) throw new Error("Board abstraction requires a positive outcome count.");
     this.id = `bucketed-board-v1-${maximumOutcomes}`;
   }
 
-  outcomes(available: SolverCard[]) {
-    const canonical = [...available].sort((left, right) => left.id - right.id);
-    if (canonical.length <= this.maximumOutcomes) {
-      return canonical.map((card) => ({ card, probability: 1 / canonical.length, representedCards: 1 }));
-    }
-    const buckets: SolverCard[][] = Array.from({ length: this.maximumOutcomes }, () => []);
-    canonical.forEach((card, index) => buckets[index % buckets.length].push(card));
-    return buckets.map((bucket) => ({
-      card: bucket[Math.floor(bucket.length / 2)],
-      probability: bucket.length / canonical.length,
-      representedCards: bucket.length,
-    }));
+  outcomes(available: SolverCard[], street: "turn" | "river" = "turn") {
+    const buckets = deterministicBoardBuckets(available, this.maximumOutcomes);
+    return buckets.map((bucket, index) => {
+      const card = bucket[Math.floor(bucket.length / 2)];
+      return {
+        card,
+        probability: bucket.length / available.length,
+        representedCards: bucket.length,
+        observation: String(card.id),
+        bucketId: "bucket:" + street + ":" + index,
+      };
+    });
   }
 
   metadata() {
     return {
       id: this.id,
       method: this.method,
+      boardContinuationModel: this.boardContinuationModel,
       maximumOutcomes: this.maximumOutcomes,
       warning: "Each deterministic bucket is represented by one physical card; this changes the solved game.",
     };
   }
 }
 
+export class ExpectedBucketBoardProvider implements FutureBoardProvider {
+  readonly id: string;
+  readonly method = "abstracted" as const;
+  readonly boardContinuationModel = "expected-bucket" as const;
+
+  constructor(readonly maximumOutcomes: number) {
+    if (!Number.isInteger(maximumOutcomes) || maximumOutcomes <= 0) throw new Error("Expected board abstraction requires a positive bucket count.");
+    this.id = "expected-bucket-board-v1-" + maximumOutcomes;
+  }
+
+  outcomes(available: SolverCard[], street: "turn" | "river" = "turn") {
+    const buckets = deterministicBoardBuckets(available, this.maximumOutcomes);
+    const membership = new Map<number, { index: number; size: number }>();
+    buckets.forEach((bucket, index) => bucket.forEach((card) => membership.set(card.id, { index, size: bucket.length })));
+    return [...available].sort((left, right) => left.id - right.id).map((card) => {
+      const bucket = membership.get(card.id)!;
+      return {
+        card,
+        probability: 1 / available.length,
+        representedCards: bucket.size,
+        observation: "bucket:" + street + ":" + bucket.index,
+        bucketId: "bucket:" + street + ":" + bucket.index,
+      };
+    });
+  }
+
+  metadata() {
+    return { id: this.id, method: this.method, boardContinuationModel: this.boardContinuationModel, maximumOutcomes: this.maximumOutcomes, probabilityModel: "Every legal physical card retains probability 1/N; strategic information sets observe only deterministic bucket identity.", warning: "Physical runouts are enumerated, while decisions are constrained to bucket-level observations." };
+  }
+}
+
 export type RangePostflopSubgameDefinition = {
   id: string;
   ranges: [WeightedRange, WeightedRange];
+  privateDeals?: PrivateDealOutcome[];
   flop: [SolverCard, SolverCard, SolverCard];
   pot: number;
   stacks: [number, number];
@@ -106,6 +160,7 @@ export type RangePostflopState = {
   holeCards: [HoleCombo, HoleCombo] | null;
   street: RangePostflopStreet;
   board: SolverCard[];
+  boardObservations: string[];
   pot: number;
   stacks: [number, number];
   contributions: [number, number];
@@ -129,6 +184,7 @@ function copy(state: RangePostflopState): RangePostflopState {
     ...state,
     holeCards: state.holeCards ? [...state.holeCards] : null,
     board: [...state.board],
+    boardObservations: [...state.boardObservations],
     stacks: [...state.stacks],
     contributions: [...state.contributions],
     streetCommitted: [...state.streetCommitted],
@@ -154,10 +210,15 @@ export class RangePostflopHoldemSubgame implements ExtensiveGame<RangePostflopSt
     if (!(configuration.pot > 0) || configuration.stacks.some((stack) => !Number.isFinite(stack) || stack < 0)) {
       throw new Error("Range postflop pot and stacks must be finite and non-negative.");
     }
-    this.privateDeals = privateDealDistribution(configuration.ranges[0], configuration.ranges[1], configuration.flop);
+    this.privateDeals = configuration.privateDeals
+      ? [...configuration.privateDeals].sort((left, right) => (left.playerZero.id + "|" + left.playerOne.id).localeCompare(right.playerZero.id + "|" + right.playerOne.id))
+      : privateDealDistribution(configuration.ranges[0], configuration.ranges[1], configuration.flop);
+    const privateProbability = this.privateDeals.reduce((sum, deal) => sum + deal.probability, 0);
+    if (Math.abs(privateProbability - 1) > 1e-12) throw new Error("Explicit private-deal distribution must sum to one.");
     this.definition = {
       id: configuration.id,
       ranges: configuration.ranges.map((range) => range.entries().filter(({ weight }) => weight > 0).map(({ combo, weight }) => [combo.id, weight])),
+      privateDeals: this.privateDeals.map((deal) => [deal.playerZero.id, deal.playerOne.id, deal.probability]),
       flop: flopIds,
       pot: configuration.pot,
       stacks: configuration.stacks,
@@ -174,6 +235,7 @@ export class RangePostflopHoldemSubgame implements ExtensiveGame<RangePostflopSt
       holeCards: null,
       street: "flop",
       board: [...this.configuration.flop],
+      boardObservations: this.configuration.flop.map((card) => String(card.id)),
       pot: this.configuration.pot,
       stacks: [...this.configuration.stacks],
       contributions: [this.configuration.pot / 2, this.configuration.pot / 2],
@@ -284,6 +346,7 @@ export class RangePostflopHoldemSubgame implements ExtensiveGame<RangePostflopSt
       const card = createHoldemDeck().find((candidate) => candidate.id === cardId);
       if (!card) throw new Error("Unknown board card.");
       next.board.push(card);
+      next.boardObservations.push(outcome.observation ?? String(card.id));
       next.street = next.board.length === 4 ? "turn" : "river";
       next.streetCommitted = [0, 0];
       next.currentBet = 0;
@@ -339,7 +402,7 @@ export class RangePostflopHoldemSubgame implements ExtensiveGame<RangePostflopSt
     return next;
   }
 
-  chanceOutcomes(state: RangePostflopState) {
+  chanceOutcomes(state: RangePostflopState): Array<{ action: RangePostflopAction; probability: number; observation?: string }> {
     if (state.privateDealIndex === null) {
       return this.privateDeals.map((deal, index) => ({
         action: `private:${index}` as RangePostflopAction,
@@ -362,6 +425,7 @@ export class RangePostflopHoldemSubgame implements ExtensiveGame<RangePostflopSt
     return outcomes.map((outcome) => ({
       action: `deal:${outcome.card.id}` as RangePostflopAction,
       probability: outcome.probability,
+      observation: outcome.observation ?? String(outcome.card.id),
     }));
   }
 
@@ -373,8 +437,8 @@ export class RangePostflopHoldemSubgame implements ExtensiveGame<RangePostflopSt
       actor,
       combo.id,
       state.street,
-      state.board.map((card) => card.id).join("-"),
-      state.history.filter((action) => !action.startsWith("private:")).join(",") || "root",
+      state.boardObservations.join("-"),
+      state.history.filter((action) => !action.startsWith("private:") && !action.startsWith("deal:")).join(",") || "root",
     ].join("|");
   }
 
@@ -403,6 +467,7 @@ export type RangePostflopArtifact = {
   board: string[];
   bettingAbstraction: RangePostflopAbstraction;
   chanceAbstraction: Record<string, unknown>;
+  boardContinuationModel: BoardContinuationModel;
   rangeSource: RangePostflopSubgameDefinition["rangeSource"];
   continuationModel: "strategic-subgame";
   algorithm: RangePostflopSolveConfiguration;
@@ -503,6 +568,7 @@ export function solveRangePostflopSubgame(
     board: definition.flop.map((card) => card.notation),
     bettingAbstraction: definition.abstraction,
     chanceAbstraction: definition.boardProvider.metadata(),
+    boardContinuationModel: definition.boardProvider.boardContinuationModel,
     rangeSource: definition.rangeSource,
     continuationModel: "strategic-subgame",
     algorithm: configuration,
@@ -521,5 +587,143 @@ export function solveRangePostflopSubgame(
       approximateHeapDeltaBytes: Math.max(0, heapAfter - heapBefore),
     },
     trust: "Experimental",
+  };
+}
+
+export type InnerQualityGateConfiguration = {
+  exploitabilityThreshold: number;
+  reachWeightedMovementThreshold: number;
+  checkpoints: number[];
+  maximumIterations: number;
+};
+
+export type QualityGatedRangePostflopArtifact = RangePostflopArtifact & {
+  innerQuality: {
+    passed: boolean;
+    status: "passed" | "inner-quality-failed";
+    exploitabilityThreshold: number;
+    reachWeightedMovementThreshold: number;
+    maximumIterations: number;
+    points: Array<{ iterations: number; exploitability: number | null; nashConv: number | null; reachWeightedMovement: number | null; strategyHash: string }>;
+  };
+};
+
+export function solveRangePostflopToQuality(
+  definition: RangePostflopSubgameDefinition,
+  configuration: RangePostflopSolveConfiguration,
+  gate: InnerQualityGateConfiguration,
+): QualityGatedRangePostflopArtifact {
+  if (!(gate.exploitabilityThreshold > 0) || !(gate.reachWeightedMovementThreshold > 0)) throw new Error("Inner quality thresholds must be positive.");
+  const budgets = [...new Set([...gate.checkpoints, gate.maximumIterations])]
+    .filter((value) => Number.isInteger(value) && value > 0 && value <= gate.maximumIterations)
+    .sort((left, right) => left - right);
+  if (!budgets.length || budgets.at(-1) !== gate.maximumIterations) throw new Error("Inner quality gate requires a valid maximum iteration budget.");
+
+  const totalStarted = performance.now();
+  const game = new RangePostflopHoldemSubgame(definition);
+  const compileStarted = performance.now();
+  const compiled = compileGameTree(game);
+  const compileMs = performance.now() - compileStarted;
+  const heapBefore = process.memoryUsage().heapUsed;
+  const solver = createSolver(game, configuration, compiled);
+  let result = solver.solve({ maxIterations: budgets[0], metricInterval: budgets[0] });
+  let solveMs = 0;
+  let previous: BehavioralStrategy | null = null;
+  const points: QualityGatedRangePostflopArtifact["innerQuality"]["points"] = [];
+  let passed = false;
+
+  for (let index = 0; index < budgets.length; index += 1) {
+    const iterations = budgets[index];
+    const started = performance.now();
+    if (index > 0) result = solver.solve({ maxIterations: iterations, metricInterval: iterations });
+    solveMs += performance.now() - started;
+    let reachWeightedMovement: number | null = null;
+    if (previous) {
+      const reach = compiledInformationSetReach(compiled.root, result.strategy);
+      reachWeightedMovement = strategyStability(previous, result.strategy, reach, 1e-10).reachWeightedStrategyDelta;
+    }
+    points.push({
+      iterations,
+      exploitability: result.metrics.exploitability,
+      nashConv: result.metrics.nashConv,
+      reachWeightedMovement,
+      strategyHash: hashValue(result.strategy),
+    });
+    passed = result.metrics.exploitability !== null
+      && result.metrics.exploitability <= gate.exploitabilityThreshold
+      && reachWeightedMovement !== null
+      && reachWeightedMovement <= gate.reachWeightedMovementThreshold;
+    previous = result.strategy;
+    if (passed) break;
+  }
+
+  const heapAfter = process.memoryUsage().heapUsed;
+  const evaluationStarted = performance.now();
+  const utilities = evaluateCompiledNode(compiled.root, result.strategy);
+  const strategyEvaluationMs = performance.now() - evaluationStarted;
+  if (compiled.root.kind !== "chance") throw new Error("Range postflop compiled root must be private chance.");
+  const pairUtilities = game.privateDeals.map((deal, index) => {
+    const outcome = compiled.root.kind === "chance"
+      ? compiled.root.outcomes.find((candidate) => candidate.action === `private:${index}`)
+      : undefined;
+    if (!outcome) throw new Error("Compiled postflop tree is missing a private deal branch.");
+    return {
+      pairKey: deal.playerZero.id + "|" + deal.playerOne.id,
+      playerZeroComboId: deal.playerZero.id,
+      playerOneComboId: deal.playerOne.id,
+      utilities: evaluateCompiledNode(outcome.child, result.strategy),
+    };
+  });
+  const rangeHashes = definition.ranges.map((range) => hashValue(
+    range.entries().filter(({ weight }) => weight > 0).map(({ combo, weight }) => [combo.id, weight]),
+  )) as [string, string];
+  const gameDefinitionHash = hashValue(game.definition);
+  const id = `range-continuation:${hashValue({ definition: game.definition, configuration, strategy: result.strategy, qualityGate: gate })}`;
+  const validation = new ValidationSuite(`validation:${id}`)
+    .add({ id: "private-chance", level: "MATHEMATICAL", description: "Compatible private deals are normalized.", metric: { name: "probability", value: game.privateDeals.reduce((sum, deal) => sum + deal.probability, 0) }, threshold: { kind: "absolute-error", expected: 1, tolerance: 1e-12 } })
+    .add({ id: "card-collisions", level: "STRUCTURAL", description: "No private deal collides with the fixed flop.", metric: { name: "valid", value: game.privateDeals.every((deal) => new Set([deal.playerZero.first.id, deal.playerZero.second.id, deal.playerOne.first.id, deal.playerOne.second.id, ...definition.flop.map((card) => card.id)]).size === 7) }, threshold: { kind: "equal", value: true } })
+    .add({ id: "multi-street", level: "STRUCTURAL", description: "The tree contains flop decisions and future public chance.", metric: { name: "chanceNodes", value: compiled.statistics.chanceNodes }, threshold: { kind: "minimum", value: 2 } })
+    .add({ id: "zero-sum", level: "MATHEMATICAL", description: "Utilities sum to zero.", metric: { name: "utilitySum", value: utilities[0] + utilities[1] }, threshold: { kind: "absolute-error", expected: 0, tolerance: 1e-8 } })
+    .add({ id: "strategy", level: "STRATEGIC", description: "Every behavioral strategy is finite and normalized.", metric: { name: "normalized", value: Object.values(result.strategy).every((actions) => Math.abs(Object.values(actions).reduce((sum, probability) => sum + probability, 0) - 1) < 1e-9) }, threshold: { kind: "equal", value: true } })
+    .add({ id: "nash-conv", level: "CONVERGENCE", description: "NashConv is finite.", metric: { name: "finite", value: result.metrics.nashConv === null || Number.isFinite(result.metrics.nashConv) }, threshold: { kind: "equal", value: true } })
+    .add({ id: "inner-quality", level: "CONVERGENCE", description: "Adaptive inner quality gate is explicit.", metric: { name: "passed", value: passed }, threshold: { kind: "equal", value: true } })
+    .report("2026-10-04T00:00:00.000Z");
+  const finalIterations = result.metrics.iteration;
+  return {
+    schemaVersion: 1,
+    id,
+    gameScope: "HU fixed-flop weighted-range subgame",
+    gameDefinitionHash,
+    rangeHashes,
+    board: definition.flop.map((card) => card.notation),
+    bettingAbstraction: definition.abstraction,
+    chanceAbstraction: definition.boardProvider.metadata(),
+    boardContinuationModel: definition.boardProvider.boardContinuationModel,
+    rangeSource: definition.rangeSource,
+    continuationModel: "strategic-subgame",
+    algorithm: { ...configuration, iterations: finalIterations, metricInterval: finalIterations },
+    tree: compiled.statistics,
+    convergence: result.metrics,
+    utilities,
+    pairUtilities,
+    strategy: result.strategy,
+    validation,
+    runtime: {
+      compileMs,
+      solveMs,
+      strategyEvaluationMs,
+      totalMs: performance.now() - totalStarted,
+      iterationsPerSecond: finalIterations / Math.max(0.001, solveMs / 1000),
+      approximateHeapDeltaBytes: Math.max(0, heapAfter - heapBefore),
+    },
+    trust: "Experimental",
+    innerQuality: {
+      passed,
+      status: passed ? "passed" : "inner-quality-failed",
+      exploitabilityThreshold: gate.exploitabilityThreshold,
+      reachWeightedMovementThreshold: gate.reachWeightedMovementThreshold,
+      maximumIterations: gate.maximumIterations,
+      points,
+    },
   };
 }

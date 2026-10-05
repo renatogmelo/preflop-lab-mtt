@@ -1,0 +1,136 @@
+{
+  "schemaVersion": 1,
+  "phase": "6.6",
+  "solverVersion": "0.6.0",
+  "baselineCommit": "ef0b0b06971d86a06446cecff93d036fe34873f9",
+  "referenceGameId": "phase6-reference-game-v1",
+  "referenceGameHash": "bfd3615d6ee13da1",
+  "trust": "Experimental",
+  "verifiedDatasets": 0,
+  "purpose": "Diagnose the deterministic continuation operator and test mathematically explicit stabilization without hiding raw residual through damping.",
+  "frozenMainGame": true,
+  "predeclaredThresholds": {
+    "innerExploitability": 0.02,
+    "innerReachWeightedMovement": 0.02,
+    "preflopReachWeightedDelta": 0.02,
+    "conditionalRangeL1": 0.02,
+    "normalizedRawContinuationResidual": 0.02,
+    "dampedContinuationDelta": 0.02,
+    "postflopReachWeightedDelta": 0.02,
+    "localResponseRatio": 1,
+    "consecutivePasses": 3,
+    "andersonSafeguardFactor": 1.25
+  },
+  "finiteSolve": {
+    "iterationBudgets": [
+      50,
+      100,
+      250,
+      500,
+      1000,
+      2500,
+      5000
+    ],
+    "epsilons": [
+      0.0001,
+      0.001,
+      0.01,
+      0.05
+    ],
+    "qualityTargets": [
+      0.05,
+      0.02,
+      0.01,
+      0.005
+    ],
+    "maximumIterations": 10000
+  },
+  "perturbations": {
+    "deterministicDirections": [
+      "phase6-5-last-weight",
+      "within-class",
+      "strong-to-medium",
+      "medium-to-weak",
+      "coupling-aligned",
+      "deterministic-random-0",
+      "deterministic-random-1",
+      "deterministic-random-2",
+      "deterministic-random-3"
+    ],
+    "preserveNonnegative": true,
+    "preserveNormalization": true,
+    "preserveBlockers": true
+  },
+  "abstractionLaboratory": {
+    "models": [
+      "representative-bucket",
+      "expected-bucket",
+      "exact-future"
+    ],
+    "privateCombosPerPlayer": 2,
+    "preserveFlopTurnRiver": true,
+    "preservePhysicalCardRemoval": true,
+    "preserveStrategicDecisions": true,
+    "nodeCap": 2000000
+  },
+  "couplingV2": {
+    "dampingAlphas": [
+      0.01,
+      0.025,
+      0.05,
+      0.075,
+      0.1,
+      0.15,
+      0.2,
+      0.25
+    ],
+    "screeningOuterIterations": 10,
+    "confirmatoryBudgets": [
+      25,
+      50,
+      100,
+      200
+    ],
+    "methods": [
+      "plain-damping",
+      "adaptive-damping",
+      "safeguarded-anderson"
+    ],
+    "andersonHistory": [
+      2,
+      3,
+      5
+    ],
+    "andersonRegularization": 1e-8,
+    "initializations": [
+      "equity",
+      "neutral-zero",
+      "phase6-5",
+      "frozen-range-solved"
+    ]
+  },
+  "resourceCaps": {
+    "maximumMaterializedNodes": 2000000,
+    "maximumPostflopIterations": 10000,
+    "maximumOuterIterations": 200,
+    "runtimePolicy": "Record negative and capped experiments; never relax gates after results."
+  },
+  "expectedArtifacts": [
+    "solver/artifacts/phase6-6-continuation-operator-v0.6.0.json",
+    "tests/golden/phase6-6-v0.6.0.json",
+    "PHASE6_6_REPORT.md",
+    "PHASE6_6_SENSITIVITY.md",
+    "PHASE6_6_ABSTRACTION.md",
+    "PHASE6_6_FIXED_POINT.md",
+    "PHASE6_6_HYPOTHESES.md",
+    "PHASE6_6_PERFORMANCE.md"
+  ],
+  "resultPolicy": {
+    "recordAllFailures": true,
+    "changeThresholdsAfterRun": false,
+    "tinyAlphaCannotSatisfyRawResidualGate": true,
+    "phase7RequiresAllABCD": true,
+    "promotionForbidden": true
+  },
+  "runs": []
+}

@@ -221,3 +221,33 @@ Baseline audited: `893d62720ca465153030ba5d3dcff25403f8f979` (solver `0.4.0`). P
 - Continuous outer 20 and 10→resume→20 were strategy-, utility- and trajectory-identical.
 - Final gates: A pass, B pass, C pass, D fail. Phase 7 remains blocked.
 - All strategic output remains Experimental; Verified remains zero.- Final Phase 6.5 validation: TypeScript, lint, production build and 93/93 tests passed on 2026-10-04.
+
+## PHASE 6.6 AUDIT - 2026-10-04
+
+Baseline audited: `ef0b0b06971d86a06446cecff93d036fe34873f9` (solver `0.5.0`). The frozen `phase6-reference-game-v1` and hash `bfd3615d6ee13da1` remain unchanged. All Hold'em outputs remain `Experimental`; `Verified = 0`.
+
+### Confirmed baseline
+
+- Gates remain `A PASS / B PASS / C PASS / D FAIL`.
+- Exact preflop traversal enumerates all 46 compatible private deals synchronously and is seed-invariant.
+- The postflop reference tree has 11,179 nodes and 2,032 infosets under the two-representative future-board abstraction.
+- At outer iteration 100 with alpha `0.05`, preflop reach-weighted movement was small (`0.001211`), while conditional ranges (`0.079894`), raw continuation (`2.660087`), damped continuation (`0.053868`) and postflop reach-weighted movement (`0.044017`) did not establish a fixed point.
+- Phase 6.5 sensitivity changed sharply with epsilon (`297.913854`, `53.726274`, `28.905781`, `7.048194`), but did not isolate finite-solve, posterior, representative-card or true operator response effects.
+
+### Implementation findings
+
+- Gate D currently tests damped update size, not the raw fixed-point residual `F(S)-S`; a sufficiently small alpha could therefore create false convergence.
+- `BucketedBoardProvider` assigns deterministic physical buckets but replaces each bucket with one visible representative card. Stable identity does not bound the abstraction error.
+- Conditional ranges correctly use the complete compatible joint deal posterior, but the pipeline does not expose stage-by-stage normalization, joint-deal and posterior amplification metrics.
+- Postflop coupling uses a fixed iteration count and can consume continuation values without an explicit exploitability plus reach-weighted movement quality gate.
+- Checkpoint/resume is exact for Phase 6.5 state, but does not carry raw residual history, inner-quality state or acceleration state.
+- Full exact future enumeration would materialize about 5.5M nodes; the audit found no evidence that this is a fundamental limit rather than a consequence of eager tree materialization.
+
+### Phase 6.6 controls frozen before experiments
+
+- Preserve the official reference game and historical Representative model.
+- Add a separate microgame laboratory with Representative (R), probability-weighted Expected Bucket (E) and Exact physical future enumeration (X).
+- Keep bucket membership deterministic and range-independent for a fixed card state.
+- Predeclare Gate D v2 with raw normalized continuation residual `<= 0.02`, every legacy strategic delta `<= 0.02`, LocalResponseRatio `<= 1`, inner quality passed and three consecutive passes.
+- Run the declared damping grid, quality-conditioned sensitivity, multiple initializations and guarded acceleration without changing thresholds after observing results.
+- Keep `Verified = 0` regardless of Gate D outcome and do not implement Phase 7 in this phase.
