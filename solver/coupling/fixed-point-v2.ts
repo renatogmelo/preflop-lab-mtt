@@ -100,7 +100,7 @@ export type CouplingV2Checkpoint = {
   innerQualityHistory: Array<{ outerIteration: number; passed: boolean; status: string; points: QualityGatedRangePostflopArtifact["innerQuality"]["points"] }>;
   convergencePasses: boolean[];
   accelerationState: ReturnType<SafeguardedAnderson["checkpoint"]> | null;
-  pendingAcceleration: { accelerated: boolean; referenceResidual: number } | null;
+  pendingAcceleration: { accelerated: boolean; referenceResidual: number; fallbackValues: number[] } | null;
   currentAlpha: number;
 };
 
@@ -287,8 +287,10 @@ export class CoupledFixedPointSolverV2 {
       const residual = residualNorms(stateVector, mappedVector, reachWeights);
       let acceleratedStep = false;
       let acceleratedStepAccepted: boolean | null = null;
+      let rejectedFallback: number[] | null = null;
       if (anderson && pendingAcceleration?.accelerated) {
         acceleratedStepAccepted = anderson.safeguard(residual.l2, pendingAcceleration.referenceResidual);
+        if (!acceleratedStepAccepted) rejectedFallback = [...pendingAcceleration.fallbackValues];
       }
       if (this.configuration.method === "adaptive-damping" && residualHistory.length) {
         const previousResidual = residualHistory.at(-1)!.l2;
@@ -298,11 +300,15 @@ export class CoupledFixedPointSolverV2 {
           : Math.min(adaptive.maximum, currentAlpha * adaptive.grow);
       }
       let nextVector = stateVector.map((value, index) => value + currentAlpha * residual.residual[index]);
-      if (anderson) {
+      const dampedFallback = [...nextVector];
+      if (rejectedFallback) {
+        nextVector = rejectedFallback;
+        pendingAcceleration = null;
+      } else if (anderson) {
         const proposal = anderson.propose(stateVector, mappedVector, nextVector);
         nextVector = proposal.candidate;
         acceleratedStep = proposal.accelerated;
-        pendingAcceleration = { accelerated: proposal.accelerated, referenceResidual: residual.l2 };
+        pendingAcceleration = { accelerated: proposal.accelerated, referenceResidual: residual.l2, fallbackValues: dampedFallback };
       } else {
         pendingAcceleration = null;
       }
@@ -429,5 +435,4 @@ export class CoupledFixedPointSolverV2 {
     };
   }
 }
-
 

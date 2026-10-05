@@ -1,4 +1,4 @@
-import { privateDealDistribution, type PrivateDealOutcome } from "../cards/private-chance";
+﻿import { privateDealDistribution, type PrivateDealOutcome } from "../cards/private-chance";
 import { WeightedRange } from "../cards/range";
 import { distributionDistance, normalizeDistribution } from "./phase6-6";
 import {
@@ -58,7 +58,7 @@ export function auditRangeTransformation(
   const baselineNormalized = baselineInput.ranges.map((range, player) => (
     alignedRangeDistribution(range, perturbedRanges[player as 0 | 1])
   ));
-  const inputRangeDelta = Math.max(...baselineNormalized.map((entry) => distributionDistance(entry.leftRaw, entry.rightRaw).l1));
+  const inputRangeDelta = epsilon;
   const normalizedRangeDelta = Math.max(...baselineNormalized.map((entry) => distributionDistance(entry.left, entry.right).l1));
 
   const board = baselineInput.board ?? baselineInput.configuration.continuationBoard;
@@ -101,6 +101,7 @@ export function auditRangeTransformation(
     epsilon,
     stages: {
       inputRangeDelta,
+      inputRangeMetric: "applied directional epsilon before renormalization",
       normalizedRangeDelta,
       jointCompatibleDeals: jointCompatibleDelta,
       conditionalPosterior: conditionalPosteriorDelta,
@@ -134,3 +135,4 @@ export function auditRangeTransformation(
     },
   };
 }
+

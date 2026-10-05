@@ -305,7 +305,17 @@ async function main() {
   const uninterrupted = checkpointSolver.solve();
   const partial = checkpointSolver.solve(undefined, 2);
   const resumed = new CoupledFixedPointSolverV2(checkpointConfiguration, equityInitial, "equity").solve(partial.checkpoint, 4);
-  const checkpointResume = { uninterruptedHash: hashValue(uninterrupted.checkpoint), resumedHash: hashValue(resumed.checkpoint), identical: hashValue(uninterrupted.checkpoint) === hashValue(resumed.checkpoint), schemaVersion: resumed.checkpoint.schemaVersion };
+const semanticCheckpoint = (checkpoint) => ({
+    ...checkpoint,
+    metrics: checkpoint.metrics.map((metric) => Object.fromEntries(Object.entries(metric).filter(([key]) => key !== "runtimeMs"))),
+  });
+  const uninterruptedSemanticHash = hashValue(semanticCheckpoint(uninterrupted.checkpoint));
+  const resumedSemanticHash = hashValue(semanticCheckpoint(resumed.checkpoint));
+  const checkpointResume = {
+    uninterruptedRawHash: hashValue(uninterrupted.checkpoint), resumedRawHash: hashValue(resumed.checkpoint),
+    uninterruptedSemanticHash, resumedSemanticHash, identical: uninterruptedSemanticHash === resumedSemanticHash,
+    excludedNondeterministicFields: ["metrics[].runtimeMs"], schemaVersion: resumed.checkpoint.schemaVersion,
+  };
 
   const derivativeByBudget = budgets.map((iterations) => ({
     iterations,
@@ -377,3 +387,4 @@ main().catch((error) => {
   console.error(error);
   process.exitCode = 1;
 });
+
