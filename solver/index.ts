@@ -31,3 +31,14 @@ export * from "./validation/suite";
 
 export * from "./continuation/cache";
 export * from "./coupling/engine";
+
+export * from "./research/unified/game-definition";
+export * from "./research/unified/game-tree";
+export * from "./research/unified/reference-games";
+export * from "./research/unified/ground-truth";
+export * from "./research/unified/unified-solver";
+export * from "./research/unified/validation";
+export * from "./research/decomposition/decomposed-solver";
+export * from "./research/decomposition/continuation-operator";
+export * from "./research/decomposition/fixed-point-evaluator";
+export * from "./research/comparison/convergence-comparison";

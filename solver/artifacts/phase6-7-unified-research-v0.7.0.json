@@ -1,0 +1,1731 @@
+{
+  "schemaVersion": 1,
+  "researchVersion": "0.7.0",
+  "trust": "Experimental",
+  "verifiedDatasets": 0,
+  "baseline": "842263ea678d0c64f15df0bd638dc9ccc5ae4080",
+  "algorithmVersion": {
+    "unified": "unified-cfr-dcfr-v0.7.0",
+    "decomposed": "decomposed-fixed-point-v0.7.0",
+    "groundTruth": "normal-form-support-enumeration-v1"
+  },
+  "configuration": {
+    "budgets": [
+      100,
+      500,
+      1000,
+      2500,
+      5000,
+      10000
+    ],
+    "decomposed": {
+      "innerIterations": 250,
+      "outerIterations": 20,
+      "damping": 0.5,
+      "method": "damped",
+      "initialization": "uniform"
+    }
+  },
+  "historicalGates": {
+    "A": true,
+    "B": true,
+    "C": true,
+    "D": false
+  },
+  "gates": {
+    "U1": true,
+    "U2": true,
+    "U3": true,
+    "U4": true,
+    "U5": true
+  },
+  "games": [
+    {
+      "game": {
+        "id": "sequential-hidden-choice-v1",
+        "name": "Sequential Hidden Choice",
+        "hash": "59621fec75a9f1d8",
+        "description": "A private type acts first; the responder observes the action but not the type."
+      },
+      "validation": {
+        "valid": true,
+        "chance": {
+          "valid": true,
+          "entries": [
+            {
+              "nodeId": "root",
+              "outcomes": 2,
+              "total": 1,
+              "minimum": 0.5
+            }
+          ]
+        },
+        "informationSets": {
+          "valid": true,
+          "perfectRecall": true,
+          "issues": [],
+          "informationSets": 3,
+          "byPlayer": [
+            2,
+            1
+          ]
+        },
+        "zeroSum": {
+          "valid": true,
+          "terminals": 6,
+          "maximumError": 0
+        },
+        "tree": {
+          "nodes": 11,
+          "terminals": 6,
+          "chanceNodes": 1,
+          "actionNodes": 4,
+          "informationSets": 3,
+          "maximumDepth": 3
+        },
+        "privateInformationProtected": true,
+        "publicHistorySharedByConstruction": true
+      },
+      "groundTruth": {
+        "method": "independent-normal-form-support-enumeration",
+        "value": 0.6666666666666666,
+        "strategy": {
+          "A:P0:high": {
+            "pass": 0,
+            "challenge": 1
+          },
+          "A:P0:low": {
+            "pass": 0.6666666666666666,
+            "challenge": 0.3333333333333333
+          },
+          "A:P1:challenge": {
+            "yield": 0.6666666666666666,
+            "contest": 0.3333333333333333
+          }
+        },
+        "evaluation": {
+          "utilities": [
+            0.6666666666666666,
+            -0.6666666666666666
+          ],
+          "bestResponses": [
+            {
+              "player": 0,
+              "value": 0.6666666666666666,
+              "policy": {
+                "A:P0:high": "challenge",
+                "A:P0:low": "pass"
+              },
+              "informationSets": 2,
+              "nodesVisited": 11
+            },
+            {
+              "player": 1,
+              "value": -0.6666666666666666,
+              "policy": {
+                "A:P1:challenge": "yield"
+              },
+              "informationSets": 1,
+              "nodesVisited": 11
+            }
+          ],
+          "nashConv": 0,
+          "exploitability": 0
+        },
+        "pureStrategies": [
+          4,
+          2
+        ],
+        "supportSizes": [
+          2,
+          2
+        ],
+        "payoffMatrixHash": "055bd81be57b53c7",
+        "strategyHash": "254364be2ff06d52"
+      },
+      "unified": {
+        "final": {
+          "strategyHash": "ebbd8f9a31ffbfa6",
+          "strategyDistance": {
+            "l1": 0.006594308265478277,
+            "l2": 0.0034958089408989776,
+            "maximum": 0.002229407242977044,
+            "mean": 0.0010990513775797127,
+            "jensenShannon": 0.000001655388410603353
+          },
+          "strategyEv": 0.666663096002692,
+          "bestResponseEv": [
+            0.6688960739096437,
+            -0.6661327932217856
+          ],
+          "valueError": 0.0000035706639746058144,
+          "exploitability": 0.0013816403439290137,
+          "nashConv": 0.0027632806878580274,
+          "fixedPointResidual": null,
+          "runtimeMs": 128.30370000000005,
+          "nodesVisited": 220000
+        },
+        "strategyHash": "ebbd8f9a31ffbfa6",
+        "configurationHash": "151572c9f3c4834d",
+        "experimentId": "f3d53c0c9cdff7a0",
+        "checkpointHash": "d20a08784fc38634",
+        "convergence": [
+          {
+            "iterations": 100,
+            "strategyHash": "2621c1e8996e19ac",
+            "strategyDistance": {
+              "l1": 0.09170471596668998,
+              "l2": 0.045900051380885806,
+              "maximum": 0.023972326692316637,
+              "mean": 0.015284119327781663,
+              "jensenShannon": 0.00029018518483476505
+            },
+            "strategyEv": 0.665879881628321,
+            "bestResponseEv": [
+              0.6885466783517742,
+              -0.6546804935175479
+            ],
+            "valueError": 0.0007867850383456165,
+            "exploitability": 0.01693309241711316,
+            "nashConv": 0.03386618483422632,
+            "fixedPointResidual": null,
+            "runtimeMs": 6.44380000000001,
+            "nodesVisited": 2200,
+            "averagePositiveRegret": 0.013686575028347733,
+            "millisecondsPerIteration": 0.0644380000000001,
+            "evaluationRuntimeMs": 0.25600000000002865
+          },
+          {
+            "iterations": 500,
+            "strategyHash": "a6f9fb973c56bbeb",
+            "strategyDistance": {
+              "l1": 0.024986571346281395,
+              "l2": 0.013761105402565423,
+              "maximum": 0.009131336729274908,
+              "mean": 0.004164428557713566,
+              "jensenShannon": 0.000025778538272561255
+            },
+            "strategyEv": 0.6666206180141909,
+            "bestResponseEv": [
+              0.6757980033959416,
+              -0.6649856921947337
+            ],
+            "valueError": 0.00004604865247570533,
+            "exploitability": 0.005406155600603979,
+            "nashConv": 0.010812311201207958,
+            "fixedPointResidual": null,
+            "runtimeMs": 10.2106,
+            "nodesVisited": 11000,
+            "averagePositiveRegret": 0.005802708774835636,
+            "millisecondsPerIteration": 0.0204212,
+            "evaluationRuntimeMs": 0.20109999999999673
+          },
+          {
+            "iterations": 1000,
+            "strategyHash": "082684485dc90e9c",
+            "strategyDistance": {
+              "l1": 0.016426471779682865,
+              "l2": 0.01000279587044324,
+              "maximum": 0.006961380695727382,
+              "mean": 0.002737745296613811,
+              "jensenShannon": 0.000013602936688812617
+            },
+            "strategyEv": 0.6666535947044906,
+            "bestResponseEv": [
+              0.673628047362394,
+              -0.6660407390696096
+            ],
+            "valueError": 0.000013071962176036678,
+            "exploitability": 0.0037936541463922113,
+            "nashConv": 0.007587308292784423,
+            "fixedPointResidual": null,
+            "runtimeMs": 15.242700000000013,
+            "nodesVisited": 22000,
+            "averagePositiveRegret": 0.004048174465341893,
+            "millisecondsPerIteration": 0.015242700000000014,
+            "evaluationRuntimeMs": 0.18219999999996617
+          },
+          {
+            "iterations": 2500,
+            "strategyHash": "27572d04b86bd768",
+            "strategyDistance": {
+              "l1": 0.013466467555567884,
+              "l2": 0.0070408882833316545,
+              "maximum": 0.004395897063643295,
+              "mean": 0.002244411259261314,
+              "jensenShannon": 0.000006725070546676083
+            },
+            "strategyEv": 0.6666512546292354,
+            "bestResponseEv": [
+              0.6710625637303098,
+              -0.6654979983095963
+            ],
+            "valueError": 0.00001541203743127273,
+            "exploitability": 0.0027822827103567427,
+            "nashConv": 0.005564565420713485,
+            "fixedPointResidual": null,
+            "runtimeMs": 39.23079999999999,
+            "nodesVisited": 55000,
+            "averagePositiveRegret": 0.002466412766633039,
+            "millisecondsPerIteration": 0.015692319999999996,
+            "evaluationRuntimeMs": 0.18029999999998836
+          },
+          {
+            "iterations": 5000,
+            "strategyHash": "7564f1da6abcd026",
+            "strategyDistance": {
+              "l1": 0.00846423548520301,
+              "l2": 0.00476993311651946,
+              "maximum": 0.003216222648749323,
+              "mean": 0.0014107059142005017,
+              "jensenShannon": 0.0000030843240656814416
+            },
+            "strategyEv": 0.6666617656494501,
+            "bestResponseEv": [
+              0.669882889315416,
+              -0.6661587191197406
+            ],
+            "valueError": 0.000004901017216507597,
+            "exploitability": 0.0018620850978376957,
+            "nashConv": 0.0037241701956753914,
+            "fixedPointResidual": null,
+            "runtimeMs": 66.79810000000003,
+            "nodesVisited": 110000,
+            "averagePositiveRegret": 0.0017386410346817425,
+            "millisecondsPerIteration": 0.013359620000000006,
+            "evaluationRuntimeMs": 0.2278999999999769
+          },
+          {
+            "iterations": 10000,
+            "strategyHash": "ebbd8f9a31ffbfa6",
+            "strategyDistance": {
+              "l1": 0.006594308265478277,
+              "l2": 0.0034958089408989776,
+              "maximum": 0.002229407242977044,
+              "mean": 0.0010990513775797127,
+              "jensenShannon": 0.000001655388410603353
+            },
+            "strategyEv": 0.666663096002692,
+            "bestResponseEv": [
+              0.6688960739096437,
+              -0.6661327932217856
+            ],
+            "valueError": 0.0000035706639746058144,
+            "exploitability": 0.0013816403439290137,
+            "nashConv": 0.0027632806878580274,
+            "fixedPointResidual": null,
+            "runtimeMs": 123.5358,
+            "nodesVisited": 220000,
+            "averagePositiveRegret": 0.001208531978157586,
+            "millisecondsPerIteration": 0.01235358,
+            "evaluationRuntimeMs": 0.18620000000009895
+          }
+        ],
+        "reproducibility": {
+          "identicalAcrossDeclaredSeeds": true,
+          "first": "ebbd8f9a31ffbfa6",
+          "second": "ebbd8f9a31ffbfa6"
+        },
+        "checkpointResume": {
+          "identical": true,
+          "continuousStrategyHash": "082684485dc90e9c",
+          "resumedStrategyHash": "082684485dc90e9c",
+          "checkpointHash": "aa8767fb2df48fcf"
+        },
+        "performance": {
+          "runtimeMs": 128.30370000000005,
+          "millisecondsPerIteration": 0.012830370000000004,
+          "nodesVisited": 220000,
+          "informationSets": 3,
+          "heapUsedBeforeBytes": 12570504,
+          "heapUsedAfterBytes": 12770144,
+          "heapDeltaBytes": 199896,
+          "evaluationRuntimeMs": 0.2524999999999409,
+          "strategyEvaluationRuntimeMs": 0.038799999999923784,
+          "bestResponseRuntimeMs": 0.2137000000000171
+        }
+      },
+      "decomposed": [
+        {
+          "method": "undamped",
+          "strategyHash": "cf760fe454d60d88",
+          "strategyDistance": {
+            "l1": 1.9980000000000002,
+            "l2": 1.0509340818740462,
+            "maximum": 0.6646666666666667,
+            "mean": 0.333,
+            "jensenShannon": 0.21235621713204722
+          },
+          "strategyEv": 0.9970019999999999,
+          "bestResponseEv": [
+            0.9989999999999999,
+            0
+          ],
+          "valueError": 0.3303353333333333,
+          "exploitability": 0.49949999999999994,
+          "nashConv": 0.9989999999999999,
+          "fixedPointResidual": 0.9979939879900364,
+          "runtimeMs": 106.09649999999999,
+          "nodesVisited": 220000,
+          "final": {
+            "iteration": 20,
+            "residual": {
+              "residual": [
+                0,
+                0,
+                -0.996,
+                0.996
+              ],
+              "l1": 1.992,
+              "l2": 1.4085567081236028,
+              "lInfinity": 0.996,
+              "reachWeighted": 0.498,
+              "normalizedL2": 0.9979939879900364,
+              "scale": 1.4113879693408187
+            },
+            "updateDistance": {
+              "l1": 1.992,
+              "l2": 1.4085567081236028,
+              "lInfinity": 0.996,
+              "reachWeighted": 0.498
+            },
+            "localResponseRatio": 1,
+            "strategyEv": 0.9970019999999999,
+            "bestResponseEv": [
+              0.9989999999999999,
+              0
+            ],
+            "exploitability": 0.49949999999999994,
+            "nashConv": 0.9989999999999999,
+            "averagePositiveRegret": 0.0004992499999999999,
+            "nodesVisited": 11000,
+            "accelerated": false
+          },
+          "performance": {
+            "runtimeMs": 106.09649999999999,
+            "nodesVisited": 220000,
+            "heapUsedBeforeBytes": 12684728,
+            "heapUsedAfterBytes": 12126960,
+            "heapDeltaBytes": -557152
+          },
+          "experimentId": "3022588eba83c0ca",
+          "configurationHash": "02c2414bf9198f4f",
+          "checkpointHash": "fbe8e376491a7a32"
+        },
+        {
+          "method": "damped",
+          "strategyHash": "d87ce9759ab98231",
+          "strategyDistance": {
+            "l1": 1.1976622558075047,
+            "l2": 0.597388866121514,
+            "maximum": 0.3112471739451091,
+            "mean": 0.19961037596791745,
+            "jensenShannon": 0.05905614348372409
+          },
+          "strategyEv": 0.798949244168248,
+          "bestResponseEv": [
+            0.9522501456955004,
+            -0.353419017791748
+          ],
+          "valueError": 0.13228257750158134,
+          "exploitability": 0.2994155639518762,
+          "nashConv": 0.5988311279037524,
+          "fixedPointResidual": 0.70825407424683,
+          "runtimeMs": 82.96190000000013,
+          "nodesVisited": 220000,
+          "final": {
+            "iteration": 20,
+            "residual": {
+              "residual": [
+                -9.498596191407152e-7,
+                9.498596191814812e-7,
+                -0.7068389854431152,
+                0.7068389854431152
+              ],
+              "l1": 1.4136798706054687,
+              "l2": 0.9996212796285947,
+              "lInfinity": 0.7068389854431152,
+              "reachWeighted": 0.3534199676513672,
+              "normalizedL2": 0.70825407424683,
+              "scale": 1.4113879693408187
+            },
+            "updateDistance": {
+              "l1": 0.7068399353027344,
+              "l2": 0.49981063981429735,
+              "lInfinity": 0.3534194927215576,
+              "reachWeighted": 0.1767099838256836
+            },
+            "localResponseRatio": 3.444447729307195,
+            "strategyEv": 0.798949244168248,
+            "bestResponseEv": [
+              0.9522501456955004,
+              -0.353419017791748
+            ],
+            "exploitability": 0.2994155639518762,
+            "nashConv": 0.5988311279037524,
+            "averagePositiveRegret": 0.005070905932878095,
+            "nodesVisited": 11000,
+            "accelerated": false
+          },
+          "performance": {
+            "runtimeMs": 82.96190000000013,
+            "nodesVisited": 220000,
+            "heapUsedBeforeBytes": 12625184,
+            "heapUsedAfterBytes": 12338728,
+            "heapDeltaBytes": -286200
+          },
+          "experimentId": "455b1610dd6603fc",
+          "configurationHash": "af0ce59277ee8466",
+          "checkpointHash": "8f0e5246fe8d88ba"
+        },
+        {
+          "method": "anderson",
+          "strategyHash": "cd36a859f3f77c95",
+          "strategyDistance": {
+            "l1": 1.3947211022814014,
+            "l2": 0.9097692232431909,
+            "maximum": 0.6409999576059324,
+            "mean": 0.23245351704690023,
+            "jensenShannon": 0.1295593485871181
+          },
+          "strategyEv": 0.6124246261488977,
+          "bestResponseEv": [
+            0.987166645469633,
+            -0.6103060731318983
+          ],
+          "valueError": 0.05424204051776893,
+          "exploitability": 0.1884302861688673,
+          "nashConv": 0.3768605723377346,
+          "fixedPointResidual": 0.42447605202009386,
+          "runtimeMs": 129.5223000000001,
+          "nodesVisited": 374000,
+          "final": {
+            "iteration": 20,
+            "residual": {
+              "residual": [
+                0,
+                0,
+                0.42362795056861047,
+                -0.42362795056861047
+              ],
+              "l1": 0.8472559011372209,
+              "l2": 0.599100393094448,
+              "lInfinity": 0.42362795056861047,
+              "reachWeighted": 0.21181397528430523,
+              "normalizedL2": 0.42447605202009386,
+              "scale": 1.4113879693408187
+            },
+            "updateDistance": {
+              "l1": 0.07586804740101766,
+              "l2": 0.05364681079264201,
+              "lInfinity": 0.037934023700508857,
+              "reachWeighted": 0.018967011850254414
+            },
+            "localResponseRatio": 0,
+            "strategyEv": 0.6124246261488977,
+            "bestResponseEv": [
+              0.987166645469633,
+              -0.6103060731318983
+            ],
+            "exploitability": 0.1884302861688673,
+            "nashConv": 0.3768605723377346,
+            "averagePositiveRegret": 0.0038218320200594912,
+            "nodesVisited": 22000,
+            "accelerated": true
+          },
+          "performance": {
+            "runtimeMs": 129.5223000000001,
+            "nodesVisited": 374000,
+            "heapUsedBeforeBytes": 12834944,
+            "heapUsedAfterBytes": 12618256,
+            "heapDeltaBytes": -216432
+          },
+          "experimentId": "e1747df22ca5a0c6",
+          "configurationHash": "f74b55931961322f",
+          "checkpointHash": "7db8c37ff310d133"
+        }
+      ],
+      "multipleInitializations": [
+        {
+          "initialization": "uniform",
+          "strategyHash": "d87ce9759ab98231",
+          "finalResidual": 0.70825407424683,
+          "exploitability": 0.2994155639518762,
+          "stoppedAt": 20
+        },
+        {
+          "initialization": "first-action",
+          "strategyHash": "e7ca140bc0701667",
+          "finalResidual": 0.3219330502033571,
+          "exploitability": 0.05220682469871002,
+          "stoppedAt": 20
+        },
+        {
+          "initialization": "second-action",
+          "strategyHash": "1ba642f64c27f09a",
+          "finalResidual": 0.32193342478759585,
+          "exploitability": 0.05220622356334903,
+          "stoppedAt": 20
+        }
+      ],
+      "operatorSensitivity": {
+        "epsilon": 0.001,
+        "inputDistance": 0.0014142135623730957,
+        "outputDistance": 0,
+        "localResponseRatio": 0
+      },
+      "checkpointResume": {
+        "identical": true,
+        "continuousStrategyHash": "32c1f63946491c65",
+        "resumedStrategyHash": "32c1f63946491c65",
+        "checkpointHash": "cb04440cdcf24ef0"
+      }
+    },
+    {
+      "game": {
+        "id": "public-signal-game-v1",
+        "name": "Public Signal Game",
+        "hash": "9ec89cd6b3b18cea",
+        "description": "A noisy public signal is revealed between the private first decision and the response."
+      },
+      "validation": {
+        "valid": true,
+        "chance": {
+          "valid": true,
+          "entries": [
+            {
+              "nodeId": "root",
+              "outcomes": 2,
+              "total": 1,
+              "minimum": 0.5
+            },
+            {
+              "nodeId": "signal-high",
+              "outcomes": 2,
+              "total": 1,
+              "minimum": 0.25
+            },
+            {
+              "nodeId": "signal-low",
+              "outcomes": 2,
+              "total": 1,
+              "minimum": 0.25
+            }
+          ]
+        },
+        "informationSets": {
+          "valid": true,
+          "perfectRecall": true,
+          "issues": [],
+          "informationSets": 4,
+          "byPlayer": [
+            2,
+            2
+          ]
+        },
+        "zeroSum": {
+          "valid": true,
+          "terminals": 10,
+          "maximumError": 0
+        },
+        "tree": {
+          "nodes": 19,
+          "terminals": 10,
+          "chanceNodes": 3,
+          "actionNodes": 6,
+          "informationSets": 4,
+          "maximumDepth": 4
+        },
+        "privateInformationProtected": true,
+        "publicHistorySharedByConstruction": true
+      },
+      "groundTruth": {
+        "method": "independent-normal-form-support-enumeration",
+        "value": 0.5555555555555556,
+        "strategy": {
+          "B:P0:high": {
+            "safe": 0,
+            "proceed": 1
+          },
+          "B:P0:low": {
+            "safe": 0.888888888888889,
+            "proceed": 0.11111111111111105
+          },
+          "B:P1:bad": {
+            "allow": 0.5555555555555556,
+            "block": 0.4444444444444444
+          },
+          "B:P1:good": {
+            "allow": 1,
+            "block": 0
+          }
+        },
+        "evaluation": {
+          "utilities": [
+            0.5555555555555556,
+            -0.5555555555555556
+          ],
+          "bestResponses": [
+            {
+              "player": 0,
+              "value": 0.5555555555555556,
+              "policy": {
+                "B:P0:high": "proceed",
+                "B:P0:low": "safe"
+              },
+              "informationSets": 2,
+              "nodesVisited": 19
+            },
+            {
+              "player": 1,
+              "value": -0.5555555555555556,
+              "policy": {
+                "B:P1:good": "allow",
+                "B:P1:bad": "allow"
+              },
+              "informationSets": 2,
+              "nodesVisited": 19
+            }
+          ],
+          "nashConv": 0,
+          "exploitability": 0
+        },
+        "pureStrategies": [
+          4,
+          4
+        ],
+        "supportSizes": [
+          2,
+          2
+        ],
+        "payoffMatrixHash": "6f5504a716c0f17b",
+        "strategyHash": "f9760b312b4eac6d"
+      },
+      "unified": {
+        "final": {
+          "strategyHash": "8b3b288b788a5b17",
+          "strategyDistance": {
+            "l1": 0.006064350107850325,
+            "l2": 0.004252062480263229,
+            "maximum": 0.003006553039681392,
+            "mean": 0.0007580437634812906,
+            "jensenShannon": 0.0000016519415855331892
+          },
+          "strategyEv": 0.5555554688923676,
+          "bestResponseEv": [
+            0.558562108595237,
+            -0.5555427445484337
+          ],
+          "valueError": 8.66631879592461e-8,
+          "exploitability": 0.0015096820234016817,
+          "nashConv": 0.0030193640468033633,
+          "fixedPointResidual": null,
+          "runtimeMs": 177.62229999999977,
+          "nodesVisited": 380000
+        },
+        "strategyHash": "8b3b288b788a5b17",
+        "configurationHash": "151572c9f3c4834d",
+        "experimentId": "559af85c9f3a6720",
+        "checkpointHash": "47b6e541897af3d5",
+        "convergence": [
+          {
+            "iterations": 100,
+            "strategyHash": "437e6e3eeac90232",
+            "strategyDistance": {
+              "l1": 0.05890612797155984,
+              "l2": 0.035597869952985396,
+              "maximum": 0.02472310660850019,
+              "mean": 0.00736326599644498,
+              "jensenShannon": 0.0001223434121910726
+            },
+            "strategyEv": 0.5556871052906283,
+            "bestResponseEv": [
+              0.5802786621640558,
+              -0.5525993413850313
+            ],
+            "valueError": 0.00013154973507267798,
+            "exploitability": 0.013839660389512232,
+            "nashConv": 0.027679320779024463,
+            "fixedPointResidual": null,
+            "runtimeMs": 2.341000000000122,
+            "nodesVisited": 3800,
+            "averagePositiveRegret": 0.003910810621020309,
+            "millisecondsPerIteration": 0.023410000000001218,
+            "evaluationRuntimeMs": 0.12169999999991887
+          },
+          {
+            "iterations": 500,
+            "strategyHash": "bf00444ec4fc439a",
+            "strategyDistance": {
+              "l1": 0.025852526937908776,
+              "l2": 0.017445264071120858,
+              "maximum": 0.012320796614303464,
+              "mean": 0.003231565867238597,
+              "jensenShannon": 0.0000279667427155868
+            },
+            "strategyEv": 0.5555639478583068,
+            "bestResponseEv": [
+              0.567876352169859,
+              -0.5551771387863389
+            ],
+            "valueError": 0.000008392302751181191,
+            "exploitability": 0.006349606691760046,
+            "nashConv": 0.012699213383520092,
+            "fixedPointResidual": null,
+            "runtimeMs": 9.755200000000059,
+            "nodesVisited": 19000,
+            "averagePositiveRegret": 0.0013509464561175912,
+            "millisecondsPerIteration": 0.01951040000000012,
+            "evaluationRuntimeMs": 0.16699999999991633
+          },
+          {
+            "iterations": 1000,
+            "strategyHash": "f9ddf97093e9ad4c",
+            "strategyDistance": {
+              "l1": 0.020260595779790114,
+              "l2": 0.012999191939264736,
+              "maximum": 0.00913811026779654,
+              "mean": 0.002532574472473764,
+              "jensenShannon": 0.00001573135565634262
+            },
+            "strategyEv": 0.5555453554951002,
+            "bestResponseEv": [
+              0.5646936658233521,
+              -0.5550594617452548
+            ],
+            "valueError": 0.00001020006045537869,
+            "exploitability": 0.004817102039048671,
+            "nashConv": 0.009634204078097341,
+            "fixedPointResidual": null,
+            "runtimeMs": 18.484899999999925,
+            "nodesVisited": 38000,
+            "averagePositiveRegret": 0.0008879653723756156,
+            "millisecondsPerIteration": 0.018484899999999926,
+            "evaluationRuntimeMs": 0.12409999999977117
+          },
+          {
+            "iterations": 2500,
+            "strategyHash": "05676c9c458c7198",
+            "strategyDistance": {
+              "l1": 0.012730810484392329,
+              "l2": 0.008449411171700505,
+              "maximum": 0.005960928910082819,
+              "mean": 0.001591351310549041,
+              "jensenShannon": 0.000006571737699276207
+            },
+            "strategyEv": 0.5555528431190464,
+            "bestResponseEv": [
+              0.5615164844656384,
+              -0.555353317389518
+            ],
+            "valueError": 0.0000027124365091779623,
+            "exploitability": 0.0030815835380602064,
+            "nashConv": 0.006163167076120413,
+            "fixedPointResidual": null,
+            "runtimeMs": 45.37270000000012,
+            "nodesVisited": 95000,
+            "averagePositiveRegret": 0.0005251442843203723,
+            "millisecondsPerIteration": 0.01814908000000005,
+            "evaluationRuntimeMs": 0.16990000000009786
+          },
+          {
+            "iterations": 5000,
+            "strategyHash": "c9f6cbfd4bd4b061",
+            "strategyDistance": {
+              "l1": 0.008472702713486982,
+              "l2": 0.005912826875973177,
+              "maximum": 0.004180628638286832,
+              "mean": 0.0010590878391858727,
+              "jensenShannon": 0.0000031957531100742606
+            },
+            "strategyEv": 0.5555552934800629,
+            "bestResponseEv": [
+              0.5597361841938424,
+              -0.5555276941963283
+            ],
+            "valueError": 2.620754926407898e-7,
+            "exploitability": 0.0021042449987570544,
+            "nashConv": 0.004208489997514109,
+            "fixedPointResidual": null,
+            "runtimeMs": 88.30749999999989,
+            "nodesVisited": 190000,
+            "averagePositiveRegret": 0.00035504125444159047,
+            "millisecondsPerIteration": 0.01766149999999998,
+            "evaluationRuntimeMs": 0.12540000000012697
+          },
+          {
+            "iterations": 10000,
+            "strategyHash": "8b3b288b788a5b17",
+            "strategyDistance": {
+              "l1": 0.006064350107850325,
+              "l2": 0.004252062480263229,
+              "maximum": 0.003006553039681392,
+              "mean": 0.0007580437634812906,
+              "jensenShannon": 0.0000016519415855331892
+            },
+            "strategyEv": 0.5555554688923676,
+            "bestResponseEv": [
+              0.558562108595237,
+              -0.5555427445484337
+            ],
+            "valueError": 8.66631879592461e-8,
+            "exploitability": 0.0015096820234016817,
+            "nashConv": 0.0030193640468033633,
+            "fixedPointResidual": null,
+            "runtimeMs": 174.07650000000012,
+            "nodesVisited": 380000,
+            "averagePositiveRegret": 0.00024412996432362458,
+            "millisecondsPerIteration": 0.017407650000000014,
+            "evaluationRuntimeMs": 0.12090000000011969
+          }
+        ],
+        "reproducibility": {
+          "identicalAcrossDeclaredSeeds": true,
+          "first": "8b3b288b788a5b17",
+          "second": "8b3b288b788a5b17"
+        },
+        "checkpointResume": {
+          "identical": true,
+          "continuousStrategyHash": "f9ddf97093e9ad4c",
+          "resumedStrategyHash": "f9ddf97093e9ad4c",
+          "checkpointHash": "5af3850f7bfca593"
+        },
+        "performance": {
+          "runtimeMs": 177.62229999999977,
+          "millisecondsPerIteration": 0.017762229999999976,
+          "nodesVisited": 380000,
+          "informationSets": 4,
+          "heapUsedBeforeBytes": 15528440,
+          "heapUsedAfterBytes": 15226328,
+          "heapDeltaBytes": -301856,
+          "evaluationRuntimeMs": 0.13029999999980646,
+          "strategyEvaluationRuntimeMs": 0.03629999999975553,
+          "bestResponseRuntimeMs": 0.09400000000005093
+        }
+      },
+      "decomposed": [
+        {
+          "method": "undamped",
+          "strategyHash": "02982a0a05747a4e",
+          "strategyDistance": {
+            "l1": 2.668666666666667,
+            "l2": 1.402615286518477,
+            "maximum": 0.886888888888889,
+            "mean": 0.3335833333333334,
+            "jensenShannon": 0.2492815042215052
+          },
+          "strategyEv": 0.997501,
+          "bestResponseEv": [
+            0.9995,
+            0
+          ],
+          "valueError": 0.4419454444444444,
+          "exploitability": 0.49975,
+          "nashConv": 0.9995,
+          "fixedPointResidual": 0.9979939879900364,
+          "runtimeMs": 105.25330000000031,
+          "nodesVisited": 380000,
+          "final": {
+            "iteration": 20,
+            "residual": {
+              "residual": [
+                0,
+                0,
+                -0.996,
+                0.996
+              ],
+              "l1": 1.992,
+              "l2": 1.4085567081236028,
+              "lInfinity": 0.996,
+              "reachWeighted": 0.498,
+              "normalizedL2": 0.9979939879900364,
+              "scale": 1.4113879693408187
+            },
+            "updateDistance": {
+              "l1": 1.992,
+              "l2": 1.4085567081236028,
+              "lInfinity": 0.996,
+              "reachWeighted": 0.498
+            },
+            "localResponseRatio": 1,
+            "strategyEv": 0.997501,
+            "bestResponseEv": [
+              0.9995,
+              0
+            ],
+            "exploitability": 0.49975,
+            "nashConv": 0.9995,
+            "averagePositiveRegret": 0.00037462499999999996,
+            "nodesVisited": 19000,
+            "accelerated": false
+          },
+          "performance": {
+            "runtimeMs": 105.25330000000031,
+            "nodesVisited": 380000,
+            "heapUsedBeforeBytes": 14859184,
+            "heapUsedAfterBytes": 13565336,
+            "heapDeltaBytes": -1293592
+          },
+          "experimentId": "fab028a2a75133fe",
+          "configurationHash": "02c2414bf9198f4f",
+          "checkpointHash": "87ac12fb08c68067"
+        },
+        {
+          "method": "damped",
+          "strategyHash": "712502c70a8a2acb",
+          "strategyDistance": {
+            "l1": 1.7386887357462975,
+            "l2": 0.8661221472965037,
+            "maximum": 0.4437550357164375,
+            "mean": 0.21733609196828718,
+            "jensenShannon": 0.10589883754715133
+          },
+          "strategyEv": 0.7655336583517163,
+          "bestResponseEv": [
+            0.9993105912719932,
+            -0.2904997229576111
+          ],
+          "valueError": 0.2099781027961607,
+          "exploitability": 0.35440543415719106,
+          "nashConv": 0.7088108683143821,
+          "fixedPointResidual": 0.9314611189086023,
+          "runtimeMs": 106.55659999999989,
+          "nodesVisited": 380000,
+          "final": {
+            "iteration": 20,
+            "residual": {
+              "residual": [
+                -9.498596191407152e-7,
+                9.498596191814812e-7,
+                -0.9296000633239746,
+                0.9296000633239746
+              ],
+              "l1": 1.8592020263671876,
+              "l2": 1.314653017136339,
+              "lInfinity": 0.9296000633239746,
+              "reachWeighted": 0.4648005065917969,
+              "normalizedL2": 0.9314611189086023,
+              "scale": 1.4113879693408187
+            },
+            "updateDistance": {
+              "l1": 0.9296010131835937,
+              "l2": 0.6573265085681695,
+              "lInfinity": 0.4648000316619873,
+              "reachWeighted": 0.23240025329589842
+            },
+            "localResponseRatio": 15.000014303593613,
+            "strategyEv": 0.7655336583517163,
+            "bestResponseEv": [
+              0.9993105912719932,
+              -0.2904997229576111
+            ],
+            "exploitability": 0.35440543415719106,
+            "nashConv": 0.7088108683143821,
+            "averagePositiveRegret": 0.0003863918872504961,
+            "nodesVisited": 19000,
+            "accelerated": false
+          },
+          "performance": {
+            "runtimeMs": 106.55659999999989,
+            "nodesVisited": 380000,
+            "heapUsedBeforeBytes": 13834752,
+            "heapUsedAfterBytes": 12218000,
+            "heapDeltaBytes": -1616496
+          },
+          "experimentId": "a7c704f002c603ac",
+          "configurationHash": "af0ce59277ee8466",
+          "checkpointHash": "a6f0955c3ba18bc8"
+        },
+        {
+          "method": "anderson",
+          "strategyHash": "379d139b34b53aaf",
+          "strategyDistance": {
+            "l1": 1.144485792329105,
+            "l2": 0.7656899137278437,
+            "maximum": 0.5406915907003066,
+            "mean": 0.14306072404113812,
+            "jensenShannon": 0.078630116892374
+          },
+          "strategyEv": 0.5718869185003617,
+          "bestResponseEv": [
+            0.6237045043930939,
+            -0.5405299028234326
+          ],
+          "valueError": 0.016331362944806083,
+          "exploitability": 0.04158730078483064,
+          "nashConv": 0.08317460156966128,
+          "fixedPointResidual": 0.16244417410283604,
+          "runtimeMs": 181.52340000000004,
+          "nodesVisited": 646000,
+          "final": {
+            "iteration": 20,
+            "residual": {
+              "residual": [
+                0,
+                0,
+                0.16211961129373054,
+                -0.1621196112937306
+              ],
+              "l1": 0.32423922258746113,
+              "l2": 0.22927175301824815,
+              "lInfinity": 0.1621196112937306,
+              "reachWeighted": 0.08105980564686528,
+              "normalizedL2": 0.16244417410283604,
+              "scale": 1.4113879693408187
+            },
+            "updateDistance": {
+              "l1": 0.16211961129373062,
+              "l2": 0.11463587650912412,
+              "lInfinity": 0.08105980564686532,
+              "reachWeighted": 0.040529902823432655
+            },
+            "localResponseRatio": 0,
+            "strategyEv": 0.5718869185003617,
+            "bestResponseEv": [
+              0.6237045043930939,
+              -0.5405299028234326
+            ],
+            "exploitability": 0.04158730078483064,
+            "nashConv": 0.08317460156966128,
+            "averagePositiveRegret": 0.0006912911425457135,
+            "nodesVisited": 19000,
+            "accelerated": false
+          },
+          "performance": {
+            "runtimeMs": 181.52340000000004,
+            "nodesVisited": 646000,
+            "heapUsedBeforeBytes": 12490640,
+            "heapUsedAfterBytes": 16456560,
+            "heapDeltaBytes": 3966176
+          },
+          "experimentId": "5a12bb56f5cd546a",
+          "configurationHash": "f74b55931961322f",
+          "checkpointHash": "4ef30e0d5b092d61"
+        }
+      ],
+      "multipleInitializations": [
+        {
+          "initialization": "uniform",
+          "strategyHash": "712502c70a8a2acb",
+          "finalResidual": 0.9314611189086023,
+          "exploitability": 0.35440543415719106,
+          "stoppedAt": 20
+        },
+        {
+          "initialization": "first-action",
+          "strategyHash": "de473c99def1c92d",
+          "finalResidual": 0.1330655508805285,
+          "exploitability": 0.043453675437064965,
+          "stoppedAt": 20
+        },
+        {
+          "initialization": "second-action",
+          "strategyHash": "dcc9da633067a38f",
+          "finalResidual": 0.2661316636221259,
+          "exploitability": 0.042665617390924504,
+          "stoppedAt": 20
+        }
+      ],
+      "operatorSensitivity": {
+        "epsilon": 0.001,
+        "inputDistance": 0.0014142135623730957,
+        "outputDistance": 0,
+        "localResponseRatio": 0
+      },
+      "checkpointResume": {
+        "identical": true,
+        "continuousStrategyHash": "f27edc33cbe0d6b7",
+        "resumedStrategyHash": "f27edc33cbe0d6b7",
+        "checkpointHash": "906785f67c76784a"
+      }
+    },
+    {
+      "game": {
+        "id": "coupled-decision-game-v1",
+        "name": "Coupled Decision Game",
+        "hash": "43bcd81044e74b7c",
+        "description": "The first private decision changes both the public-signal distribution and the continuation beliefs."
+      },
+      "validation": {
+        "valid": true,
+        "chance": {
+          "valid": true,
+          "entries": [
+            {
+              "nodeId": "root",
+              "outcomes": 2,
+              "total": 1,
+              "minimum": 0.5
+            },
+            {
+              "nodeId": "signal-high-X",
+              "outcomes": 2,
+              "total": 1,
+              "minimum": 0.15000000000000002
+            },
+            {
+              "nodeId": "signal-high-Y",
+              "outcomes": 2,
+              "total": 1,
+              "minimum": 0.4
+            },
+            {
+              "nodeId": "signal-low-X",
+              "outcomes": 2,
+              "total": 1,
+              "minimum": 0.3
+            },
+            {
+              "nodeId": "signal-low-Y",
+              "outcomes": 2,
+              "total": 1,
+              "minimum": 0.1
+            }
+          ]
+        },
+        "informationSets": {
+          "valid": true,
+          "perfectRecall": true,
+          "issues": [],
+          "informationSets": 6,
+          "byPlayer": [
+            2,
+            4
+          ]
+        },
+        "zeroSum": {
+          "valid": true,
+          "terminals": 16,
+          "maximumError": 0
+        },
+        "tree": {
+          "nodes": 31,
+          "terminals": 16,
+          "chanceNodes": 5,
+          "actionNodes": 10,
+          "informationSets": 6,
+          "maximumDepth": 4
+        },
+        "privateInformationProtected": true,
+        "publicHistorySharedByConstruction": true
+      },
+      "groundTruth": {
+        "method": "independent-normal-form-support-enumeration",
+        "value": 0,
+        "strategy": {
+          "C:P0:high": {
+            "route-X": 0,
+            "route-Y": 1
+          },
+          "C:P0:low": {
+            "route-X": 0,
+            "route-Y": 1
+          },
+          "C:P1:X:bad": {
+            "accept": 0,
+            "challenge": 1
+          },
+          "C:P1:X:good": {
+            "accept": 0.588235294117647,
+            "challenge": 0.41176470588235303
+          },
+          "C:P1:Y:bad": {
+            "accept": 0,
+            "challenge": 1
+          },
+          "C:P1:Y:good": {
+            "accept": 0,
+            "challenge": 1
+          }
+        },
+        "evaluation": {
+          "utilities": [
+            0,
+            0
+          ],
+          "bestResponses": [
+            {
+              "player": 0,
+              "value": 0,
+              "policy": {
+                "C:P0:high": "route-X",
+                "C:P0:low": "route-Y"
+              },
+              "informationSets": 2,
+              "nodesVisited": 31
+            },
+            {
+              "player": 1,
+              "value": 0,
+              "policy": {
+                "C:P1:X:good": "accept",
+                "C:P1:X:bad": "accept",
+                "C:P1:Y:good": "challenge",
+                "C:P1:Y:bad": "challenge"
+              },
+              "informationSets": 4,
+              "nodesVisited": 31
+            }
+          ],
+          "nashConv": 0,
+          "exploitability": 0
+        },
+        "pureStrategies": [
+          4,
+          16
+        ],
+        "supportSizes": [
+          2,
+          2
+        ],
+        "payoffMatrixHash": "399f3f27e35a602b",
+        "strategyHash": "9ed070d7d8178e1b"
+      },
+      "unified": {
+        "final": {
+          "strategyHash": "810c0a52a46b27b6",
+          "strategyDistance": {
+            "l1": 0.47658943594966735,
+            "l2": 0.3356192812989769,
+            "maximum": 0.23731665424318837,
+            "mean": 0.03971578632913895,
+            "jensenShannon": 0.008431788463122496
+          },
+          "strategyEv": 0.000019561273925217115,
+          "bestResponseEv": [
+            0.000019561274394952477,
+            2.6061375280050925e-12
+          ],
+          "valueError": 0.000019561273925217115,
+          "exploitability": 0.000009780638500545003,
+          "nashConv": 0.000019561277001090005,
+          "fixedPointResidual": null,
+          "runtimeMs": 318.2703000000006,
+          "nodesVisited": 620000
+        },
+        "strategyHash": "810c0a52a46b27b6",
+        "configurationHash": "151572c9f3c4834d",
+        "experimentId": "0a409085ae169079",
+        "checkpointHash": "b012082d262e3a41",
+        "convergence": [
+          {
+            "iterations": 100,
+            "strategyHash": "ef8d2eb3604cfc0f",
+            "strategyDistance": {
+              "l1": 0.5435426619143503,
+              "l2": 0.34358903611081715,
+              "maximum": 0.2411616918423164,
+              "mean": 0.04529522182619586,
+              "jensenShannon": 0.011243194881408333
+            },
+            "strategyEv": 0.0005411064820608491,
+            "bestResponseEv": [
+              0.0005888751480246368,
+              0.0002555292462318448
+            ],
+            "valueError": 0.0005411064820608491,
+            "exploitability": 0.0004222021971282408,
+            "nashConv": 0.0008444043942564816,
+            "fixedPointResidual": null,
+            "runtimeMs": 4.228100000000268,
+            "nodesVisited": 6200,
+            "averagePositiveRegret": 0.00410332202111277,
+            "millisecondsPerIteration": 0.04228100000000268,
+            "evaluationRuntimeMs": 0.12230000000045038
+          },
+          {
+            "iterations": 500,
+            "strategyHash": "cd313dddafd4a829",
+            "strategyDistance": {
+              "l1": 0.48380121132369225,
+              "l2": 0.33568764995884004,
+              "maximum": 0.23732290489284502,
+              "mean": 0.04031676761030769,
+              "jensenShannon": 0.008732866778814668
+            },
+            "strategyEv": 0.00009144069777911046,
+            "bestResponseEv": [
+              0.00009151610904711838,
+              4.1540134754214364e-7
+            ],
+            "valueError": 0.00009144069777911046,
+            "exploitability": 0.00004596575519733026,
+            "nashConv": 0.00009193151039466052,
+            "fixedPointResidual": null,
+            "runtimeMs": 16.4395999999997,
+            "nodesVisited": 31000,
+            "averagePositiveRegret": 0.0011813257282242285,
+            "millisecondsPerIteration": 0.0328791999999994,
+            "evaluationRuntimeMs": 0.15270000000009532
+          },
+          {
+            "iterations": 1000,
+            "strategyHash": "732fd4b7e720ee0b",
+            "strategyDistance": {
+              "l1": 0.4809408457435014,
+              "l2": 0.33564660938565344,
+              "maximum": 0.23731704565296752,
+              "mean": 0.04007840381195845,
+              "jensenShannon": 0.008613366862788234
+            },
+            "strategyEv": 0.00006306046143311761,
+            "bestResponseEv": [
+              0.00006306517049381455,
+              2.6014483345271344e-8
+            ],
+            "valueError": 0.00006306046143311761,
+            "exploitability": 0.00003154559248857991,
+            "nashConv": 0.00006309118497715982,
+            "fixedPointResidual": null,
+            "runtimeMs": 32.591499999999996,
+            "nodesVisited": 62000,
+            "averagePositiveRegret": 0.0007219473037285384,
+            "millisecondsPerIteration": 0.032591499999999995,
+            "evaluationRuntimeMs": 0.1275999999998021
+          },
+          {
+            "iterations": 2500,
+            "strategyHash": "295c37eb486cb84f",
+            "strategyDistance": {
+              "l1": 0.4785711149853295,
+              "l2": 0.3356279954154052,
+              "maximum": 0.2373166642370933,
+              "mean": 0.03988092624877746,
+              "jensenShannon": 0.008514446262341867
+            },
+            "strategyEv": 0.000039377683862973356,
+            "bestResponseEv": [
+              0.000039377804267104466,
+              6.667698615459017e-10
+            ],
+            "valueError": 0.000039377683862973356,
+            "exploitability": 0.000019689235518483006,
+            "nashConv": 0.00003937847103696601,
+            "fixedPointResidual": null,
+            "runtimeMs": 79.37620000000015,
+            "nodesVisited": 155000,
+            "averagePositiveRegret": 0.00039210914611216953,
+            "millisecondsPerIteration": 0.03175048000000006,
+            "evaluationRuntimeMs": 0.14010000000007494
+          },
+          {
+            "iterations": 5000,
+            "strategyHash": "a06bfec5b12b34b9",
+            "strategyDistance": {
+              "l1": 0.47740584446071516,
+              "l2": 0.3356221577819075,
+              "maximum": 0.23731665483129927,
+              "mean": 0.039783820371726265,
+              "jensenShannon": 0.008465834517099922
+            },
+            "strategyEv": 0.00002772533665773569,
+            "bestResponseEv": [
+              0.000027725344176943167,
+              4.168987377539679e-11
+            ],
+            "valueError": 0.00002772533665773569,
+            "exploitability": 0.000013862692933408471,
+            "nashConv": 0.000027725385866816943,
+            "fixedPointResidual": null,
+            "runtimeMs": 157.85970000000043,
+            "nodesVisited": 310000,
+            "averagePositiveRegret": 0.0002540405817856446,
+            "millisecondsPerIteration": 0.03157194000000008,
+            "evaluationRuntimeMs": 0.12929999999960273
+          },
+          {
+            "iterations": 10000,
+            "strategyHash": "810c0a52a46b27b6",
+            "strategyDistance": {
+              "l1": 0.47658943594966735,
+              "l2": 0.3356192812989769,
+              "maximum": 0.23731665424318837,
+              "mean": 0.03971578632913895,
+              "jensenShannon": 0.008431788463122496
+            },
+            "strategyEv": 0.000019561273925217115,
+            "bestResponseEv": [
+              0.000019561274394952477,
+              2.6061375280050925e-12
+            ],
+            "valueError": 0.000019561273925217115,
+            "exploitability": 0.000009780638500545003,
+            "nashConv": 0.000019561277001090005,
+            "fixedPointResidual": null,
+            "runtimeMs": 318.0340000000001,
+            "nodesVisited": 620000,
+            "averagePositiveRegret": 0.00016794773479022318,
+            "millisecondsPerIteration": 0.03180340000000001,
+            "evaluationRuntimeMs": 0.13720000000012078
+          }
+        ],
+        "reproducibility": {
+          "identicalAcrossDeclaredSeeds": true,
+          "first": "810c0a52a46b27b6",
+          "second": "810c0a52a46b27b6"
+        },
+        "checkpointResume": {
+          "identical": true,
+          "continuousStrategyHash": "732fd4b7e720ee0b",
+          "resumedStrategyHash": "732fd4b7e720ee0b",
+          "checkpointHash": "8252a7a7fac8572b"
+        },
+        "performance": {
+          "runtimeMs": 318.2703000000006,
+          "millisecondsPerIteration": 0.03182703000000006,
+          "nodesVisited": 620000,
+          "informationSets": 6,
+          "heapUsedBeforeBytes": 20126664,
+          "heapUsedAfterBytes": 14081480,
+          "heapDeltaBytes": -6044928,
+          "evaluationRuntimeMs": 0.13139999999930296,
+          "strategyEvaluationRuntimeMs": 0.04199999999946158,
+          "bestResponseRuntimeMs": 0.08939999999984138
+        }
+      },
+      "decomposed": [
+        {
+          "method": "undamped",
+          "strategyHash": "edacc42c6e8b1f18",
+          "strategyDistance": {
+            "l1": 7.174046912345964,
+            "l2": 2.5824080051920433,
+            "maximum": 0.9993846153846154,
+            "mean": 0.597837242695497,
+            "jensenShannon": 0.5589509481588091
+          },
+          "strategyEv": 1.792043643834097,
+          "bestResponseEv": [
+            1.796826185208703,
+            0.3968
+          ],
+          "valueError": 1.792043643834097,
+          "exploitability": 1.0968130926043516,
+          "nashConv": 2.193626185208703,
+          "fixedPointResidual": 1.411376632982321,
+          "runtimeMs": 181.1939999999995,
+          "nodesVisited": 620000,
+          "final": {
+            "iteration": 20,
+            "residual": {
+              "residual": [
+                0.996,
+                -0.996,
+                -0.996,
+                0.996
+              ],
+              "l1": 3.984,
+              "l2": 1.992,
+              "lInfinity": 0.996,
+              "reachWeighted": 0.996,
+              "normalizedL2": 1.411376632982321,
+              "scale": 1.4113879693408187
+            },
+            "updateDistance": {
+              "l1": 3.984,
+              "l2": 1.992,
+              "lInfinity": 0.996,
+              "reachWeighted": 0.996
+            },
+            "localResponseRatio": 1,
+            "strategyEv": 1.792043643834097,
+            "bestResponseEv": [
+              1.796826185208703,
+              0.3968
+            ],
+            "exploitability": 1.0968130926043516,
+            "nashConv": 2.193626185208703,
+            "averagePositiveRegret": 0.0010223652360173267,
+            "nodesVisited": 31000,
+            "accelerated": false
+          },
+          "performance": {
+            "runtimeMs": 181.1939999999995,
+            "nodesVisited": 620000,
+            "heapUsedBeforeBytes": 16777760,
+            "heapUsedAfterBytes": 15677128,
+            "heapDeltaBytes": -1100376
+          },
+          "experimentId": "a5133c5b096ed847",
+          "configurationHash": "02c2414bf9198f4f",
+          "checkpointHash": "0dfa141193912005"
+        },
+        {
+          "method": "damped",
+          "strategyHash": "aeabde71eea33715",
+          "strategyDistance": {
+            "l1": 5.163117657440092,
+            "l2": 1.9403248602696201,
+            "maximum": 0.9977871238087163,
+            "mean": 0.43025980478667436,
+            "jensenShannon": 0.3312408014297285
+          },
+          "strategyEv": 0.1865784819049391,
+          "bestResponseEv": [
+            0.5357949583388509,
+            0.1597599430084229
+          ],
+          "valueError": 0.1865784819049391,
+          "exploitability": 0.3477774506736369,
+          "nashConv": 0.6955549013472738,
+          "fixedPointResidual": 0.940918203986096,
+          "runtimeMs": 182.28899999999976,
+          "nodesVisited": 620000,
+          "final": {
+            "iteration": 20,
+            "residual": {
+              "residual": [
+                0.664000316619873,
+                -0.6640003166198731,
+                -0.6640003166198731,
+                0.664000316619873
+              ],
+              "l1": 2.6560012664794925,
+              "l2": 1.3280006332397463,
+              "lInfinity": 0.6640003166198731,
+              "reachWeighted": 0.6640003166198731,
+              "normalizedL2": 0.940918203986096,
+              "scale": 1.4113879693408187
+            },
+            "updateDistance": {
+              "l1": 1.328000633239746,
+              "l2": 0.664000316619873,
+              "lInfinity": 0.33200015830993657,
+              "reachWeighted": 0.3320001583099365
+            },
+            "localResponseRatio": 3.000002861025677,
+            "strategyEv": 0.1865784819049391,
+            "bestResponseEv": [
+              0.5357949583388509,
+              0.1597599430084229
+            ],
+            "exploitability": 0.3477774506736369,
+            "nashConv": 0.6955549013472738,
+            "averagePositiveRegret": 0.0008748708491151161,
+            "nodesVisited": 31000,
+            "accelerated": false
+          },
+          "performance": {
+            "runtimeMs": 182.28899999999976,
+            "nodesVisited": 620000,
+            "heapUsedBeforeBytes": 15993688,
+            "heapUsedAfterBytes": 14429568,
+            "heapDeltaBytes": -1563864
+          },
+          "experimentId": "80414fe96f98d8b5",
+          "configurationHash": "af0ce59277ee8466",
+          "checkpointHash": "b57cc7bd84e75101"
+        },
+        {
+          "method": "anderson",
+          "strategyHash": "a169ee79edd838bd",
+          "strategyDistance": {
+            "l1": 2.5542216647462994,
+            "l2": 1.0698494208444227,
+            "maximum": 0.6380435906995914,
+            "mean": 0.21285180539552495,
+            "jensenShannon": 0.11997204411532338
+          },
+          "strategyEv": 0.001313783073488839,
+          "bestResponseEv": [
+            0.03691218920621897,
+            0.26580620679631806
+          ],
+          "valueError": 0.001313783073488839,
+          "exploitability": 0.1513591980012685,
+          "nashConv": 0.302718396002537,
+          "fixedPointResidual": 0.7548472583949789,
+          "runtimeMs": 317.53999999999996,
+          "nodesVisited": 1085000,
+          "final": {
+            "iteration": 20,
+            "residual": {
+              "residual": [
+                -0.2219128160825436,
+                0.22191281608254354,
+                0.7199128186008175,
+                -0.7199128186008175
+              ],
+              "l1": 1.883651269366722,
+              "l2": 1.0653823391885735,
+              "lInfinity": 0.7199128186008175,
+              "reachWeighted": 0.4709128173416805,
+              "normalizedL2": 0.7548472583949789,
+              "scale": 1.4113879693408187
+            },
+            "updateDistance": {
+              "l1": 0.9418256346833611,
+              "l2": 0.5326911695942868,
+              "lInfinity": 0.3599564093004088,
+              "reachWeighted": 0.23545640867084028
+            },
+            "localResponseRatio": 2.811838522219508,
+            "strategyEv": 0.001313783073488839,
+            "bestResponseEv": [
+              0.03691218920621897,
+              0.26580620679631806
+            ],
+            "exploitability": 0.1513591980012685,
+            "nashConv": 0.302718396002537,
+            "averagePositiveRegret": 0.001188846459679971,
+            "nodesVisited": 31000,
+            "accelerated": false
+          },
+          "performance": {
+            "runtimeMs": 317.53999999999996,
+            "nodesVisited": 1085000,
+            "heapUsedBeforeBytes": 14748824,
+            "heapUsedAfterBytes": 20163488,
+            "heapDeltaBytes": 5414920
+          },
+          "experimentId": "def05bcf15544dd3",
+          "configurationHash": "f74b55931961322f",
+          "checkpointHash": "13b6d7992f585cd5"
+        }
+      ],
+      "multipleInitializations": [
+        {
+          "initialization": "uniform",
+          "strategyHash": "aeabde71eea33715",
+          "finalResidual": 0.940918203986096,
+          "exploitability": 0.3477774506736369,
+          "stoppedAt": 20
+        },
+        {
+          "initialization": "first-action",
+          "strategyHash": "49c43a1ce5b697f8",
+          "finalResidual": 0.940919814857844,
+          "exploitability": 0.3477774213898418,
+          "stoppedAt": 20
+        },
+        {
+          "initialization": "second-action",
+          "strategyHash": "b962667eac7f3202",
+          "finalResidual": 0.9409171228667018,
+          "exploitability": 0.12482997885090813,
+          "stoppedAt": 20
+        }
+      ],
+      "operatorSensitivity": {
+        "epsilon": 0.001,
+        "inputDistance": 0.0014142135623730963,
+        "outputDistance": 0,
+        "localResponseRatio": 0
+      },
+      "checkpointResume": {
+        "identical": true,
+        "continuousStrategyHash": "b38b8a6d1e4d0791",
+        "resumedStrategyHash": "b38b8a6d1e4d0791",
+        "checkpointHash": "c01aee6e2201df3a"
+      }
+    }
+  ],
+  "failures": [],
+  "limitations": [
+    "Synthetic two-player zero-sum games only; no poker ranges or betting recommendations are produced.",
+    "Normal-form support enumeration is intentionally limited to small games.",
+    "Decomposition uses finite inner solves, so its operator includes finite-solve error.",
+    "Passing U gates does not change historical Gate D and does not promote any dataset to Verified."
+  ],
+  "artifactHashBasis": "dad83c8a1797b80e"
+}

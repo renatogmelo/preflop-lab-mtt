@@ -314,3 +314,17 @@ Result: A ✅, B ✅, C ✅, D ❌. Exact seed distance is zero, but coupling di
 
 Solver 0.6.0 completed the continuation-operator diagnosis without product expansion. Gates: A ✅, B ✅, C ✅, D ❌. Verified = 0. Main blocker: non-small raw fixed-point residual and response ratios above one, with path dependence and intermittent inner-quality failure. Phase 7 is not authorized/recommended; next research should stabilize E or evaluate unified solving.
 <!-- PHASE6.6 END -->
+
+## Phase 6.7 — unified game architecture research
+
+Implemented an independent synthetic-game laboratory without changing poker strategies. Three two-player zero-sum imperfect-information games now share one declarative tree model across unified DCFR, decomposed fixed-point baselines and independent normal-form ground truth.
+
+- Unified final exploitability: `0.001382`, `0.001510`, `0.000010`.
+- U1/U2/U3/U4/U5: PASS.
+- Decomposed raw residuals remain material; Coupled Decision Game is the strongest negative case.
+- Unified and decomposed checkpoint/resume reproduce exactly.
+- Research remains Experimental; Verified = 0.
+- Final validation: TypeScript, ESLint, production build and 135/135 tests.
+- Historical A/B/C/D remains PASS/PASS/PASS/FAIL; Phase 7 is not authorized.
+
+Evidence: `PHASE6_7_REPORT.md` and `solver/artifacts/phase6-7-unified-research-v0.7.0.json`.
