@@ -23,7 +23,8 @@
     "solver:phase6": "node --import tsx solver/benchmarks/phase6.ts",
     "solver:phase6-5": "node --import tsx solver/benchmarks/phase6-5.ts",
     "solver:phase6-6": "node --import tsx solver/benchmarks/phase6-6.mjs",
-    "solver:phase6-6-finalize": "node --import tsx solver/benchmarks/phase6-6-finalize.mjs"
+    "solver:phase6-6-finalize": "node --import tsx solver/benchmarks/phase6-6-finalize.mjs",
+    "solver:phase6-6-docs": "node solver/benchmarks/render-phase6-6-docs.mjs"
   },
   "dependencies": {
     "drizzle-orm": "0.45.2",

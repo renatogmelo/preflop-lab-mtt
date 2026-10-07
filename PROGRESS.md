@@ -308,3 +308,9 @@ Validation final: TypeScript, lint, build de producao e 82/82 testes aprovados.
 Implemented and measured exact 46-deal preflop traversal, RNG ledgers, fixed/stratified/quasi schedules, sample coverage, exact provider comparison, sensitivity diagnostics, canonical board buckets and deterministic fixed-point checkpoint/resume.
 
 Result: A ✅, B ✅, C ✅, D ❌. Exact seed distance is zero, but coupling did not converge after 100 outer iterations. Board Coverage / Phase 7 is not released. Product-facing poker data remains Experimental and `Verified = 0`.
+
+<!-- PHASE6.6 START -->
+## Phase 6.6 solver status
+
+Solver 0.6.0 completed the continuation-operator diagnosis without product expansion. Gates: A ✅, B ✅, C ✅, D ❌. Verified = 0. Main blocker: non-small raw fixed-point residual and response ratios above one, with path dependence and intermittent inner-quality failure. Phase 7 is not authorized/recommended; next research should stabilize E or evaluate unified solving.
+<!-- PHASE6.6 END -->

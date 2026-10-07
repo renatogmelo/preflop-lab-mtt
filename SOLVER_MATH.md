@@ -153,3 +153,9 @@ For private deals `d` with normalized target probability `p(d)`, exact CFR evalu
 For sampled proposal `q(d)`, the traversal multiplier is the importance weight `w(d)=p(d)/q(d)`. IID and fixed CRN use `q=p`, hence `w=1`. Stratified and quasi schedules use their empirical allocation as `q` and retain coverage/effective-sample-size diagnostics.
 
 The coupled operator is `F(S)=P(D(C(R(S))))`: condition ranges `R`, solve postflop continuation `C`, damp utilities `D`, then solve exact preflop `P`. With raw utility vector `u_k`, the value passed back is `v_k = αu_k + (1-α)v_{k-1}`. Convergence tests `v`, never relabels it as raw `u`, and requires all four residuals at most `0.02` for three consecutive iterations.
+
+<!-- PHASE6.6 START -->
+## Phase 6.6 operator definitions
+
+For state vector S and deterministic map F, residual is R(S)=F(S)-S. Metrics: L1, L2, L∞, reach-weighted L1, and normalized L2 = ||R||₂/max(1,||S||₂,||F(S)||₂). LocalResponseRatio = ||F(S+δ)-F(S)||₂/||δ||₂ is a finite local diagnostic, not a Lipschitz or contraction proof. Damping changes S(next)-S but cannot reduce the raw residual by definition. Mass-preserving perturbations are normalized, nonnegative and blocker-compatible.
+<!-- PHASE6.6 END -->

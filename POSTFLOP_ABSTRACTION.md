@@ -42,3 +42,9 @@ Range weights are quantized at 1e-9. This tolerance removes insignificant floati
 `phase6-reference-game-v1` preserves exactly the Phase 5 laboratory: flop `8h 7d 2c`, 46 compatible private deals, two representative future-board outcomes, one bet size per street, no raises and no jams. Hash: `bfd3615d6ee13da1`.
 
 The faster engine does not increase board coverage or action complexity. It solves this abstract game more deeply; it does not make the abstraction equivalent to NLHE. Expansion is blocked until seed stability and outer coupling pass.
+
+<!-- PHASE6.6 START -->
+## Phase 6.6 R/E/X ablation
+
+R uses one representative card per deterministic bucket. E enumerates each legal physical card with exact chance probability but exposes only a deterministic bucket observation. X enumerates and exposes physical runouts. The controlled tree has 181 R nodes and 71,833 E/X nodes. R and X reached the fixed quality gate; E did not at 5,000 iterations, so Expected≈Exact remains unresolved. The full 5,533,605-node projection stays over the 2,000,000 cap.
+<!-- PHASE6.6 END -->

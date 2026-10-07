@@ -148,3 +148,9 @@ The frozen reference game now has an exact 46-deal training oracle in addition t
 Exact repeated runs and five provenance seeds produce distance `0`. Golden v0.5.0 records the exact oracle, deterministic provider comparison, fixed schedule, coupling trajectory and gate matrix. Golden data is a regression baseline, not poker truth.
 
 Final gates: `A=true`, `B=true`, `C=true`, `D=false`. No dataset is Verified.
+
+<!-- PHASE6.6 START -->
+## Phase 6.6 validation
+
+Reference game remained frozen at phase6-reference-game-v1 (bfd3615d6ee13da1). A/B/C were executed again and passed. Gate D v2 adds normalized raw fixed-point residual, LocalResponseRatio, inner-solve quality and three-pass patience; it failed. Continuous/resumed semantic checkpoint hashes match after excluding runtimeMs only. The full regression is 118/118 with a successful production build. Artifacts are Experimental and no dataset is Verified.
+<!-- PHASE6.6 END -->

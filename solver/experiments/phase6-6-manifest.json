@@ -132,5 +132,78 @@
     "phase7RequiresAllABCD": true,
     "promotionForbidden": true
   },
-  "runs": []
+  "runs": [
+    {
+      "id": "abc-revalidation",
+      "status": "completed",
+      "result": "A/B/C PASS"
+    },
+    {
+      "id": "finite-solve-matrix",
+      "status": "completed",
+      "points": 28
+    },
+    {
+      "id": "fixed-quality-sensitivity",
+      "status": "completed",
+      "failedTargets": [
+        0.01,
+        0.005
+      ]
+    },
+    {
+      "id": "range-posterior-audit",
+      "status": "completed",
+      "directions": 9
+    },
+    {
+      "id": "rex-microgame",
+      "status": "completed",
+      "result": "E failed quality gate at 5000"
+    },
+    {
+      "id": "cr-damping-grid",
+      "status": "completed",
+      "bestAlpha": 0.15,
+      "failedAlphas": [
+        0.2,
+        0.25
+      ]
+    },
+    {
+      "id": "cr-confirmatory",
+      "status": "stopped",
+      "reason": "inner-quality-failed at outer 32"
+    },
+    {
+      "id": "method-comparison",
+      "status": "completed",
+      "andersonRejectedSteps": 2
+    },
+    {
+      "id": "multiple-initializations",
+      "status": "completed",
+      "result": "path-dependent; two runs inner-quality-failed"
+    },
+    {
+      "id": "cx-microgame",
+      "status": "completed",
+      "result": "not converged at 25"
+    },
+    {
+      "id": "ce-full",
+      "status": "blocked",
+      "reason": "projected 5533605 nodes exceeds cap 2000000"
+    },
+    {
+      "id": "checkpoint-v2",
+      "status": "completed",
+      "semanticIdentity": true
+    },
+    {
+      "id": "tiny-alpha",
+      "status": "completed",
+      "falseConvergencePrevented": true
+    }
+  ]
 }

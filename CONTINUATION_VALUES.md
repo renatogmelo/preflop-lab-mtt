@@ -71,3 +71,9 @@ Pair-table continuation now participates in a deterministic outer map. Each iter
 These objects are never mixed. At outer iteration 100, raw maximum movement was `2.660087` while damped movement was `0.053868`; reporting only the damped value would hide the response instability.
 
 Exact provider comparison uses the same frozen preflop tree: Equity↔Solved weighted strategy distance is `0.629219`. This remains Experimental because future boards are abstracted and no external solver has validated the pair utilities.
+
+<!-- PHASE6.6 START -->
+## Phase 6.6 continuation policy
+
+Continuation utilities entering the outer loop must pass declared exploitability and reach-weighted movement thresholds or the iteration stops as inner-quality-failed. Every artifact declares boardContinuationModel: representative-bucket, expected-bucket or exact-future. Pair utilities are carried with exact joint posterior deal weights. No finite CFR utility is called exact or Verified.
+<!-- PHASE6.6 END -->

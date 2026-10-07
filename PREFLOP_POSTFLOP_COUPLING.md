@@ -52,3 +52,9 @@ The preflop leg now enumerates all 46 private deals exactly, so outer-loop resul
 Gate D requires preflop reach-weighted strategy, conditional-range L1, damped continuation utility and postflop reach-weighted strategy deltas all `<=0.02` for three consecutive iterations. It failed at 100 because the last three non-preflop residuals remained `0.079894`, `0.053868`, and `0.044017`.
 
 No approximate period-2/3 cycle was detected. Checkpoint/resume exactly reproduced the continuous 20-iteration trajectory. Therefore remaining instability belongs to the approximation feedback map, not RNG or resume mechanics.
+
+<!-- PHASE6.6 START -->
+## Phase 6.6 Coupling V2
+
+Coupling V2 uses exact preflop traversal, an explicit joint Bayesian posterior, adaptive inner postflop budget, raw/damped value separation, component residuals, LocalResponseRatio and schema-2 checkpoints. Plain, adaptive and safeguarded-Anderson methods were compared. The full C-R operator failed Gate D; C-E full was blocked by the node cap and micro C-E failed inner quality; micro C-X remained unstable. Outer coupling is retained only as an Experimental diagnostic baseline.
+<!-- PHASE6.6 END -->

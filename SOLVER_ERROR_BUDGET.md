@@ -38,3 +38,15 @@ Errors remain separate; they are not added into a fake scalar uncertainty.
 - external-validation error: unmeasured; no independent solver comparison.
 
 A/B/C pass and D fails. `Verified = 0`.
+
+<!-- PHASE6.6 START -->
+## Phase 6.6 — Error budget V3
+
+- **Preflop sampling:** resolved for exact mode; Gate B seed distance is 0.
+- **Postflop finite-solve:** unresolved/material. Sensitivity improved through 1,000 iterations but worsened again at 2,500/5,000; 0.01 and 0.005 quality targets failed by 10,000.
+- **Representative-card abstraction:** material R↔X utility error, but causal attribution is unresolved because E failed its quality gate.
+- **Conditional-range amplification:** joint compatibility stayed near one; conditional Bayes ranged 0.148–1.740. Coupling V2 now preserves the exact joint posterior rather than reconstructing product marginals.
+- **Outer fixed-point residual:** dominant blocker. Best confirmatory normalized raw residual 0.103773 at outer 25, versus 0.02 gate; resumed run failed quality at outer 32.
+- **Numerical error:** deterministic seed distance 0 and semantic checkpoint identity hold; no evidence this is the blocker.
+- **External-validity error:** unchanged and dominant outside the laboratory. No external solve matched to the exact game; Verified = 0.
+<!-- PHASE6.6 END -->
