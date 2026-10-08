@@ -270,3 +270,13 @@ Result: A PASS / B PASS / C PASS / D FAIL. Best α=0.15; outer-25 raw residual 0
 - Maior escala materializada: 131.069 nós; primeira escala bloqueada: S5 com 2.097.149 nós estimados.
 - Rust não recomendado antes de reduzir a materialização eager.
 - Resultado: S1–S6 PASS, 152/152 testes; sem mudança em poker, Gate D ou Verified.
+
+## Phase 6.9 — Research Solver 0.9.0
+
+- Implemented generic `CompactGameProvider`, direct compact compilation, lazy explicit-stack EV, iterative strategy evaluation and Best Response V2.
+- Stable numeric information-set IDs preserve public-history/own-private-state semantics and exact chance enumeration.
+- Vanilla CFR, CFR+, and DCFR are differential-equivalent to the previous engines through S4.
+- Checkpoint V4 resumes to a bit-identical typed solver state.
+- S4: 131,069 nodes, 10,922 infosets, 28.50 B/node, 16-iteration exploitability `0.000226103934`.
+- S5: deterministic safe abort because 2,097,149 nodes exceed the unchanged 250,000-node budget.
+- M1–M7 PASS; poker data remains Experimental, historical Gate D FAIL, Verified = 0.

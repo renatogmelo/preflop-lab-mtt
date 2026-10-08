@@ -162,3 +162,13 @@ Artifact: `solver/artifacts/phase6-8-unified-scalability-v0.8.0.json`.
 S0 preserva ground truth independente por enumeração normal-form com exploitability zero. S1–S4 usam best response, NashConv, differential oracle e invariantes metamórficos, declarados como evidência compartilhada e não como prova independente completa. Os 24 casos determinísticos validam estrutura, estratégias normalizadas, regrets, strategy sums e utilities finitos. Checkpoint V3 contínuo/resumido é idêntico. S5 é um safe abort legítimo do preflight, não um resultado omitido.
 
 Gates do laboratório S1–S6 passaram. A/B/C/D histórico continua PASS/PASS/PASS/FAIL, os outputs são Experimental e `Verified = 0`. Validação de repositório: TypeScript, ESLint, build e 152/152 testes.
+
+## Phase 6.9 validation
+
+Artifact: `solver/artifacts/phase6-9-compact-tree-v0.9.0.json`.
+
+Direct compact compilation matches the legacy and Phase 6.8 indexed engines on S0–S4. The acceptance tolerance is `1e-12`; behavioral strategies, complete regrets, strategy sums, strategy EV, best-response EV, exploitability, and NashConv pass. The largest observed BR error is floating-point noise at `2.7755575615628914e-17`. Checkpoint V4 continuous/resumed typed state hashes are identical.
+
+S4 extended DCFR from two to 16 iterations and recorded exploitability `0.00022610393414868035`; this is empirical progress, not an equilibrium claim. S5 is a recorded safe abort under the unchanged node budget. Gates M1–M7 pass. Historical Gate D remains FAIL, all strategic output remains Experimental, and Verified remains 0.
+
+Final validation: TypeScript PASS, ESLint PASS, production build PASS, and 168/168 tests PASS.

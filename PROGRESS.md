@@ -341,3 +341,9 @@ O Research Solver 0.8.0 agora inclui um gerador paramétrico determinístico de 
 - Validação final: TypeScript, ESLint, build e 152/152 testes.
 
 Evidência: `PHASE6_8_REPORT.md` e `solver/artifacts/phase6-8-unified-scalability-v0.8.0.json`.
+
+## Phase 6.9 — compact game tree
+
+Research Solver 0.9.0 now compiles synthetic games directly from a numeric provider into compact typed arrays, without declarative and compiled object trees. S0–S4 passed A/B/C differential validation; S4 uses 28.50 bytes/node, reduces estimated resident logical storage by 95.15%, and completed a 16-iteration convergence curve. S5 was safely rejected by the unchanged 250,000-node budget. M1–M7 PASS; historical Gate D remains FAIL and Verified remains 0.
+
+Final validation: TypeScript, ESLint, production build, and 168/168 tests. Evidence: `PHASE6_9_REPORT.md` and `solver/artifacts/phase6-9-compact-tree-v0.9.0.json`.
