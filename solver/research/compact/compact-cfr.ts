@@ -86,6 +86,20 @@ function checkpointSemanticHash(
   });
 }
 
+function compactSolveId(
+  tree: Pick<CompactIndexedTree, "gameHash" | "version">,
+  configuration: SolverConfiguration,
+  solverVersion: string,
+) {
+  return hashValue({
+    gameHash: tree.gameHash,
+    configuration,
+    solverVersion,
+    compactSolverVersion: COMPACT_CFR_VERSION,
+    treeVersion: tree.version,
+  });
+}
+
 export class CompactCfrSolver {
   readonly regrets: Float64Array;
   readonly strategySums: Float64Array;
@@ -111,13 +125,7 @@ export class CompactCfrSolver {
     this.strategySums = new Float64Array(tree.totalInformationSetActions);
     this.evaluator = new CompactNashConvEvaluatorV2(tree);
     this.configurationHash = hashValue(configuration);
-    this.solveId = hashValue({
-      gameHash: tree.gameHash,
-      configuration,
-      solverVersion: SOLVER_VERSION,
-      compactSolverVersion: COMPACT_CFR_VERSION,
-      treeVersion: tree.version,
-    });
+    this.solveId = compactSolveId(tree, configuration, SOLVER_VERSION);
   }
 
   initialize() {
@@ -341,7 +349,10 @@ export class CompactCfrSolver {
   restore(checkpoint: CompactCheckpointV4) {
     if (checkpoint.schemaVersion !== COMPACT_CHECKPOINT_SCHEMA || checkpoint.compactSolverVersion !== COMPACT_CFR_VERSION) throw new Error("Unsupported compact checkpoint version.");
     if (checkpoint.compactTreeVersion !== this.tree.version || checkpoint.gameHash !== this.tree.gameHash || checkpoint.gameId !== this.tree.gameId) throw new Error("Compact checkpoint belongs to another game.");
-    if (checkpoint.configurationHash !== this.configurationHash || checkpoint.solveId !== this.solveId) throw new Error("Compact checkpoint configuration mismatch.");
+    const compatibleSolverVersions = new Set(["0.9.0", SOLVER_VERSION]);
+    if (!compatibleSolverVersions.has(checkpoint.solverVersion)) throw new Error("Unsupported compact checkpoint solver version.");
+    const expectedSolveId = compactSolveId(this.tree, this.configuration, checkpoint.solverVersion);
+    if (checkpoint.configurationHash !== this.configurationHash || checkpoint.solveId !== expectedSolveId) throw new Error("Compact checkpoint configuration mismatch.");
     if (checkpoint.regrets.length !== this.regrets.length || checkpoint.strategySums.length !== this.strategySums.length) throw new Error("Compact checkpoint state length mismatch.");
     this.regrets.set(checkpoint.regrets);
     this.strategySums.set(checkpoint.strategySums);
@@ -355,6 +366,30 @@ export class CompactCfrSolver {
     this.startedAt = performance.now();
     this.memorySnapshots = [];
     this.captureMemory("restore");
+  }
+
+  restoreNumericState(state: {
+    iteration: number;
+    nodesVisited: number;
+    regrets: Float64Array;
+    strategySums: Float64Array;
+  }) {
+    if (!Number.isInteger(state.iteration) || state.iteration < 0) throw new Error("Invalid compact checkpoint iteration.");
+    if (!Number.isInteger(state.nodesVisited) || state.nodesVisited < 0) throw new Error("Invalid compact checkpoint node count.");
+    if (state.regrets.length !== this.regrets.length || state.strategySums.length !== this.strategySums.length) {
+      throw new Error("Compact numeric checkpoint state length mismatch.");
+    }
+    this.regrets.set(state.regrets);
+    this.strategySums.set(state.strategySums);
+    assertFiniteArray(this.regrets, "Numeric checkpoint regrets");
+    assertFiniteArray(this.strategySums, "Numeric checkpoint strategy sums");
+    this.iterationCount = state.iteration;
+    this.nodesVisited = state.nodesVisited;
+    this.convergenceHistory = [];
+    this.previousMetricStrategy = this.averageStrategyArray();
+    this.startedAt = performance.now();
+    this.memorySnapshots = [];
+    this.captureMemory("restore-numeric");
   }
 }
 

@@ -347,3 +347,14 @@ Evidência: `PHASE6_8_REPORT.md` e `solver/artifacts/phase6-8-unified-scalabilit
 Research Solver 0.9.0 now compiles synthetic games directly from a numeric provider into compact typed arrays, without declarative and compiled object trees. S0–S4 passed A/B/C differential validation; S4 uses 28.50 bytes/node, reduces estimated resident logical storage by 95.15%, and completed a 16-iteration convergence curve. S5 was safely rejected by the unchanged 250,000-node budget. M1–M7 PASS; historical Gate D remains FAIL and Verified remains 0.
 
 Final validation: TypeScript, ESLint, production build, and 168/168 tests. Evidence: `PHASE6_9_REPORT.md` and `solver/artifacts/phase6-9-compact-tree-v0.9.0.json`.
+## Fase 6.10 — Resource-safe million-node research (2026-10-08)
+
+- Research Solver atualizado para 0.10.0; baseline auditado `fdc8e9dd6c0628bd9281bb78cf1574208e5eb764`.
+- Runner isolado, Worker computacional, heartbeat e watchdog independente implementados.
+- Resource Policy/Preflight V3 introduz Tier 0, Tier 1 calibrado e Tier 2 explicitamente autorizado.
+- S2, S3 e S4 perfilados duas vezes; estimador calibrado contra RSS observado.
+- S5 executado duas vezes: 2.097.149 nós, uma iteração, 16,95–17,67 s, pico máximo 191,38 MiB e hash semântico reproduzível.
+- Checkpoint binário V5 reduz o estado S4 em 62,26% e preserva resume determinístico; leitura V4 0.9 permanece suportada.
+- Todos os gates R1–R8 passaram. Gate D histórico segue FAIL, Verified segue 0 e nenhuma estratégia de poker mudou.
+- Artefato: `solver/artifacts/phase6-10-resource-safe-v0.10.0.json`.
+- Validação final: TypeScript, ESLint, build e 180/180 testes.

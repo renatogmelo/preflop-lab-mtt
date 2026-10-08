@@ -280,3 +280,18 @@ Result: A PASS / B PASS / C PASS / D FAIL. Best α=0.15; outer-25 raw residual 0
 - S4: 131,069 nodes, 10,922 infosets, 28.50 B/node, 16-iteration exploitability `0.000226103934`.
 - S5: deterministic safe abort because 2,097,149 nodes exceed the unchanged 250,000-node budget.
 - M1–M7 PASS; poker data remains Experimental, historical Gate D FAIL, Verified = 0.
+## Phase 6.10 — Resource-Safe Scaling (0.10.0)
+
+Concluído:
+
+- processo-filho isolado com PID, hashes, timestamps, protocolo e persistência;
+- watchdog externo para timeout, RSS, falta de resposta, crash e limite estrutural;
+- Resource Policy V3 com preflight multidimensional e tiers seguros;
+- seis perfis S2–S4 usados para calibração de memória/runtime;
+- S5 de 2.097.149 nós executado duas vezes, uma iteração por run, dentro de 768 MiB/30 s;
+- avaliação exata executada, mas sem alegação de convergência (`exploitability 0,3955868`, `NashConv 0,7911736`);
+- Checkpoint V5 binário, checksum, hash semântico, escrita recuperável e resume determinístico;
+- compatibilidade de leitura V4 0.9 preservada;
+- 180/180 testes, typecheck, lint e build verdes.
+
+Próximo gargalo: compilação compacta S5 (15,4–16,1 s). A próxima pesquisa deve reduzir construção estrutural e adicionar hard limits nativos antes de ampliar iterações.

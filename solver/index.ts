@@ -50,3 +50,8 @@ export * from "./research/scalability/performance-profiler";
 export * from "./research/scalability/resource-safety";
 export * from "./research/scalability/synthetic-generator";
 export * from "./research/scalability/tree-size-estimator";
+export * from "./research/resource-safe/binary-checkpoint-v5";
+export * from "./research/resource-safe/isolated-runner";
+export * from "./research/resource-safe/resource-policy-v3";
+export * from "./research/resource-safe/subtree-validation";
+export * from "./research/resource-safe/types";

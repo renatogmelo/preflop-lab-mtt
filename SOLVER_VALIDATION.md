@@ -172,3 +172,20 @@ Direct compact compilation matches the legacy and Phase 6.8 indexed engines on S
 S4 extended DCFR from two to 16 iterations and recorded exploitability `0.00022610393414868035`; this is empirical progress, not an equilibrium claim. S5 is a recorded safe abort under the unchanged node budget. Gates M1–M7 pass. Historical Gate D remains FAIL, all strategic output remains Experimental, and Verified remains 0.
 
 Final validation: TypeScript PASS, ESLint PASS, production build PASS, and 168/168 tests PASS.
+## Phase 6.10 validation — 0.10.0
+
+Artefato canônico: `solver/artifacts/phase6-10-resource-safe-v0.10.0.json`.
+
+- S2/S3/S4: duas repetições isoladas por escala, hashes semânticos estáveis.
+- Calibração: pico inicial subestimou todas as seis execuções; V3 passou a usar overhead fixo 79.773.696 B e multiplicador variável 2,6713.
+- S5 preflight: 352.411.221 B / 19.263 ms estimados; limite 805.306.368 B / 30.000 ms.
+- S5 real: 2.097.149 nós, 174.762 infosets, profundidade 19, uma iteração; 16.946/17.669 ms e 200.675.328 B no maior pico.
+- Repetibilidade S5: hash `802fdfa46193da98` nos dois processos.
+- Validação estrutural S5: chance error 0, zero-sum error 0, reachable, no leakage e perfect recall.
+- Subárvore controlada: EV error 0 a tolerância `1e-12`; escopo não equivale a prova full-game independente.
+- Checkpoint S4 V4/V5: 927.392/349.995 B; resume determinístico e corrupção recusada.
+- Failure recovery: timeout, unresponsive, memory limit, child crash, checkpoint interruption e corrupção cobertos.
+- R1–R8: PASS.
+- TypeScript, ESLint, build e 180/180 testes: PASS.
+
+Trust permanece Experimental. Gate D permanece FAIL. Verified permanece 0. S5 foi iterado e avaliado, não convergiu nem foi declarado solved.
