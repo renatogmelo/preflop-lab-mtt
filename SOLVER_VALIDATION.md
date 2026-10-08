@@ -154,3 +154,11 @@ Final gates: `A=true`, `B=true`, `C=true`, `D=false`. No dataset is Verified.
 
 Reference game remained frozen at phase6-reference-game-v1 (bfd3615d6ee13da1). A/B/C were executed again and passed. Gate D v2 adds normalized raw fixed-point residual, LocalResponseRatio, inner-solve quality and three-pass patience; it failed. Continuous/resumed semantic checkpoint hashes match after excluding runtimeMs only. The full regression is 118/118 with a successful production build. Artifacts are Experimental and no dataset is Verified.
 <!-- PHASE6.6 END -->
+
+## Phase 6.8 validation
+
+Artifact: `solver/artifacts/phase6-8-unified-scalability-v0.8.0.json`.
+
+S0 preserva ground truth independente por enumeração normal-form com exploitability zero. S1–S4 usam best response, NashConv, differential oracle e invariantes metamórficos, declarados como evidência compartilhada e não como prova independente completa. Os 24 casos determinísticos validam estrutura, estratégias normalizadas, regrets, strategy sums e utilities finitos. Checkpoint V3 contínuo/resumido é idêntico. S5 é um safe abort legítimo do preflight, não um resultado omitido.
+
+Gates do laboratório S1–S6 passaram. A/B/C/D histórico continua PASS/PASS/PASS/FAIL, os outputs são Experimental e `Verified = 0`. Validação de repositório: TypeScript, ESLint, build e 152/152 testes.

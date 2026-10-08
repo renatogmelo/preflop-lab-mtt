@@ -259,3 +259,14 @@ Implemented finite/fixed-quality sensitivity, joint-posterior audit, ExpectedBuc
 
 Result: A PASS / B PASS / C PASS / D FAIL. Best α=0.15; outer-25 raw residual 0.103773; LocalResponseRatio 4.368. Tiny α=0.001 was correctly rejected despite damped delta 0.004784. H1 partial, H2 unresolved, H3 supported, H4 partial, H5 supported. Build + 118/118 tests pass. Verified=0. Phase 7 is not recommended.
 <!-- PHASE6.6 END -->
+
+## Phase 6.8 — Research Solver 0.8.0
+
+- Implementado `SyntheticExtensiveGameGenerator` parametrizado por estados privados, sinais públicos, estágios, ações, seed e dependências.
+- Estimador prévio coincidiu com todas as árvores materializadas; validation-first cobre chance, infosets, perfect recall, alcance, soma zero, leakage e finitude.
+- Vanilla CFR, CFR+ e DCFR usam a mesma interface e registram iterações, tempo, nós, memória, exploitability e NashConv.
+- Oracle object-based e engine indexed-f64-v1 coincidiram em estratégias, utilities, regrets, strategy sums e métricas em S0–S4.
+- Checkpoint V3 e repetição integral preservaram determinismo semântico.
+- Maior escala materializada: 131.069 nós; primeira escala bloqueada: S5 com 2.097.149 nós estimados.
+- Rust não recomendado antes de reduzir a materialização eager.
+- Resultado: S1–S6 PASS, 152/152 testes; sem mudança em poker, Gate D ou Verified.

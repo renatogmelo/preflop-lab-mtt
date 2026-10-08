@@ -16,6 +16,11 @@ export type ResearchDecisionNode = {
   stage: ResearchStage;
   actions: string[];
   transitions: Record<string, string>;
+  observation?: {
+    ownPrivateState: number;
+    opponentPrivateState: number;
+    publicHistory: string[];
+  };
 };
 
 export type ResearchTerminalNode = {
@@ -34,6 +39,11 @@ export type UnifiedGameDefinition = {
   root: string;
   zeroSum: true;
   nodes: Record<string, ResearchNode>;
+  research?: {
+    family: string;
+    seed: number;
+    generatorVersion: string;
+  };
 };
 
 export type DefinitionIssue = { code: string; message: string; nodeId?: string };

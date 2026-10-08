@@ -328,3 +328,16 @@ Implemented an independent synthetic-game laboratory without changing poker stra
 - Historical A/B/C/D remains PASS/PASS/PASS/FAIL; Phase 7 is not authorized.
 
 Evidence: `PHASE6_7_REPORT.md` and `solver/artifacts/phase6-7-unified-research-v0.7.0.json`.
+
+## Phase 6.8 — unified scalability
+
+O Research Solver 0.8.0 agora inclui um gerador paramétrico determinístico de jogos extensivos sintéticos, estimativa prévia exata, validation-first, três algoritmos, curvas de convergência, oracle diferencial, testes metamórficos/property-based, checkpoint V3 e budgets com safe abort.
+
+- S0–S4 concluídos; maior jogo: 131.069 nós, 10.922 infosets, profundidade 15.
+- S5 (2.097.149 nós estimados) recusado antes da materialização por node/memory budget.
+- Representação indexada diferencialmente idêntica e 3,72x–10,73x mais rápida que a referência nos ensaios pareados.
+- Hash semântico `3db676a9e81ac2bd` idêntico em duas execuções completas.
+- S1–S6 PASS; A/B/C/D histórico permanece PASS/PASS/PASS/FAIL; Verified = 0.
+- Validação final: TypeScript, ESLint, build e 152/152 testes.
+
+Evidência: `PHASE6_8_REPORT.md` e `solver/artifacts/phase6-8-unified-scalability-v0.8.0.json`.
