@@ -1,6 +1,8 @@
 import { parentPort, workerData } from "node:worker_threads";
 import { runFixtureExperiment, runProfileExperiment } from "./experiment-core";
 import { runCompilerProfileExperiment } from "../fast-compiler/compiler-experiment";
+import { runGenericCompilerExperiment } from "../generic/generic-experiment";
+import { runGenericCacheExperiment } from "../generic/cache-experiment";
 import type { IsolatedExperimentRequest, StageMetric } from "./types";
 
 const port = parentPort;
@@ -13,7 +15,11 @@ try {
     ? await runProfileExperiment(request, report)
     : request.kind === "compiler-profile"
       ? await runCompilerProfileExperiment(request, report)
-      : await runFixtureExperiment(request);
+      : request.kind === "generic-compiler-profile"
+        ? await runGenericCompilerExperiment(request, report)
+        : request.kind === "generic-cache-profile"
+          ? await runGenericCacheExperiment(request, report)
+          : await runFixtureExperiment(request);
   port.postMessage({ type: "result", result });
 } catch (error) {
   port.postMessage({ type: "error", error: error instanceof Error ? error.stack ?? error.message : String(error) });

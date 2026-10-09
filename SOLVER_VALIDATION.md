@@ -1,4 +1,4 @@
-# Preflop Lab Solver — Validation Report 0.1.0
+# Preflop Lab Solver — Validation Report 0.12.0
 
 ## Resumo honesto
 
@@ -210,3 +210,28 @@ Trust permanece Experimental. Gate D permanece FAIL. Verified permanece 0. S5 fo
 ### Segurança e confiança
 
 S5 manteve processo isolado, preflight, tier2 explícito, watchdog, runtime/memory budgets e logging. Nenhuma mudança de poker strategy. Gate D FAIL; Verified 0.
+
+## Research Solver 0.12.0 — validação da Fase 6.12
+
+Artefato: \`phase6-12-generic-compiler-v0.12.0.json\`; hash \`b1c639520f514536\`.
+
+| Evidência | Resultado |
+|---|---:|
+| Famílias irregulares | 3/3 |
+| Delta máximo oracle independente | 2,78e-17 |
+| Delta estrutural Legacy/V2/V3 em S2 | 0 |
+| Metamórficos | PASS |
+| Checkpoint V5 via Cache V1/V2 | PASS, delta de estado 0 |
+| Jogo irregular intermediário | 40.745 nós |
+| Segmented compile | 1.119,08 ms |
+| Segmented payload copiado | 1.303.840 bytes, apenas finalização |
+| Cache V2 S5 | 59.771.960 bytes |
+| Shared-view S5 startup | 559,33 ms |
+| Shared-view S5 pico RSS | 146.014.208 bytes |
+| Shared-view payload explicitamente copiado | 0 bytes |
+| Safe abort isolado | structural-limit |
+| Gates G1–G9 | PASS |
+| Gate D histórico | FAIL |
+| Verified datasets | 0 |
+
+A expressão zero-copy é deliberadamente evitada: o resultado comprovado é zero cópia explícita do payload após a leitura no modo shared-view. Não há mmap. O cache continua validando identidade, SHA-256 completo, estrutura e structural hash.

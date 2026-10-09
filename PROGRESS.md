@@ -398,3 +398,19 @@ Final validation: TypeScript, ESLint, production build, and 168/168 tests. Evide
 - Provider genérico sem node count conhecido.
 - Cache sem cópia e validação incremental do payload.
 - Reavaliar Rust somente com integração que evite arquivo intermediário.
+
+## Fase 6.12 — Generic Compiler Architecture (concluída)
+
+- Baseline auditado: \`36b38a58eed84d6ab7719a49e7484994cb24dc34\`.
+- Provider Contract V2 e Generic Compiler V3 implementados para contagem desconhecida, branching/profundidade/chance irregulares.
+- Fast path V2 preservado por dispatch explícito de capabilities.
+- Buffers geométricos, chunked e segmented medidos; segmented escolhido.
+- Structural Cache V2 implementado com SHA-256 completo, alinhamento, safe-copy, shared-view, streaming e compatibilidade V1.
+- Três famílias irregulares, oracle independente, metamórficos e Checkpoint V5 validados.
+- Jogo irregular intermediário: 40.745 nós; aborto seguro isolado validado.
+- S5 V2: 59.771.960 bytes; shared-view: 559,33 ms startup, 146.014.208 bytes RSS e 0 bytes de payload explicitamente copiados.
+- Gates G1–G9: PASS. Decisão: KEEP TYPESCRIPT.
+- Gate D histórico: FAIL. Verified datasets: 0.
+- Artefato: \`solver/artifacts/phase6-12-generic-compiler-v0.12.0.json\` (\`b1c639520f514536\`).
+
+Próxima pesquisa: validação paginada/Merkle, leases mais fortes e protótipo mmap somente se uma implementação isolada comprovar ganho líquido.

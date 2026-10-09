@@ -38,6 +38,8 @@ export type ResourceLimits = {
 export type IsolatedExperimentKind =
   | "profile"
   | "compiler-profile"
+  | "generic-compiler-profile"
+  | "generic-cache-profile"
   | "timeout-fixture"
   | "hang-fixture"
   | "memory-fixture"
@@ -62,6 +64,13 @@ export type IsolatedExperimentRequest = {
   rustExecutable?: string;
   cachePath?: string;
   crossValidate?: boolean;
+  genericFamily?: "irregular-branching" | "variable-depth-hidden" | "asymmetric-chance" | "regular-synthetic";
+  genericScale?: number;
+  genericGrowthPolicy?: "geometric" | "chunked" | "segmented";
+  genericInitialCapacity?: number;
+  genericCacheFormat?: "v1" | "v2";
+  cacheLoadMode?: "safe-copy" | "shared-view";
+  cacheIntegrityMode?: "whole-buffer" | "streaming";
 };
 
 export type StageMetric = {

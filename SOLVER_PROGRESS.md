@@ -1,7 +1,7 @@
 # Preflop Lab Solver — Progress
 
 Atualizado em: 2026-10-03  
-Versão: 0.1.0
+Versão: 0.12.0
 
 ## Milestone A — Solver Mathematics
 
@@ -312,3 +312,24 @@ Concluído:
 S5: baseline 15,940 s; V2 6,378 s; cache TS 0,703 s; Rust end-to-end 12,696 s. O próximo alvo é reduzir cópia/hash/validação no load sem enfraquecer integridade.
 
 Limite de confiança inalterado: isto valida infraestrutura sintética, não uma solução GTO profissional de Hold'em. Gate D permanece FAIL e Verified permanece zero.
+
+## Milestone 6.12 — Generic Compiler & Structural Cache V2
+
+Concluído:
+
+- versão do Research Solver: 0.12.0;
+- Provider Contract V2 desacoplado do layout;
+- Generic Compiler V3 incremental para providers irregulares;
+- contagem desconhecida, índices estáveis, budgets, cancelamento e finalização compacta;
+- integridade de information sets, perfect recall, chance e provider determinístico;
+- três famílias sintéticas novas;
+- dispatch seguro V2/V3;
+- política segmented escolhida com medição;
+- Cache V2 com compatibilidade V1 e copy accounting;
+- shared views com lease, lifetime explícito e detecção de mutação;
+- oracle matemático independente e metamórficos;
+- Checkpoint V5 determinístico em cache V1 e V2;
+- Resource Policy V3 e watchdog preservados;
+- G1–G9 PASS.
+
+O fast path V2 permanece preferido na família regular. O generic path não é promovido como substituto de performance. Rust permanece experimental: KEEP TYPESCRIPT.

@@ -3,7 +3,7 @@ import type { Player } from "../../core/types";
 export type CompactActor = Player | "chance" | null;
 
 export type CompactLevel = {
-  kind: "root-chance" | "decision" | "public-chance" | "terminal";
+  kind: "root-chance" | "decision" | "public-chance" | "terminal" | "mixed";
   stage: number;
   offset: number;
   count: number;

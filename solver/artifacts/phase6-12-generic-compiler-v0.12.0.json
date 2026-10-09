@@ -1,0 +1,1976 @@
+{
+  "schemaVersion": 1,
+  "phase": "6.12",
+  "researchVersion": "generic-compiler-v0.12.0",
+  "solverVersion": "0.12.0",
+  "baseline": {
+    "commit": "36b38a58eed84d6ab7719a49e7484994cb24dc34",
+    "phase": "6.11",
+    "artifactHash": "800f715766ed8c5b",
+    "preservedHistoricalGates": {
+      "C1": true,
+      "C2": true,
+      "C3": true,
+      "C4": true,
+      "C5": true,
+      "C6": true,
+      "C7": true,
+      "C8": true,
+      "C9": true
+    },
+    "verifiedDatasets": 0,
+    "historicalGateD": "FAIL"
+  },
+  "startedAt": "2026-10-09T09:51:25.460Z",
+  "completedAt": "2026-10-09T09:51:59.394Z",
+  "environment": {
+    "platform": "win32",
+    "architecture": "x64",
+    "node": "v24.20.0",
+    "isolation": "one monitored child process per measured run"
+  },
+  "providerFamilies": {
+    "irregular-branching": {
+      "nodes": 31,
+      "informationSets": 13,
+      "maximumDepth": 5,
+      "structuralHash": "d36794a4cc1de9025af52fb0b636c46ad2536532281141320386505ad682c2f6",
+      "compiler": {
+        "utilities": [
+          0.03613594444444446,
+          -0.03613594444444446
+        ],
+        "bestResponseValues": [
+          0.5337085,
+          0.611402375
+        ],
+        "nashConv": 1.145110875,
+        "exploitability": 0.5725554375,
+        "policyHashes": [
+          "6a0e080091db4fdb60998c5ece21c09ad2c64981dee43e45e147f4103719a38b",
+          "b32f780c3b1d14062467a0ec82f04db7c9ff75532a4eb6b316287e310c05fb59"
+        ]
+      },
+      "independentOracle": {
+        "uniformUtilities": [
+          0.03613594444444443,
+          -0.03613594444444443
+        ],
+        "bestResponseValues": [
+          0.5337085,
+          0.611402375
+        ],
+        "nashConv": 1.145110875,
+        "exploitability": 0.5725554375,
+        "purePoliciesEnumerated": [
+          576,
+          72
+        ]
+      },
+      "maximumDelta": 2.7755575615628914e-17
+    },
+    "variable-depth-hidden": {
+      "nodes": 37,
+      "informationSets": 8,
+      "maximumDepth": 4,
+      "structuralHash": "36574068f2a917f6893a1ed59a5887148b501fbebc01eb141e56eb3d336dfc9b",
+      "compiler": {
+        "utilities": [
+          0.125,
+          -0.125
+        ],
+        "bestResponseValues": [
+          0.5,
+          0.25
+        ],
+        "nashConv": 0.75,
+        "exploitability": 0.375,
+        "policyHashes": [
+          "ddecc52d0bc5c1c1f5075fdc34097213df4947d07f5a0a58b5d3b158861d91b2",
+          "84c4f7482ca46e0552732d8a23e78983f44e4336be80648baadaf3c961dd0c30"
+        ]
+      },
+      "independentOracle": {
+        "uniformUtilities": [
+          0.125,
+          -0.125
+        ],
+        "bestResponseValues": [
+          0.5,
+          0.25
+        ],
+        "nashConv": 0.75,
+        "exploitability": 0.375,
+        "purePoliciesEnumerated": [
+          16,
+          16
+        ]
+      },
+      "maximumDelta": 0
+    },
+    "asymmetric-chance": {
+      "nodes": 13,
+      "informationSets": 3,
+      "maximumDepth": 3,
+      "structuralHash": "a7a32290983c45759cf0cb41a0c89fcc6eadcf0ccf708ed542725cb02666b809",
+      "compiler": {
+        "utilities": [
+          0.36124999999999996,
+          -0.36124999999999996
+        ],
+        "bestResponseValues": [
+          0.51125,
+          -0.22999999999999998
+        ],
+        "nashConv": 0.28125,
+        "exploitability": 0.140625,
+        "policyHashes": [
+          "27a4589af59824fb25423417eb30cc4e280d8940c6419eb9ba2b1d3d12e0fc13",
+          "c5d0356d6e6e9d0e6a0fdc00a0357d822cbbf76d257e5d702f8ccf13f70dc8fa"
+        ]
+      },
+      "independentOracle": {
+        "uniformUtilities": [
+          0.36124999999999996,
+          -0.36124999999999996
+        ],
+        "bestResponseValues": [
+          0.51125,
+          -0.22999999999999998
+        ],
+        "nashConv": 0.28125,
+        "exploitability": 0.140625,
+        "purePoliciesEnumerated": [
+          2,
+          6
+        ]
+      },
+      "maximumDelta": 0
+    }
+  },
+  "compilerConfigurations": {
+    "fastPath": "Compiler V2 exact-preallocated S0-S5",
+    "genericPath": "Compiler V3 incremental BFS",
+    "selectedGrowthPolicy": "segmented",
+    "rationale": "No growth-time payload copy; explicit finalization copy; bounded segments."
+  },
+  "structuralDifferential": {
+    "legacyVsFastMaximumDelta": 0,
+    "fastVsGenericMaximumDelta": 0,
+    "legacyHash": "35f5e9c10e19df19a93b67d60c78abdd79dc9097a99df920ab4f279e463480fa",
+    "fastHash": "35f5e9c10e19df19a93b67d60c78abdd79dc9097a99df920ab4f279e463480fa",
+    "genericHash": "35f5e9c10e19df19a93b67d60c78abdd79dc9097a99df920ab4f279e463480fa"
+  },
+  "dynamicGrowth": {
+    "geometric": {
+      "completed": 2,
+      "repetitions": 2,
+      "totalMedianMs": 1279.34185,
+      "constructionMedianMs": 1247.8323999999998,
+      "finalizationMedianMs": 18.025499999999965,
+      "validationMedianMs": 5.645800000000122,
+      "reallocationsMedian": 70,
+      "bytesCopiedMedian": 3137056,
+      "finalizationBytesCopiedMedian": 1303840,
+      "fragmentationMedianBytes": 694148,
+      "peakRssMedianBytes": 172449792,
+      "structuralHashes": [
+        "2594e9a0e241c49ddae38560774607822507974210808d8a2ac233d2295705ae"
+      ],
+      "runs": [
+        {
+          "experimentId": "phase612-irregular-geometric-0",
+          "terminationReason": "completed",
+          "runtimeMs": 1928.9640999999997,
+          "peakRssObservedBytes": 170934272,
+          "peakRssMeasurement": "os-sampled",
+          "result": {
+            "family": "irregular-branching",
+            "scale": 6,
+            "growthPolicy": "geometric",
+            "nodes": 40745,
+            "informationSets": 11668,
+            "maximumDepth": 10,
+            "structuralHash": "2594e9a0e241c49ddae38560774607822507974210808d8a2ac233d2295705ae",
+            "profile": {
+              "policy": "geometric",
+              "initialCapacity": 64,
+              "segmentSize": 4096,
+              "chunks": 18,
+              "cancellationChecks": 57,
+              "nodeBufferMetrics": {
+                "kind": {
+                  "policy": "geometric",
+                  "length": 40745,
+                  "capacity": 65536,
+                  "allocations": 11,
+                  "reallocations": 10,
+                  "bytesCopied": 106217,
+                  "finalizationBytesCopied": 40745,
+                  "logicalFragmentationBytes": 24791
+                },
+                "actor": {
+                  "policy": "geometric",
+                  "length": 40745,
+                  "capacity": 65536,
+                  "allocations": 11,
+                  "reallocations": 10,
+                  "bytesCopied": 106217,
+                  "finalizationBytesCopied": 40745,
+                  "logicalFragmentationBytes": 24791
+                },
+                "firstChild": {
+                  "policy": "geometric",
+                  "length": 40745,
+                  "capacity": 65536,
+                  "allocations": 11,
+                  "reallocations": 10,
+                  "bytesCopied": 424868,
+                  "finalizationBytesCopied": 162980,
+                  "logicalFragmentationBytes": 99164
+                },
+                "childCount": {
+                  "policy": "geometric",
+                  "length": 40745,
+                  "capacity": 65536,
+                  "allocations": 11,
+                  "reallocations": 10,
+                  "bytesCopied": 212434,
+                  "finalizationBytesCopied": 81490,
+                  "logicalFragmentationBytes": 49582
+                },
+                "informationSet": {
+                  "policy": "geometric",
+                  "length": 40745,
+                  "capacity": 65536,
+                  "allocations": 11,
+                  "reallocations": 10,
+                  "bytesCopied": 424868,
+                  "finalizationBytesCopied": 162980,
+                  "logicalFragmentationBytes": 99164
+                },
+                "edgeProbability": {
+                  "policy": "geometric",
+                  "length": 40745,
+                  "capacity": 65536,
+                  "allocations": 11,
+                  "reallocations": 10,
+                  "bytesCopied": 849736,
+                  "finalizationBytesCopied": 325960,
+                  "logicalFragmentationBytes": 198328
+                },
+                "terminalP0": {
+                  "policy": "geometric",
+                  "length": 40745,
+                  "capacity": 65536,
+                  "allocations": 11,
+                  "reallocations": 10,
+                  "bytesCopied": 849736,
+                  "finalizationBytesCopied": 325960,
+                  "logicalFragmentationBytes": 198328
+                }
+              },
+              "allocations": 77,
+              "reallocations": 70,
+              "bytesCopied": 3137056,
+              "finalizationBytesCopied": 1303840,
+              "logicalFragmentationBytes": 694148,
+              "maximumResidentCapacityBytes": 1835008,
+              "constructionMs": 1204.1949,
+              "finalizationMs": 18.030099999999948,
+              "validationMs": 5.394700000000057,
+              "structuralHashMs": 4.94600000000014,
+              "totalMs": 1235.4534
+            },
+            "semanticResultHash": "562ebd6252fedff6"
+          },
+          "error": null
+        },
+        {
+          "experimentId": "phase612-irregular-geometric-1",
+          "terminationReason": "completed",
+          "runtimeMs": 1998.2949000000003,
+          "peakRssObservedBytes": 173965312,
+          "peakRssMeasurement": "os-sampled",
+          "result": {
+            "family": "irregular-branching",
+            "scale": 6,
+            "growthPolicy": "geometric",
+            "nodes": 40745,
+            "informationSets": 11668,
+            "maximumDepth": 10,
+            "structuralHash": "2594e9a0e241c49ddae38560774607822507974210808d8a2ac233d2295705ae",
+            "profile": {
+              "policy": "geometric",
+              "initialCapacity": 64,
+              "segmentSize": 4096,
+              "chunks": 18,
+              "cancellationChecks": 57,
+              "nodeBufferMetrics": {
+                "kind": {
+                  "policy": "geometric",
+                  "length": 40745,
+                  "capacity": 65536,
+                  "allocations": 11,
+                  "reallocations": 10,
+                  "bytesCopied": 106217,
+                  "finalizationBytesCopied": 40745,
+                  "logicalFragmentationBytes": 24791
+                },
+                "actor": {
+                  "policy": "geometric",
+                  "length": 40745,
+                  "capacity": 65536,
+                  "allocations": 11,
+                  "reallocations": 10,
+                  "bytesCopied": 106217,
+                  "finalizationBytesCopied": 40745,
+                  "logicalFragmentationBytes": 24791
+                },
+                "firstChild": {
+                  "policy": "geometric",
+                  "length": 40745,
+                  "capacity": 65536,
+                  "allocations": 11,
+                  "reallocations": 10,
+                  "bytesCopied": 424868,
+                  "finalizationBytesCopied": 162980,
+                  "logicalFragmentationBytes": 99164
+                },
+                "childCount": {
+                  "policy": "geometric",
+                  "length": 40745,
+                  "capacity": 65536,
+                  "allocations": 11,
+                  "reallocations": 10,
+                  "bytesCopied": 212434,
+                  "finalizationBytesCopied": 81490,
+                  "logicalFragmentationBytes": 49582
+                },
+                "informationSet": {
+                  "policy": "geometric",
+                  "length": 40745,
+                  "capacity": 65536,
+                  "allocations": 11,
+                  "reallocations": 10,
+                  "bytesCopied": 424868,
+                  "finalizationBytesCopied": 162980,
+                  "logicalFragmentationBytes": 99164
+                },
+                "edgeProbability": {
+                  "policy": "geometric",
+                  "length": 40745,
+                  "capacity": 65536,
+                  "allocations": 11,
+                  "reallocations": 10,
+                  "bytesCopied": 849736,
+                  "finalizationBytesCopied": 325960,
+                  "logicalFragmentationBytes": 198328
+                },
+                "terminalP0": {
+                  "policy": "geometric",
+                  "length": 40745,
+                  "capacity": 65536,
+                  "allocations": 11,
+                  "reallocations": 10,
+                  "bytesCopied": 849736,
+                  "finalizationBytesCopied": 325960,
+                  "logicalFragmentationBytes": 198328
+                }
+              },
+              "allocations": 77,
+              "reallocations": 70,
+              "bytesCopied": 3137056,
+              "finalizationBytesCopied": 1303840,
+              "logicalFragmentationBytes": 694148,
+              "maximumResidentCapacityBytes": 1835008,
+              "constructionMs": 1291.4698999999998,
+              "finalizationMs": 18.020899999999983,
+              "validationMs": 5.896900000000187,
+              "structuralHashMs": 5.117999999999938,
+              "totalMs": 1323.2303
+            },
+            "semanticResultHash": "562ebd6252fedff6"
+          },
+          "error": null
+        }
+      ]
+    },
+    "chunked": {
+      "completed": 2,
+      "repetitions": 2,
+      "totalMedianMs": 1138.9511000000002,
+      "constructionMedianMs": 1108.1184999999998,
+      "finalizationMedianMs": 17.760899999999992,
+      "validationMedianMs": 5.457849999999894,
+      "reallocationsMedian": 70,
+      "bytesCopiedMedian": 6466592,
+      "finalizationBytesCopiedMedian": 1303840,
+      "fragmentationMedianBytes": 6020,
+      "peakRssMedianBytes": 181946368,
+      "structuralHashes": [
+        "2594e9a0e241c49ddae38560774607822507974210808d8a2ac233d2295705ae"
+      ],
+      "runs": [
+        {
+          "experimentId": "phase612-irregular-chunked-0",
+          "terminationReason": "completed",
+          "runtimeMs": 1883.0203999999994,
+          "peakRssObservedBytes": 178884608,
+          "peakRssMeasurement": "os-sampled",
+          "result": {
+            "family": "irregular-branching",
+            "scale": 6,
+            "growthPolicy": "chunked",
+            "nodes": 40745,
+            "informationSets": 11668,
+            "maximumDepth": 10,
+            "structuralHash": "2594e9a0e241c49ddae38560774607822507974210808d8a2ac233d2295705ae",
+            "profile": {
+              "policy": "chunked",
+              "initialCapacity": 64,
+              "segmentSize": 4096,
+              "chunks": 18,
+              "cancellationChecks": 57,
+              "nodeBufferMetrics": {
+                "kind": {
+                  "policy": "chunked",
+                  "length": 40745,
+                  "capacity": 40960,
+                  "allocations": 11,
+                  "reallocations": 10,
+                  "bytesCopied": 225129,
+                  "finalizationBytesCopied": 40745,
+                  "logicalFragmentationBytes": 215
+                },
+                "actor": {
+                  "policy": "chunked",
+                  "length": 40745,
+                  "capacity": 40960,
+                  "allocations": 11,
+                  "reallocations": 10,
+                  "bytesCopied": 225129,
+                  "finalizationBytesCopied": 40745,
+                  "logicalFragmentationBytes": 215
+                },
+                "firstChild": {
+                  "policy": "chunked",
+                  "length": 40745,
+                  "capacity": 40960,
+                  "allocations": 11,
+                  "reallocations": 10,
+                  "bytesCopied": 900516,
+                  "finalizationBytesCopied": 162980,
+                  "logicalFragmentationBytes": 860
+                },
+                "childCount": {
+                  "policy": "chunked",
+                  "length": 40745,
+                  "capacity": 40960,
+                  "allocations": 11,
+                  "reallocations": 10,
+                  "bytesCopied": 450258,
+                  "finalizationBytesCopied": 81490,
+                  "logicalFragmentationBytes": 430
+                },
+                "informationSet": {
+                  "policy": "chunked",
+                  "length": 40745,
+                  "capacity": 40960,
+                  "allocations": 11,
+                  "reallocations": 10,
+                  "bytesCopied": 900516,
+                  "finalizationBytesCopied": 162980,
+                  "logicalFragmentationBytes": 860
+                },
+                "edgeProbability": {
+                  "policy": "chunked",
+                  "length": 40745,
+                  "capacity": 40960,
+                  "allocations": 11,
+                  "reallocations": 10,
+                  "bytesCopied": 1801032,
+                  "finalizationBytesCopied": 325960,
+                  "logicalFragmentationBytes": 1720
+                },
+                "terminalP0": {
+                  "policy": "chunked",
+                  "length": 40745,
+                  "capacity": 40960,
+                  "allocations": 11,
+                  "reallocations": 10,
+                  "bytesCopied": 1801032,
+                  "finalizationBytesCopied": 325960,
+                  "logicalFragmentationBytes": 1720
+                }
+              },
+              "allocations": 77,
+              "reallocations": 70,
+              "bytesCopied": 6466592,
+              "finalizationBytesCopied": 1303840,
+              "logicalFragmentationBytes": 6020,
+              "maximumResidentCapacityBytes": 1146880,
+              "constructionMs": 1149.7541999999999,
+              "finalizationMs": 17.24090000000001,
+              "validationMs": 5.548099999999977,
+              "structuralHashMs": 4.920599999999922,
+              "totalMs": 1180.6766000000002
+            },
+            "semanticResultHash": "562ebd6252fedff6"
+          },
+          "error": null
+        },
+        {
+          "experimentId": "phase612-irregular-chunked-1",
+          "terminationReason": "completed",
+          "runtimeMs": 1685.0403999999999,
+          "peakRssObservedBytes": 185008128,
+          "peakRssMeasurement": "os-sampled",
+          "result": {
+            "family": "irregular-branching",
+            "scale": 6,
+            "growthPolicy": "chunked",
+            "nodes": 40745,
+            "informationSets": 11668,
+            "maximumDepth": 10,
+            "structuralHash": "2594e9a0e241c49ddae38560774607822507974210808d8a2ac233d2295705ae",
+            "profile": {
+              "policy": "chunked",
+              "initialCapacity": 64,
+              "segmentSize": 4096,
+              "chunks": 18,
+              "cancellationChecks": 57,
+              "nodeBufferMetrics": {
+                "kind": {
+                  "policy": "chunked",
+                  "length": 40745,
+                  "capacity": 40960,
+                  "allocations": 11,
+                  "reallocations": 10,
+                  "bytesCopied": 225129,
+                  "finalizationBytesCopied": 40745,
+                  "logicalFragmentationBytes": 215
+                },
+                "actor": {
+                  "policy": "chunked",
+                  "length": 40745,
+                  "capacity": 40960,
+                  "allocations": 11,
+                  "reallocations": 10,
+                  "bytesCopied": 225129,
+                  "finalizationBytesCopied": 40745,
+                  "logicalFragmentationBytes": 215
+                },
+                "firstChild": {
+                  "policy": "chunked",
+                  "length": 40745,
+                  "capacity": 40960,
+                  "allocations": 11,
+                  "reallocations": 10,
+                  "bytesCopied": 900516,
+                  "finalizationBytesCopied": 162980,
+                  "logicalFragmentationBytes": 860
+                },
+                "childCount": {
+                  "policy": "chunked",
+                  "length": 40745,
+                  "capacity": 40960,
+                  "allocations": 11,
+                  "reallocations": 10,
+                  "bytesCopied": 450258,
+                  "finalizationBytesCopied": 81490,
+                  "logicalFragmentationBytes": 430
+                },
+                "informationSet": {
+                  "policy": "chunked",
+                  "length": 40745,
+                  "capacity": 40960,
+                  "allocations": 11,
+                  "reallocations": 10,
+                  "bytesCopied": 900516,
+                  "finalizationBytesCopied": 162980,
+                  "logicalFragmentationBytes": 860
+                },
+                "edgeProbability": {
+                  "policy": "chunked",
+                  "length": 40745,
+                  "capacity": 40960,
+                  "allocations": 11,
+                  "reallocations": 10,
+                  "bytesCopied": 1801032,
+                  "finalizationBytesCopied": 325960,
+                  "logicalFragmentationBytes": 1720
+                },
+                "terminalP0": {
+                  "policy": "chunked",
+                  "length": 40745,
+                  "capacity": 40960,
+                  "allocations": 11,
+                  "reallocations": 10,
+                  "bytesCopied": 1801032,
+                  "finalizationBytesCopied": 325960,
+                  "logicalFragmentationBytes": 1720
+                }
+              },
+              "allocations": 77,
+              "reallocations": 70,
+              "bytesCopied": 6466592,
+              "finalizationBytesCopied": 1303840,
+              "logicalFragmentationBytes": 6020,
+              "maximumResidentCapacityBytes": 1146880,
+              "constructionMs": 1066.4827999999998,
+              "finalizationMs": 18.280899999999974,
+              "validationMs": 5.367599999999811,
+              "structuralHashMs": 4.865299999999934,
+              "totalMs": 1097.2256
+            },
+            "semanticResultHash": "562ebd6252fedff6"
+          },
+          "error": null
+        }
+      ]
+    },
+    "segmented": {
+      "completed": 2,
+      "repetitions": 2,
+      "totalMedianMs": 1119.07925,
+      "constructionMedianMs": 1083.7982000000002,
+      "finalizationMedianMs": 20.70945000000006,
+      "validationMedianMs": 6.969899999999939,
+      "reallocationsMedian": 63,
+      "bytesCopiedMedian": 1303840,
+      "finalizationBytesCopiedMedian": 1303840,
+      "fragmentationMedianBytes": 6020,
+      "peakRssMedianBytes": 163692544,
+      "structuralHashes": [
+        "2594e9a0e241c49ddae38560774607822507974210808d8a2ac233d2295705ae"
+      ],
+      "runs": [
+        {
+          "experimentId": "phase612-irregular-segmented-0",
+          "terminationReason": "completed",
+          "runtimeMs": 1664.5380999999998,
+          "peakRssObservedBytes": 146100224,
+          "peakRssMeasurement": "os-sampled",
+          "result": {
+            "family": "irregular-branching",
+            "scale": 6,
+            "growthPolicy": "segmented",
+            "nodes": 40745,
+            "informationSets": 11668,
+            "maximumDepth": 10,
+            "structuralHash": "2594e9a0e241c49ddae38560774607822507974210808d8a2ac233d2295705ae",
+            "profile": {
+              "policy": "segmented",
+              "initialCapacity": 64,
+              "segmentSize": 4096,
+              "chunks": 18,
+              "cancellationChecks": 57,
+              "nodeBufferMetrics": {
+                "kind": {
+                  "policy": "segmented",
+                  "length": 40745,
+                  "capacity": 40960,
+                  "allocations": 10,
+                  "reallocations": 9,
+                  "bytesCopied": 40745,
+                  "finalizationBytesCopied": 40745,
+                  "logicalFragmentationBytes": 215
+                },
+                "actor": {
+                  "policy": "segmented",
+                  "length": 40745,
+                  "capacity": 40960,
+                  "allocations": 10,
+                  "reallocations": 9,
+                  "bytesCopied": 40745,
+                  "finalizationBytesCopied": 40745,
+                  "logicalFragmentationBytes": 215
+                },
+                "firstChild": {
+                  "policy": "segmented",
+                  "length": 40745,
+                  "capacity": 40960,
+                  "allocations": 10,
+                  "reallocations": 9,
+                  "bytesCopied": 162980,
+                  "finalizationBytesCopied": 162980,
+                  "logicalFragmentationBytes": 860
+                },
+                "childCount": {
+                  "policy": "segmented",
+                  "length": 40745,
+                  "capacity": 40960,
+                  "allocations": 10,
+                  "reallocations": 9,
+                  "bytesCopied": 81490,
+                  "finalizationBytesCopied": 81490,
+                  "logicalFragmentationBytes": 430
+                },
+                "informationSet": {
+                  "policy": "segmented",
+                  "length": 40745,
+                  "capacity": 40960,
+                  "allocations": 10,
+                  "reallocations": 9,
+                  "bytesCopied": 162980,
+                  "finalizationBytesCopied": 162980,
+                  "logicalFragmentationBytes": 860
+                },
+                "edgeProbability": {
+                  "policy": "segmented",
+                  "length": 40745,
+                  "capacity": 40960,
+                  "allocations": 10,
+                  "reallocations": 9,
+                  "bytesCopied": 325960,
+                  "finalizationBytesCopied": 325960,
+                  "logicalFragmentationBytes": 1720
+                },
+                "terminalP0": {
+                  "policy": "segmented",
+                  "length": 40745,
+                  "capacity": 40960,
+                  "allocations": 10,
+                  "reallocations": 9,
+                  "bytesCopied": 325960,
+                  "finalizationBytesCopied": 325960,
+                  "logicalFragmentationBytes": 1720
+                }
+              },
+              "allocations": 70,
+              "reallocations": 63,
+              "bytesCopied": 1303840,
+              "finalizationBytesCopied": 1303840,
+              "logicalFragmentationBytes": 6020,
+              "maximumResidentCapacityBytes": 1146880,
+              "constructionMs": 1043.3488999999997,
+              "finalizationMs": 18.849300000000085,
+              "validationMs": 5.440799999999854,
+              "structuralHashMs": 4.844500000000153,
+              "totalMs": 1075.0137
+            },
+            "semanticResultHash": "562ebd6252fedff6"
+          },
+          "error": null
+        },
+        {
+          "experimentId": "phase612-irregular-segmented-1",
+          "terminationReason": "completed",
+          "runtimeMs": 1736.3467,
+          "peakRssObservedBytes": 181284864,
+          "peakRssMeasurement": "os-sampled",
+          "result": {
+            "family": "irregular-branching",
+            "scale": 6,
+            "growthPolicy": "segmented",
+            "nodes": 40745,
+            "informationSets": 11668,
+            "maximumDepth": 10,
+            "structuralHash": "2594e9a0e241c49ddae38560774607822507974210808d8a2ac233d2295705ae",
+            "profile": {
+              "policy": "segmented",
+              "initialCapacity": 64,
+              "segmentSize": 4096,
+              "chunks": 18,
+              "cancellationChecks": 57,
+              "nodeBufferMetrics": {
+                "kind": {
+                  "policy": "segmented",
+                  "length": 40745,
+                  "capacity": 40960,
+                  "allocations": 10,
+                  "reallocations": 9,
+                  "bytesCopied": 40745,
+                  "finalizationBytesCopied": 40745,
+                  "logicalFragmentationBytes": 215
+                },
+                "actor": {
+                  "policy": "segmented",
+                  "length": 40745,
+                  "capacity": 40960,
+                  "allocations": 10,
+                  "reallocations": 9,
+                  "bytesCopied": 40745,
+                  "finalizationBytesCopied": 40745,
+                  "logicalFragmentationBytes": 215
+                },
+                "firstChild": {
+                  "policy": "segmented",
+                  "length": 40745,
+                  "capacity": 40960,
+                  "allocations": 10,
+                  "reallocations": 9,
+                  "bytesCopied": 162980,
+                  "finalizationBytesCopied": 162980,
+                  "logicalFragmentationBytes": 860
+                },
+                "childCount": {
+                  "policy": "segmented",
+                  "length": 40745,
+                  "capacity": 40960,
+                  "allocations": 10,
+                  "reallocations": 9,
+                  "bytesCopied": 81490,
+                  "finalizationBytesCopied": 81490,
+                  "logicalFragmentationBytes": 430
+                },
+                "informationSet": {
+                  "policy": "segmented",
+                  "length": 40745,
+                  "capacity": 40960,
+                  "allocations": 10,
+                  "reallocations": 9,
+                  "bytesCopied": 162980,
+                  "finalizationBytesCopied": 162980,
+                  "logicalFragmentationBytes": 860
+                },
+                "edgeProbability": {
+                  "policy": "segmented",
+                  "length": 40745,
+                  "capacity": 40960,
+                  "allocations": 10,
+                  "reallocations": 9,
+                  "bytesCopied": 325960,
+                  "finalizationBytesCopied": 325960,
+                  "logicalFragmentationBytes": 1720
+                },
+                "terminalP0": {
+                  "policy": "segmented",
+                  "length": 40745,
+                  "capacity": 40960,
+                  "allocations": 10,
+                  "reallocations": 9,
+                  "bytesCopied": 325960,
+                  "finalizationBytesCopied": 325960,
+                  "logicalFragmentationBytes": 1720
+                }
+              },
+              "allocations": 70,
+              "reallocations": 63,
+              "bytesCopied": 1303840,
+              "finalizationBytesCopied": 1303840,
+              "logicalFragmentationBytes": 6020,
+              "maximumResidentCapacityBytes": 1146880,
+              "constructionMs": 1124.2475000000004,
+              "finalizationMs": 22.569600000000037,
+              "validationMs": 8.499000000000024,
+              "structuralHashMs": 5.410500000000184,
+              "totalMs": 1163.1448
+            },
+            "semanticResultHash": "562ebd6252fedff6"
+          },
+          "error": null
+        }
+      ]
+    }
+  },
+  "fastPath": {
+    "fastCompleted": 2,
+    "fastCompileMedianMs": 85.2149,
+    "fastPeakRssMedianBytes": 72951808,
+    "generic": {
+      "completed": 2,
+      "repetitions": 2,
+      "totalMedianMs": 569.6789,
+      "constructionMedianMs": 551.0362,
+      "finalizationMedianMs": 6.500150000000019,
+      "validationMedianMs": 5.914100000000076,
+      "reallocationsMedian": 49,
+      "bytesCopiedMedian": 1048480,
+      "finalizationBytesCopiedMedian": 1048480,
+      "fragmentationMedianBytes": 84,
+      "peakRssMedianBytes": 115578880,
+      "structuralHashes": [
+        "8260490df1d7eff4f75c3b9b715c0ceb658e10b1f56fa2b458a1fcdb5849b3fb"
+      ],
+      "runs": [
+        {
+          "experimentId": "phase612-generic-0",
+          "terminationReason": "completed",
+          "runtimeMs": 1084.7817999999988,
+          "peakRssObservedBytes": 115466240,
+          "peakRssMeasurement": "os-sampled",
+          "result": {
+            "family": "regular-synthetic",
+            "scale": 3,
+            "growthPolicy": "segmented",
+            "nodes": 32765,
+            "informationSets": 2730,
+            "maximumDepth": 13,
+            "structuralHash": "8260490df1d7eff4f75c3b9b715c0ceb658e10b1f56fa2b458a1fcdb5849b3fb",
+            "profile": {
+              "policy": "segmented",
+              "initialCapacity": 64,
+              "segmentSize": 4096,
+              "chunks": 18,
+              "cancellationChecks": 49,
+              "nodeBufferMetrics": {
+                "kind": {
+                  "policy": "segmented",
+                  "length": 32765,
+                  "capacity": 32768,
+                  "allocations": 8,
+                  "reallocations": 7,
+                  "bytesCopied": 32765,
+                  "finalizationBytesCopied": 32765,
+                  "logicalFragmentationBytes": 3
+                },
+                "actor": {
+                  "policy": "segmented",
+                  "length": 32765,
+                  "capacity": 32768,
+                  "allocations": 8,
+                  "reallocations": 7,
+                  "bytesCopied": 32765,
+                  "finalizationBytesCopied": 32765,
+                  "logicalFragmentationBytes": 3
+                },
+                "firstChild": {
+                  "policy": "segmented",
+                  "length": 32765,
+                  "capacity": 32768,
+                  "allocations": 8,
+                  "reallocations": 7,
+                  "bytesCopied": 131060,
+                  "finalizationBytesCopied": 131060,
+                  "logicalFragmentationBytes": 12
+                },
+                "childCount": {
+                  "policy": "segmented",
+                  "length": 32765,
+                  "capacity": 32768,
+                  "allocations": 8,
+                  "reallocations": 7,
+                  "bytesCopied": 65530,
+                  "finalizationBytesCopied": 65530,
+                  "logicalFragmentationBytes": 6
+                },
+                "informationSet": {
+                  "policy": "segmented",
+                  "length": 32765,
+                  "capacity": 32768,
+                  "allocations": 8,
+                  "reallocations": 7,
+                  "bytesCopied": 131060,
+                  "finalizationBytesCopied": 131060,
+                  "logicalFragmentationBytes": 12
+                },
+                "edgeProbability": {
+                  "policy": "segmented",
+                  "length": 32765,
+                  "capacity": 32768,
+                  "allocations": 8,
+                  "reallocations": 7,
+                  "bytesCopied": 262120,
+                  "finalizationBytesCopied": 262120,
+                  "logicalFragmentationBytes": 24
+                },
+                "terminalP0": {
+                  "policy": "segmented",
+                  "length": 32765,
+                  "capacity": 32768,
+                  "allocations": 8,
+                  "reallocations": 7,
+                  "bytesCopied": 262120,
+                  "finalizationBytesCopied": 262120,
+                  "logicalFragmentationBytes": 24
+                }
+              },
+              "allocations": 56,
+              "reallocations": 49,
+              "bytesCopied": 1048480,
+              "finalizationBytesCopied": 1048480,
+              "logicalFragmentationBytes": 84,
+              "maximumResidentCapacityBytes": 917504,
+              "constructionMs": 510.5990999999999,
+              "finalizationMs": 5.411899999999946,
+              "validationMs": 5.40930000000003,
+              "structuralHashMs": 3.695600000000013,
+              "totalMs": 527.2619
+            },
+            "semanticResultHash": "d6dda3418c645675"
+          },
+          "error": null
+        },
+        {
+          "experimentId": "phase612-generic-1",
+          "terminationReason": "completed",
+          "runtimeMs": 1195.7711000000018,
+          "peakRssObservedBytes": 115691520,
+          "peakRssMeasurement": "os-sampled",
+          "result": {
+            "family": "regular-synthetic",
+            "scale": 3,
+            "growthPolicy": "segmented",
+            "nodes": 32765,
+            "informationSets": 2730,
+            "maximumDepth": 13,
+            "structuralHash": "8260490df1d7eff4f75c3b9b715c0ceb658e10b1f56fa2b458a1fcdb5849b3fb",
+            "profile": {
+              "policy": "segmented",
+              "initialCapacity": 64,
+              "segmentSize": 4096,
+              "chunks": 18,
+              "cancellationChecks": 49,
+              "nodeBufferMetrics": {
+                "kind": {
+                  "policy": "segmented",
+                  "length": 32765,
+                  "capacity": 32768,
+                  "allocations": 8,
+                  "reallocations": 7,
+                  "bytesCopied": 32765,
+                  "finalizationBytesCopied": 32765,
+                  "logicalFragmentationBytes": 3
+                },
+                "actor": {
+                  "policy": "segmented",
+                  "length": 32765,
+                  "capacity": 32768,
+                  "allocations": 8,
+                  "reallocations": 7,
+                  "bytesCopied": 32765,
+                  "finalizationBytesCopied": 32765,
+                  "logicalFragmentationBytes": 3
+                },
+                "firstChild": {
+                  "policy": "segmented",
+                  "length": 32765,
+                  "capacity": 32768,
+                  "allocations": 8,
+                  "reallocations": 7,
+                  "bytesCopied": 131060,
+                  "finalizationBytesCopied": 131060,
+                  "logicalFragmentationBytes": 12
+                },
+                "childCount": {
+                  "policy": "segmented",
+                  "length": 32765,
+                  "capacity": 32768,
+                  "allocations": 8,
+                  "reallocations": 7,
+                  "bytesCopied": 65530,
+                  "finalizationBytesCopied": 65530,
+                  "logicalFragmentationBytes": 6
+                },
+                "informationSet": {
+                  "policy": "segmented",
+                  "length": 32765,
+                  "capacity": 32768,
+                  "allocations": 8,
+                  "reallocations": 7,
+                  "bytesCopied": 131060,
+                  "finalizationBytesCopied": 131060,
+                  "logicalFragmentationBytes": 12
+                },
+                "edgeProbability": {
+                  "policy": "segmented",
+                  "length": 32765,
+                  "capacity": 32768,
+                  "allocations": 8,
+                  "reallocations": 7,
+                  "bytesCopied": 262120,
+                  "finalizationBytesCopied": 262120,
+                  "logicalFragmentationBytes": 24
+                },
+                "terminalP0": {
+                  "policy": "segmented",
+                  "length": 32765,
+                  "capacity": 32768,
+                  "allocations": 8,
+                  "reallocations": 7,
+                  "bytesCopied": 262120,
+                  "finalizationBytesCopied": 262120,
+                  "logicalFragmentationBytes": 24
+                }
+              },
+              "allocations": 56,
+              "reallocations": 49,
+              "bytesCopied": 1048480,
+              "finalizationBytesCopied": 1048480,
+              "logicalFragmentationBytes": 84,
+              "maximumResidentCapacityBytes": 917504,
+              "constructionMs": 591.4733000000001,
+              "finalizationMs": 7.588400000000092,
+              "validationMs": 6.4189000000001215,
+              "structuralHashMs": 4.180299999999988,
+              "totalMs": 612.0959
+            },
+            "semanticResultHash": "d6dda3418c645675"
+          },
+          "error": null
+        }
+      ]
+    },
+    "fastRuns": [
+      {
+        "experimentId": "phase612-fast-0",
+        "terminationReason": "completed",
+        "runtimeMs": 671.6733000000004,
+        "peakRssObservedBytes": 64917504,
+        "peakRssMeasurement": "os-sampled",
+        "result": {
+          "mode": "typescript-v2",
+          "configurationHash": "395ab462f02629be",
+          "gameHash": "77dd47b4fd96a7e0",
+          "structuralHash": "8260490df1d7eff4f75c3b9b715c0ceb658e10b1f56fa2b458a1fcdb5849b3fb",
+          "compilerDetails": {
+            "compilationMs": 84.39510000000007,
+            "topologyBytes": 917420,
+            "registryBytes": 16384,
+            "temporaryBytes": 32765,
+            "profile": {
+              "providerInitializationMs": 0.19309999999995853,
+              "stateEnumerationMs": null,
+              "successorGenerationMs": null,
+              "informationSetAssignmentMs": null,
+              "topologyAllocationMs": 0.8654000000000224,
+              "topologyPopulationMs": 78.1325,
+              "chanceValidationMs": null,
+              "perfectRecallValidationMs": 0.0016000000000531145,
+              "structuralHashMs": 3.758199999999988,
+              "finalizationMs": 4.456800000000044,
+              "totalMs": 84.39510000000007,
+              "cpuUserMicros": 125000,
+              "cpuSystemMicros": 16000,
+              "chunks": 1,
+              "chunkSize": 65536,
+              "cancellationChecks": 1
+            },
+            "structuralHash": "8260490df1d7eff4f75c3b9b715c0ceb658e10b1f56fa2b458a1fcdb5849b3fb"
+          },
+          "compileWallMs": 85.34550000000002,
+          "initializationMs": 1.0375999999999976,
+          "traversalMs": 0.06939999999997326,
+          "evaluationMs": 0,
+          "stateHash": "5eeebb387c653edf078936717fe73ab356c94e92787c20b36f9cbabf9f87ee82",
+          "evaluation": null,
+          "semanticResultHash": "3696f58dca88fd21",
+          "snapshots": [
+            {
+              "timestamp": "2026-10-09T09:51:37.176Z",
+              "stage": "before-compilation",
+              "rss": 77209600,
+              "heapUsed": 10569704,
+              "heapTotal": 21258240,
+              "external": 4368242,
+              "arrayBuffers": 143899,
+              "peakRssSelfReported": 77250560
+            },
+            {
+              "timestamp": "2026-10-09T09:51:37.277Z",
+              "stage": "after-compilation",
+              "rss": 79872000,
+              "heapUsed": 11796896,
+              "heapTotal": 21258240,
+              "external": 5203793,
+              "arrayBuffers": 1110484,
+              "peakRssSelfReported": 80904192
+            },
+            {
+              "timestamp": "2026-10-09T09:51:37.279Z",
+              "stage": "after-solver-initialization",
+              "rss": 80019456,
+              "heapUsed": 11850656,
+              "heapTotal": 21258240,
+              "external": 5291153,
+              "arrayBuffers": 1197844,
+              "peakRssSelfReported": 80904192
+            },
+            {
+              "timestamp": "2026-10-09T09:51:37.279Z",
+              "stage": "after-traversal",
+              "rss": 80019456,
+              "heapUsed": 11857000,
+              "heapTotal": 21258240,
+              "external": 5291153,
+              "arrayBuffers": 1197844,
+              "peakRssSelfReported": 80904192
+            }
+          ],
+          "profiling": {
+            "gcCount": 0,
+            "gcDurationMs": 0
+          }
+        },
+        "error": null
+      },
+      {
+        "experimentId": "phase612-fast-1",
+        "terminationReason": "completed",
+        "runtimeMs": 703.9293999999991,
+        "peakRssObservedBytes": 80986112,
+        "peakRssMeasurement": "os-sampled",
+        "result": {
+          "mode": "typescript-v2",
+          "configurationHash": "395ab462f02629be",
+          "gameHash": "77dd47b4fd96a7e0",
+          "structuralHash": "8260490df1d7eff4f75c3b9b715c0ceb658e10b1f56fa2b458a1fcdb5849b3fb",
+          "compilerDetails": {
+            "compilationMs": 84.06970000000001,
+            "topologyBytes": 917420,
+            "registryBytes": 16384,
+            "temporaryBytes": 32765,
+            "profile": {
+              "providerInitializationMs": 0.21209999999996398,
+              "stateEnumerationMs": null,
+              "successorGenerationMs": null,
+              "informationSetAssignmentMs": null,
+              "topologyAllocationMs": 0.9273999999999205,
+              "topologyPopulationMs": 77.65890000000002,
+              "chanceValidationMs": null,
+              "perfectRecallValidationMs": 0.0015000000000782165,
+              "structuralHashMs": 3.804200000000037,
+              "finalizationMs": 4.510300000000029,
+              "totalMs": 84.06970000000001,
+              "cpuUserMicros": 141000,
+              "cpuSystemMicros": 0,
+              "chunks": 1,
+              "chunkSize": 65536,
+              "cancellationChecks": 1
+            },
+            "structuralHash": "8260490df1d7eff4f75c3b9b715c0ceb658e10b1f56fa2b458a1fcdb5849b3fb"
+          },
+          "compileWallMs": 85.08429999999998,
+          "initializationMs": 0.7545999999999822,
+          "traversalMs": 0.07100000000002638,
+          "evaluationMs": 0,
+          "stateHash": "5eeebb387c653edf078936717fe73ab356c94e92787c20b36f9cbabf9f87ee82",
+          "evaluation": null,
+          "semanticResultHash": "3696f58dca88fd21",
+          "snapshots": [
+            {
+              "timestamp": "2026-10-09T09:51:38.955Z",
+              "stage": "before-compilation",
+              "rss": 76873728,
+              "heapUsed": 10568976,
+              "heapTotal": 20996096,
+              "external": 4368242,
+              "arrayBuffers": 143899,
+              "peakRssSelfReported": 77668352
+            },
+            {
+              "timestamp": "2026-10-09T09:51:39.057Z",
+              "stage": "after-compilation",
+              "rss": 80027648,
+              "heapUsed": 11833656,
+              "heapTotal": 21258240,
+              "external": 5203793,
+              "arrayBuffers": 1110484,
+              "peakRssSelfReported": 80986112
+            },
+            {
+              "timestamp": "2026-10-09T09:51:39.058Z",
+              "stage": "after-solver-initialization",
+              "rss": 80134144,
+              "heapUsed": 12141568,
+              "heapTotal": 21258240,
+              "external": 5291153,
+              "arrayBuffers": 1197844,
+              "peakRssSelfReported": 80986112
+            },
+            {
+              "timestamp": "2026-10-09T09:51:39.058Z",
+              "stage": "after-traversal",
+              "rss": 80142336,
+              "heapUsed": 11893760,
+              "heapTotal": 21258240,
+              "external": 5291153,
+              "arrayBuffers": 1197844,
+              "peakRssSelfReported": 80986112
+            }
+          ],
+          "profiling": {
+            "gcCount": 0,
+            "gcDurationMs": 0
+          }
+        },
+        "error": null
+      }
+    ]
+  },
+  "cacheBenchmark": {
+    "target": "S5",
+    "nodes": 2097149,
+    "v1SerializedBytes": 59772060,
+    "v2SerializedBytes": 59771960,
+    "modes": {
+      "v1Safe": {
+        "completed": 2,
+        "repetitions": 2,
+        "fileBytes": 59772060,
+        "readMedianMs": 47.6446,
+        "decodeMedianMs": 529.06645,
+        "initializationMedianMs": 3.1454499999999825,
+        "startupMedianMs": 579.8616000000001,
+        "peakRssMedianBytes": 205613056,
+        "copyAccounting": {
+          "fileReadBytes": 59772060,
+          "inputBufferAllocationBytes": 59772060,
+          "explicitPayloadBytesCopied": 59768748,
+          "backingArrayAllocations": 9,
+          "typedArrayViewsCreated": 0,
+          "retainedInputBytes": 0,
+          "invisibleRuntimeCopies": null
+        },
+        "validationTimings": {
+          "totalMs": 511.7754000000001,
+          "headerMs": null,
+          "integrityMs": null,
+          "viewCreationMs": null,
+          "structuralValidationMs": null,
+          "structuralHashMs": null,
+          "semanticVerificationMs": null
+        },
+        "runs": [
+          {
+            "experimentId": "phase612-cache-v1Safe-0",
+            "terminationReason": "completed",
+            "runtimeMs": 1559.947500000002,
+            "peakRssObservedBytes": 205438976,
+            "peakRssMeasurement": "os-sampled",
+            "result": {
+              "format": "v1",
+              "loadMode": "safe-copy",
+              "integrityMode": "whole-buffer",
+              "fileBytes": 59772060,
+              "readMs": 47.96730000000002,
+              "decodeMs": 528.4408,
+              "initializationMs": 2.373299999999972,
+              "startupMs": 578.7860000000001,
+              "structuralHash": "219501fd1a1164d2c3e60cf410a1162865e1c84ce3d10899709ce07a8d3fba38",
+              "copyAccounting": {
+                "fileReadBytes": 59772060,
+                "inputBufferAllocationBytes": 59772060,
+                "explicitPayloadBytesCopied": 59768748,
+                "backingArrayAllocations": 9,
+                "typedArrayViewsCreated": 0,
+                "retainedInputBytes": 0,
+                "invisibleRuntimeCopies": null
+              },
+              "validationTimings": {
+                "totalMs": 511.7754000000001,
+                "headerMs": null,
+                "integrityMs": null,
+                "viewCreationMs": null,
+                "structuralValidationMs": null,
+                "structuralHashMs": null,
+                "semanticVerificationMs": null
+              },
+              "semanticResultHash": "671136d7b9b4cff3"
+            },
+            "error": null
+          },
+          {
+            "experimentId": "phase612-cache-v1Safe-1",
+            "terminationReason": "completed",
+            "runtimeMs": 1572.8738000000012,
+            "peakRssObservedBytes": 205787136,
+            "peakRssMeasurement": "os-sampled",
+            "result": {
+              "format": "v1",
+              "loadMode": "safe-copy",
+              "integrityMode": "whole-buffer",
+              "fileBytes": 59772060,
+              "readMs": 47.32189999999997,
+              "decodeMs": 529.6921,
+              "initializationMs": 3.917599999999993,
+              "startupMs": 580.9372000000001,
+              "structuralHash": "219501fd1a1164d2c3e60cf410a1162865e1c84ce3d10899709ce07a8d3fba38",
+              "copyAccounting": {
+                "fileReadBytes": 59772060,
+                "inputBufferAllocationBytes": 59772060,
+                "explicitPayloadBytesCopied": 59768748,
+                "backingArrayAllocations": 9,
+                "typedArrayViewsCreated": 0,
+                "retainedInputBytes": 0,
+                "invisibleRuntimeCopies": null
+              },
+              "validationTimings": {
+                "totalMs": 512.5718,
+                "headerMs": null,
+                "integrityMs": null,
+                "viewCreationMs": null,
+                "structuralValidationMs": null,
+                "structuralHashMs": null,
+                "semanticVerificationMs": null
+              },
+              "semanticResultHash": "671136d7b9b4cff3"
+            },
+            "error": null
+          }
+        ]
+      },
+      "v2Safe": {
+        "completed": 2,
+        "repetitions": 2,
+        "fileBytes": 59771960,
+        "readMedianMs": 45.38175000000001,
+        "decodeMedianMs": 536.69445,
+        "initializationMedianMs": 2.312999999999988,
+        "startupMedianMs": 584.3941,
+        "peakRssMedianBytes": 206020608,
+        "copyAccounting": {
+          "fileReadBytes": 59771960,
+          "inputBufferAllocationBytes": 59771960,
+          "explicitPayloadBytesCopied": 59768748,
+          "backingArrayAllocations": 9,
+          "typedArrayViewsCreated": 9,
+          "retainedInputBytes": 0,
+          "invisibleRuntimeCopies": null
+        },
+        "validationTimings": {
+          "totalMs": 517.3189,
+          "headerMs": 0.358600000000024,
+          "integrityMs": 222.48939999999993,
+          "viewCreationMs": 19.179500000000075,
+          "structuralValidationMs": 56.42329999999993,
+          "structuralHashMs": 218.6912000000001,
+          "semanticVerificationMs": 0.0009000000000014552
+        },
+        "runs": [
+          {
+            "experimentId": "phase612-cache-v2Safe-0",
+            "terminationReason": "completed",
+            "runtimeMs": 1585.5607999999993,
+            "peakRssObservedBytes": 206499840,
+            "peakRssMeasurement": "os-sampled",
+            "result": {
+              "format": "v2",
+              "loadMode": "safe-copy",
+              "integrityMode": "whole-buffer",
+              "fileBytes": 59771960,
+              "readMs": 45.11560000000003,
+              "decodeMs": 533.6632,
+              "initializationMs": 2.28430000000003,
+              "startupMs": 581.0681,
+              "structuralHash": "219501fd1a1164d2c3e60cf410a1162865e1c84ce3d10899709ce07a8d3fba38",
+              "copyAccounting": {
+                "fileReadBytes": 59771960,
+                "inputBufferAllocationBytes": 59771960,
+                "explicitPayloadBytesCopied": 59768748,
+                "backingArrayAllocations": 9,
+                "typedArrayViewsCreated": 9,
+                "retainedInputBytes": 0,
+                "invisibleRuntimeCopies": null
+              },
+              "validationTimings": {
+                "totalMs": 517.3189,
+                "headerMs": 0.358600000000024,
+                "integrityMs": 222.48939999999993,
+                "viewCreationMs": 19.179500000000075,
+                "structuralValidationMs": 56.42329999999993,
+                "structuralHashMs": 218.6912000000001,
+                "semanticVerificationMs": 0.0009000000000014552
+              },
+              "semanticResultHash": "3b43d8da39862586"
+            },
+            "error": null
+          },
+          {
+            "experimentId": "phase612-cache-v2Safe-1",
+            "terminationReason": "completed",
+            "runtimeMs": 1585.968200000003,
+            "peakRssObservedBytes": 205541376,
+            "peakRssMeasurement": "os-sampled",
+            "result": {
+              "format": "v2",
+              "loadMode": "safe-copy",
+              "integrityMode": "whole-buffer",
+              "fileBytes": 59771960,
+              "readMs": 45.64789999999999,
+              "decodeMs": 539.7257,
+              "initializationMs": 2.341699999999946,
+              "startupMs": 587.7201,
+              "structuralHash": "219501fd1a1164d2c3e60cf410a1162865e1c84ce3d10899709ce07a8d3fba38",
+              "copyAccounting": {
+                "fileReadBytes": 59771960,
+                "inputBufferAllocationBytes": 59771960,
+                "explicitPayloadBytesCopied": 59768748,
+                "backingArrayAllocations": 9,
+                "typedArrayViewsCreated": 9,
+                "retainedInputBytes": 0,
+                "invisibleRuntimeCopies": null
+              },
+              "validationTimings": {
+                "totalMs": 522.7636,
+                "headerMs": 0.348700000000008,
+                "integrityMs": 221.11990000000003,
+                "viewCreationMs": 18.67279999999994,
+                "structuralValidationMs": 62.780200000000036,
+                "structuralHashMs": 219.6461999999999,
+                "semanticVerificationMs": 0.0009000000000014552
+              },
+              "semanticResultHash": "3b43d8da39862586"
+            },
+            "error": null
+          }
+        ]
+      },
+      "v2Streaming": {
+        "completed": 2,
+        "repetitions": 2,
+        "fileBytes": 59771960,
+        "readMedianMs": 45.92535000000001,
+        "decodeMedianMs": 538.8853999999999,
+        "initializationMedianMs": 2.288650000000075,
+        "startupMedianMs": 587.1052500000001,
+        "peakRssMedianBytes": 205953024,
+        "copyAccounting": {
+          "fileReadBytes": 59771960,
+          "inputBufferAllocationBytes": 59771960,
+          "explicitPayloadBytesCopied": 59768748,
+          "backingArrayAllocations": 9,
+          "typedArrayViewsCreated": 9,
+          "retainedInputBytes": 0,
+          "invisibleRuntimeCopies": null
+        },
+        "validationTimings": {
+          "totalMs": 523.6007999999999,
+          "headerMs": 0.7385000000000446,
+          "integrityMs": 227.20720000000006,
+          "viewCreationMs": 22.847099999999955,
+          "structuralValidationMs": 53.33159999999998,
+          "structuralHashMs": 219.25130000000013,
+          "semanticVerificationMs": 0.0007999999997991836
+        },
+        "runs": [
+          {
+            "experimentId": "phase612-cache-v2Streaming-0",
+            "terminationReason": "completed",
+            "runtimeMs": 1587.5949999999975,
+            "peakRssObservedBytes": 205500416,
+            "peakRssMeasurement": "os-sampled",
+            "result": {
+              "format": "v2",
+              "loadMode": "safe-copy",
+              "integrityMode": "streaming",
+              "fileBytes": 59771960,
+              "readMs": 44.10220000000004,
+              "decodeMs": 541.0781,
+              "initializationMs": 2.2905000000000655,
+              "startupMs": 587.4765,
+              "structuralHash": "219501fd1a1164d2c3e60cf410a1162865e1c84ce3d10899709ce07a8d3fba38",
+              "copyAccounting": {
+                "fileReadBytes": 59771960,
+                "inputBufferAllocationBytes": 59771960,
+                "explicitPayloadBytesCopied": 59768748,
+                "backingArrayAllocations": 9,
+                "typedArrayViewsCreated": 9,
+                "retainedInputBytes": 0,
+                "invisibleRuntimeCopies": null
+              },
+              "validationTimings": {
+                "totalMs": 523.6007999999999,
+                "headerMs": 0.7385000000000446,
+                "integrityMs": 227.20720000000006,
+                "viewCreationMs": 22.847099999999955,
+                "structuralValidationMs": 53.33159999999998,
+                "structuralHashMs": 219.25130000000013,
+                "semanticVerificationMs": 0.0007999999997991836
+              },
+              "semanticResultHash": "3b43d8da39862586"
+            },
+            "error": null
+          },
+          {
+            "experimentId": "phase612-cache-v2Streaming-1",
+            "terminationReason": "completed",
+            "runtimeMs": 1599.9527999999991,
+            "peakRssObservedBytes": 206405632,
+            "peakRssMeasurement": "os-sampled",
+            "result": {
+              "format": "v2",
+              "loadMode": "safe-copy",
+              "integrityMode": "streaming",
+              "fileBytes": 59771960,
+              "readMs": 47.74849999999998,
+              "decodeMs": 536.6927,
+              "initializationMs": 2.2868000000000848,
+              "startupMs": 586.7340000000002,
+              "structuralHash": "219501fd1a1164d2c3e60cf410a1162865e1c84ce3d10899709ce07a8d3fba38",
+              "copyAccounting": {
+                "fileReadBytes": 59771960,
+                "inputBufferAllocationBytes": 59771960,
+                "explicitPayloadBytesCopied": 59768748,
+                "backingArrayAllocations": 9,
+                "typedArrayViewsCreated": 9,
+                "retainedInputBytes": 0,
+                "invisibleRuntimeCopies": null
+              },
+              "validationTimings": {
+                "totalMs": 520.2143,
+                "headerMs": 0.3423999999999978,
+                "integrityMs": 224.16290000000004,
+                "viewCreationMs": 22.779499999999985,
+                "structuralValidationMs": 52.34770000000003,
+                "structuralHashMs": 220.3893999999999,
+                "semanticVerificationMs": 0.0009999999999763531
+              },
+              "semanticResultHash": "3b43d8da39862586"
+            },
+            "error": null
+          }
+        ]
+      },
+      "v2Shared": {
+        "completed": 2,
+        "repetitions": 2,
+        "fileBytes": 59771960,
+        "readMedianMs": 44.341399999999965,
+        "decodeMedianMs": 512.6351999999999,
+        "initializationMedianMs": 2.3496000000000095,
+        "startupMedianMs": 559.3306999999999,
+        "peakRssMedianBytes": 146014208,
+        "copyAccounting": {
+          "fileReadBytes": 59771960,
+          "inputBufferAllocationBytes": 59771960,
+          "explicitPayloadBytesCopied": 0,
+          "backingArrayAllocations": 0,
+          "typedArrayViewsCreated": 9,
+          "retainedInputBytes": 59771960,
+          "invisibleRuntimeCopies": null
+        },
+        "validationTimings": {
+          "totalMs": 496.02019999999993,
+          "headerMs": 0.35180000000002565,
+          "integrityMs": 223.78020000000004,
+          "viewCreationMs": 0.4653000000000702,
+          "structuralValidationMs": 51.44310000000007,
+          "structuralHashMs": 219.7047,
+          "semanticVerificationMs": 0.0008000000000265572
+        },
+        "runs": [
+          {
+            "experimentId": "phase612-cache-v2Shared-0",
+            "terminationReason": "completed",
+            "runtimeMs": 1569.7914999999994,
+            "peakRssObservedBytes": 146231296,
+            "peakRssMeasurement": "os-sampled",
+            "result": {
+              "format": "v2",
+              "loadMode": "shared-view",
+              "integrityMode": "streaming",
+              "fileBytes": 59771960,
+              "readMs": 47.226099999999974,
+              "decodeMs": 512.2946,
+              "initializationMs": 2.2749999999998636,
+              "startupMs": 561.8001999999999,
+              "structuralHash": "219501fd1a1164d2c3e60cf410a1162865e1c84ce3d10899709ce07a8d3fba38",
+              "copyAccounting": {
+                "fileReadBytes": 59771960,
+                "inputBufferAllocationBytes": 59771960,
+                "explicitPayloadBytesCopied": 0,
+                "backingArrayAllocations": 0,
+                "typedArrayViewsCreated": 9,
+                "retainedInputBytes": 59771960,
+                "invisibleRuntimeCopies": null
+              },
+              "validationTimings": {
+                "totalMs": 496.02019999999993,
+                "headerMs": 0.35180000000002565,
+                "integrityMs": 223.78020000000004,
+                "viewCreationMs": 0.4653000000000702,
+                "structuralValidationMs": 51.44310000000007,
+                "structuralHashMs": 219.7047,
+                "semanticVerificationMs": 0.0008000000000265572
+              },
+              "semanticResultHash": "3b43d8da39862586"
+            },
+            "error": null
+          },
+          {
+            "experimentId": "phase612-cache-v2Shared-1",
+            "terminationReason": "completed",
+            "runtimeMs": 1557.5479999999989,
+            "peakRssObservedBytes": 145797120,
+            "peakRssMeasurement": "os-sampled",
+            "result": {
+              "format": "v2",
+              "loadMode": "shared-view",
+              "integrityMode": "streaming",
+              "fileBytes": 59771960,
+              "readMs": 41.456699999999955,
+              "decodeMs": 512.9757999999999,
+              "initializationMs": 2.4242000000001553,
+              "startupMs": 556.8611999999998,
+              "structuralHash": "219501fd1a1164d2c3e60cf410a1162865e1c84ce3d10899709ce07a8d3fba38",
+              "copyAccounting": {
+                "fileReadBytes": 59771960,
+                "inputBufferAllocationBytes": 59771960,
+                "explicitPayloadBytesCopied": 0,
+                "backingArrayAllocations": 0,
+                "typedArrayViewsCreated": 9,
+                "retainedInputBytes": 59771960,
+                "invisibleRuntimeCopies": null
+              },
+              "validationTimings": {
+                "totalMs": 496.602,
+                "headerMs": 0.3505000000000109,
+                "integrityMs": 224.0978,
+                "viewCreationMs": 0.44470000000001164,
+                "structuralValidationMs": 50.995700000000056,
+                "structuralHashMs": 220.45860000000005,
+                "semanticVerificationMs": 0.0009000000000014552
+              },
+              "semanticResultHash": "3b43d8da39862586"
+            },
+            "error": null
+          }
+        ]
+      }
+    },
+    "mmapImplemented": false,
+    "zeroCopyClaim": "No end-to-end zero-copy claim. Shared-view has zero explicit payload copies after file read; OS and runtime copies are unmeasured."
+  },
+  "mathematicalValidation": {
+    "tolerance": 1e-12,
+    "independentOracles": {
+      "irregular-branching": {
+        "nodes": 31,
+        "informationSets": 13,
+        "maximumDepth": 5,
+        "structuralHash": "d36794a4cc1de9025af52fb0b636c46ad2536532281141320386505ad682c2f6",
+        "compiler": {
+          "utilities": [
+            0.03613594444444446,
+            -0.03613594444444446
+          ],
+          "bestResponseValues": [
+            0.5337085,
+            0.611402375
+          ],
+          "nashConv": 1.145110875,
+          "exploitability": 0.5725554375,
+          "policyHashes": [
+            "6a0e080091db4fdb60998c5ece21c09ad2c64981dee43e45e147f4103719a38b",
+            "b32f780c3b1d14062467a0ec82f04db7c9ff75532a4eb6b316287e310c05fb59"
+          ]
+        },
+        "independentOracle": {
+          "uniformUtilities": [
+            0.03613594444444443,
+            -0.03613594444444443
+          ],
+          "bestResponseValues": [
+            0.5337085,
+            0.611402375
+          ],
+          "nashConv": 1.145110875,
+          "exploitability": 0.5725554375,
+          "purePoliciesEnumerated": [
+            576,
+            72
+          ]
+        },
+        "maximumDelta": 2.7755575615628914e-17
+      },
+      "variable-depth-hidden": {
+        "nodes": 37,
+        "informationSets": 8,
+        "maximumDepth": 4,
+        "structuralHash": "36574068f2a917f6893a1ed59a5887148b501fbebc01eb141e56eb3d336dfc9b",
+        "compiler": {
+          "utilities": [
+            0.125,
+            -0.125
+          ],
+          "bestResponseValues": [
+            0.5,
+            0.25
+          ],
+          "nashConv": 0.75,
+          "exploitability": 0.375,
+          "policyHashes": [
+            "ddecc52d0bc5c1c1f5075fdc34097213df4947d07f5a0a58b5d3b158861d91b2",
+            "84c4f7482ca46e0552732d8a23e78983f44e4336be80648baadaf3c961dd0c30"
+          ]
+        },
+        "independentOracle": {
+          "uniformUtilities": [
+            0.125,
+            -0.125
+          ],
+          "bestResponseValues": [
+            0.5,
+            0.25
+          ],
+          "nashConv": 0.75,
+          "exploitability": 0.375,
+          "purePoliciesEnumerated": [
+            16,
+            16
+          ]
+        },
+        "maximumDelta": 0
+      },
+      "asymmetric-chance": {
+        "nodes": 13,
+        "informationSets": 3,
+        "maximumDepth": 3,
+        "structuralHash": "a7a32290983c45759cf0cb41a0c89fcc6eadcf0ccf708ed542725cb02666b809",
+        "compiler": {
+          "utilities": [
+            0.36124999999999996,
+            -0.36124999999999996
+          ],
+          "bestResponseValues": [
+            0.51125,
+            -0.22999999999999998
+          ],
+          "nashConv": 0.28125,
+          "exploitability": 0.140625,
+          "policyHashes": [
+            "27a4589af59824fb25423417eb30cc4e280d8940c6419eb9ba2b1d3d12e0fc13",
+            "c5d0356d6e6e9d0e6a0fdc00a0357d822cbbf76d257e5d702f8ccf13f70dc8fa"
+          ]
+        },
+        "independentOracle": {
+          "uniformUtilities": [
+            0.36124999999999996,
+            -0.36124999999999996
+          ],
+          "bestResponseValues": [
+            0.51125,
+            -0.22999999999999998
+          ],
+          "nashConv": 0.28125,
+          "exploitability": 0.140625,
+          "purePoliciesEnumerated": [
+            2,
+            6
+          ]
+        },
+        "maximumDelta": 0
+      }
+    },
+    "metamorphic": {
+      "tolerance": 1e-12,
+      "deltas": {
+        "actionRename": 0,
+        "chanceOrder": 0,
+        "statePermutation": 0,
+        "utilityScale": 0,
+        "exploitabilityScale": 0,
+        "playerPermutation": 0
+      },
+      "passed": true
+    },
+    "regretsAndStrategySums": {
+      "v1": {
+        "passed": true,
+        "continuousStateHash": "d313d34aafa0a90c1b37dbf25a24cd76be8cfd94ff9e11fd75bdb214db4dece8",
+        "resumedStateHash": "d313d34aafa0a90c1b37dbf25a24cd76be8cfd94ff9e11fd75bdb214db4dece8",
+        "regretMaximumDelta": 0,
+        "strategySumMaximumDelta": 0
+      },
+      "v2": {
+        "passed": true,
+        "continuousStateHash": "d313d34aafa0a90c1b37dbf25a24cd76be8cfd94ff9e11fd75bdb214db4dece8",
+        "resumedStateHash": "d313d34aafa0a90c1b37dbf25a24cd76be8cfd94ff9e11fd75bdb214db4dece8",
+        "regretMaximumDelta": 0,
+        "strategySumMaximumDelta": 0
+      }
+    }
+  },
+  "checkpoint": {
+    "v1": {
+      "passed": true,
+      "continuousStateHash": "d313d34aafa0a90c1b37dbf25a24cd76be8cfd94ff9e11fd75bdb214db4dece8",
+      "resumedStateHash": "d313d34aafa0a90c1b37dbf25a24cd76be8cfd94ff9e11fd75bdb214db4dece8",
+      "regretMaximumDelta": 0,
+      "strategySumMaximumDelta": 0
+    },
+    "v2": {
+      "passed": true,
+      "continuousStateHash": "d313d34aafa0a90c1b37dbf25a24cd76be8cfd94ff9e11fd75bdb214db4dece8",
+      "resumedStateHash": "d313d34aafa0a90c1b37dbf25a24cd76be8cfd94ff9e11fd75bdb214db4dece8",
+      "regretMaximumDelta": 0,
+      "strategySumMaximumDelta": 0
+    }
+  },
+  "resourcePolicy": {
+    "version": "resource-policy-v3.0.0",
+    "calibrationHash": "621b14ae9fa93f8a",
+    "limits": {
+      "maximumRssBytes": 805306368,
+      "maximumRuntimeMs": 30000,
+      "maximumIdleMs": 12000,
+      "maximumIterations": 1,
+      "sampleIntervalMs": 100
+    },
+    "conservativeUnknownNodeBudget": 100000,
+    "safeAbort": {
+      "experimentId": "phase612-safe-abort",
+      "terminationReason": "structural-limit",
+      "runtimeMs": 591.6422999999995,
+      "peakRssObservedBytes": 64139264,
+      "peakRssMeasurement": "os-sampled",
+      "result": null,
+      "error": "Error: STRUCTURAL_LIMIT: Generic compilation exceeded node budget 100.\n    at runGenericCompilerExperiment (C:\\Users\\pcnov\\Documents\\Codex\\2026-09-27\\quero\\solver\\research\\generic\\generic-experiment.ts:39:68)\n    at <anonymous> (C:\\Users\\pcnov\\Documents\\Codex\\2026-09-27\\quero\\solver\\research\\resource-safe\\experiment-worker.ts:19:17)\n    at ModuleJob.run (node:internal/modules/esm/module_job:561:25)\n    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)\n    at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:647:26)\n    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:101:5)"
+    },
+    "allMeasuredCompleted": true
+  },
+  "gates": {
+    "G1": true,
+    "G2": true,
+    "G3": true,
+    "G4": true,
+    "G5": true,
+    "G6": true,
+    "G7": true,
+    "G8": true,
+    "G9": true
+  },
+  "verdict": "PASS",
+  "rustDecision": "KEEP TYPESCRIPT",
+  "verifiedDatasets": 0,
+  "historicalGateD": "FAIL",
+  "limitations": [
+    "Shared views retain the file buffer and are not physically read-only; a lease detects mutation.",
+    "No mmap was implemented.",
+    "Independent brute-force oracles are limited to small games.",
+    "Unknown-provider preflight uses a conservative ceiling plus watchdog.",
+    "The irregular benchmark is intermediate, not million-node."
+  ],
+  "runCount": 19,
+  "completedRuns": 18,
+  "totalRuntimeMs": 33933.114,
+  "validation": {
+    "completedAt": "2026-10-09T09:56:42.193Z",
+    "typecheck": {
+      "command": "npm run typecheck",
+      "passed": true
+    },
+    "lint": {
+      "command": "npm run lint",
+      "passed": true
+    },
+    "build": {
+      "command": "npm run build",
+      "passed": true
+    },
+    "typescript": {
+      "command": "node --import tsx --test tests/*.test.mjs",
+      "total": 221,
+      "passed": 221,
+      "failed": 0,
+      "historicalPreserved": 198,
+      "phase612Added": 23
+    },
+    "focal": {
+      "command": "node --import tsx --test tests/solver-phase6-12.test.mjs",
+      "total": 23,
+      "passed": 23,
+      "failed": 0
+    },
+    "rust": {
+      "command": "cargo test --manifest-path solver/native/phase611-compiler/Cargo.toml --release",
+      "total": 3,
+      "passed": 3,
+      "failed": 0
+    }
+  },
+  "artifactHash": "b1c639520f514536"
+}
