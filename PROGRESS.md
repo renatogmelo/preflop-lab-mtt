@@ -358,3 +358,43 @@ Final validation: TypeScript, ESLint, production build, and 168/168 tests. Evide
 - Todos os gates R1–R8 passaram. Gate D histórico segue FAIL, Verified segue 0 e nenhuma estratégia de poker mudou.
 - Artefato: `solver/artifacts/phase6-10-resource-safe-v0.10.0.json`.
 - Validação final: TypeScript, ESLint, build e 180/180 testes.
+
+## Fase 6.11 — Fast Compiler, Structural Cache & Rust Spike (2026-10-08)
+
+### Estado atual
+
+- Research Solver 0.11.0 implementado; artefato oficial PASS, hash `800f715766ed8c5b`.
+- Compiler V2 reduz cold compile em 2,43×–3,48× nas escalas S3–S5.
+- Structural Cache V1 reduz S5 de 15,940 s para 0,703 s de load mediano.
+- Rust S0–S5 é matematicamente equivalente, mas S5 end-to-end é 1,991× mais lento que V2; decisão `KEEP TYPESCRIPT`.
+- C1–C9 PASS; Gate D continua FAIL; Verified continua zero.
+
+### Concluído
+
+- Auditoria e profiling sem rateio estimado de subestágios.
+- Construção incremental, chunks, cancelamento e cleanup.
+- Cache binário, identity, checksum, invariants, escrita atômica e recovery.
+- Rust CLI isolada, overflow checks, formato binário e telemetria interna.
+- Matriz de 40 processos, Resource Policy V3 e S5 tier2 explícito.
+- Cache + Checkpoint V5 resume idêntico à execução contínua.
+- Build e suíte completa validados; testes Rust, rustfmt e Clippy validados.
+
+### Em andamento
+
+- Nenhuma tarefa funcional da Fase 6.11 permanece; fechamento de versionamento/deploy.
+
+### Próximo passo
+
+- Investigar cache zero-copy/mmap ou streaming validado antes de ampliar o provider.
+
+### Problemas encontrados
+
+- Cache write aumenta temporariamente RSS.
+- `tanh` difere até ~2,22e-16 entre JS/Rust; contrato tolerante 1e-12 é necessário.
+- Cold/warm de disco não pode ser provado sem controle do page cache do SO.
+
+### Experimentos pendentes
+
+- Provider genérico sem node count conhecido.
+- Cache sem cópia e validação incremental do payload.
+- Reavaliar Rust somente com integração que evite arquivo intermediário.

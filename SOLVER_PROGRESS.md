@@ -295,3 +295,20 @@ Concluído:
 - 180/180 testes, typecheck, lint e build verdes.
 
 Próximo gargalo: compilação compacta S5 (15,4–16,1 s). A próxima pesquisa deve reduzir construção estrutural e adicionar hard limits nativos antes de ampliar iterações.
+
+## Milestone J — Phase 6.11 Fast Compiler (0.11.0)
+
+Concluído:
+
+- Compiler V2 sintético, incremental e cancelável;
+- Structural Cache V1 binário e recuperável;
+- equivalência baseline/V2/cache e TypeScript/Rust S0–S5;
+- matriz S3–S5 com duas repetições por implementação;
+- 40/40 execuções isoladas, C1–C9 PASS;
+- Resource Policy V3 e Checkpoint V5 preservados;
+- decisão baseada em thresholds: `KEEP TYPESCRIPT`;
+- arquitetura recomendada: Compiler V2 + Structural Cache V1.
+
+S5: baseline 15,940 s; V2 6,378 s; cache TS 0,703 s; Rust end-to-end 12,696 s. O próximo alvo é reduzir cópia/hash/validação no load sem enfraquecer integridade.
+
+Limite de confiança inalterado: isto valida infraestrutura sintética, não uma solução GTO profissional de Hold'em. Gate D permanece FAIL e Verified permanece zero.

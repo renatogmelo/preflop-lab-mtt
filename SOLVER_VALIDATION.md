@@ -189,3 +189,24 @@ Artefato canônico: `solver/artifacts/phase6-10-resource-safe-v0.10.0.json`.
 - TypeScript, ESLint, build e 180/180 testes: PASS.
 
 Trust permanece Experimental. Gate D permanece FAIL. Verified permanece 0. S5 foi iterado e avaliado, não convergiu nem foi declarado solved.
+
+## Validation Report 0.11.0 — Phase 6.11
+
+### Resultado
+
+- Artifact: `phase6-11-fast-compiler-v0.11.0.json` (`800f715766ed8c5b`).
+- C1–C9: PASS.
+- Processos isolados: 40/40 concluídos.
+- TypeScript: build e 198/198 testes passaram na suíte completa final.
+- Rust: 3/3 testes; rustfmt e Clippy (`-D warnings`) aprovados.
+
+### Equivalência
+
+- V2 versus baseline: structural hash e numeric state idênticos.
+- Cache + Checkpoint V5: state hash contínuo/restaurado `0b8d83f225fa2613a9250ac7efc7d57654fd771bd8da15bc76de07e18dbecf08`.
+- Rust versus TypeScript S0–S5: integer topology exata, chance error 0, utility error máximo 2,22e-16, tolerância 1e-12.
+- EV, best response, exploitability e NashConv: delta máximo da matriz ≤ 1e-10.
+
+### Segurança e confiança
+
+S5 manteve processo isolado, preflight, tier2 explícito, watchdog, runtime/memory budgets e logging. Nenhuma mudança de poker strategy. Gate D FAIL; Verified 0.

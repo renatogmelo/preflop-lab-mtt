@@ -37,6 +37,7 @@ export type ResourceLimits = {
 
 export type IsolatedExperimentKind =
   | "profile"
+  | "compiler-profile"
   | "timeout-fixture"
   | "hang-fixture"
   | "memory-fixture"
@@ -55,6 +56,12 @@ export type IsolatedExperimentRequest = {
   limits: ResourceLimits;
   fixtureAllocationBytes?: number;
   preflight?: PreflightV3Result;
+  compilerMode?: "baseline" | "typescript-v2" | "cache-load" | "rust";
+  chunkSize?: number;
+  structuralPath?: string;
+  rustExecutable?: string;
+  cachePath?: string;
+  crossValidate?: boolean;
 };
 
 export type StageMetric = {
