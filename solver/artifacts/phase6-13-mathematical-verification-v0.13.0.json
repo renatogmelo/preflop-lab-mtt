@@ -1,0 +1,2238 @@
+{
+  "phase": "6.13",
+  "version": "0.13.0",
+  "baselineCommit": "8cd893ff0118ebcd84ee9abfd37baf2538f2c600",
+  "environment": {
+    "runtime": "v24.20.0",
+    "platform": "win32",
+    "architecture": "x64"
+  },
+  "formalSpecificationVersion": "phase6.13-formal-spec-v1",
+  "referenceEngineVersion": "independent-reference-cfr-v0.13.0",
+  "assumptions": [
+    "finite",
+    "two-player",
+    "zero-sum",
+    "imperfect-information",
+    "perfect-recall",
+    "behavioral-strategies",
+    "explicit-chance"
+  ],
+  "configurations": [
+    {
+      "algorithm": "vanilla-cfr",
+      "seed": 1,
+      "exactMetrics": true,
+      "engine": "indexed-tree"
+    },
+    {
+      "algorithm": "cfr-plus",
+      "seed": 1,
+      "exactMetrics": true,
+      "engine": "indexed-tree"
+    },
+    {
+      "algorithm": "dcfr",
+      "seed": 1,
+      "exactMetrics": true,
+      "engine": "indexed-tree"
+    }
+  ],
+  "analyticalFixtures": [
+    {
+      "fixture": "matching-pennies",
+      "uniformOrKnownEquilibrium": {
+        "utilities": [
+          0,
+          0
+        ],
+        "bestResponseValues": [
+          0,
+          0
+        ],
+        "nashConv": 0,
+        "exploitability": 0,
+        "purePoliciesEnumerated": [
+          2,
+          2
+        ],
+        "bestResponsePolicies": [
+          {
+            "matching-pennies:p0": "H"
+          },
+          {
+            "matching-pennies:p1": "H"
+          }
+        ]
+      }
+    },
+    {
+      "fixture": "rock-paper-scissors",
+      "uniformOrKnownEquilibrium": {
+        "utilities": [
+          0,
+          0
+        ],
+        "bestResponseValues": [
+          0,
+          0
+        ],
+        "nashConv": 0,
+        "exploitability": 0,
+        "purePoliciesEnumerated": [
+          3,
+          3
+        ],
+        "bestResponsePolicies": [
+          {
+            "rock-paper-scissors:p0": "R"
+          },
+          {
+            "rock-paper-scissors:p1": "R"
+          }
+        ]
+      }
+    },
+    {
+      "fixture": "sequential-perfect-information",
+      "uniformOrKnownEquilibrium": {
+        "utilities": [
+          0.5,
+          -0.5
+        ],
+        "bestResponseValues": [
+          0.5,
+          0.5
+        ],
+        "nashConv": 1,
+        "exploitability": 0.5,
+        "purePoliciesEnumerated": [
+          2,
+          4
+        ],
+        "bestResponsePolicies": [
+          {
+            "seq:p0": "L"
+          },
+          {
+            "seq:p1:L": "y",
+            "seq:p1:R": "x"
+          }
+        ]
+      }
+    },
+    {
+      "fixture": "hidden-information",
+      "uniformOrKnownEquilibrium": {
+        "utilities": [
+          0.125,
+          -0.125
+        ],
+        "bestResponseValues": [
+          0.25,
+          0
+        ],
+        "nashConv": 0.25,
+        "exploitability": 0.125,
+        "purePoliciesEnumerated": [
+          4,
+          2
+        ],
+        "bestResponsePolicies": [
+          {
+            "hidden:p0:strong": "bet",
+            "hidden:p0:weak": "bet"
+          },
+          {
+            "hidden:p1": "call"
+          }
+        ]
+      }
+    },
+    {
+      "fixture": "nonuniform-chance",
+      "uniformOrKnownEquilibrium": {
+        "utilities": [
+          0.30000000000000004,
+          -0.30000000000000004
+        ],
+        "bestResponseValues": [
+          0.4,
+          -0.30000000000000004
+        ],
+        "nashConv": 0.09999999999999998,
+        "exploitability": 0.04999999999999999,
+        "purePoliciesEnumerated": [
+          2,
+          1
+        ],
+        "bestResponsePolicies": [
+          {
+            "nonuniform:p0": "B"
+          },
+          {}
+        ]
+      }
+    }
+  ],
+  "iterationComparisons": [
+    {
+      "fixture": "matching-pennies",
+      "algorithm": "vanilla-cfr",
+      "iteration": 0,
+      "regretDelta": 0,
+      "strategySumDelta": 0,
+      "evDelta": 0,
+      "bestResponseDelta": 0,
+      "nashConvDelta": 0,
+      "firstDivergence": null
+    },
+    {
+      "fixture": "matching-pennies",
+      "algorithm": "vanilla-cfr",
+      "iteration": 1,
+      "regretDelta": 0,
+      "strategySumDelta": 0,
+      "evDelta": 0,
+      "bestResponseDelta": 0,
+      "nashConvDelta": 0,
+      "firstDivergence": null
+    },
+    {
+      "fixture": "matching-pennies",
+      "algorithm": "vanilla-cfr",
+      "iteration": 2,
+      "regretDelta": 0,
+      "strategySumDelta": 0,
+      "evDelta": 0,
+      "bestResponseDelta": 0,
+      "nashConvDelta": 0,
+      "firstDivergence": null
+    },
+    {
+      "fixture": "matching-pennies",
+      "algorithm": "vanilla-cfr",
+      "iteration": 25,
+      "regretDelta": 0,
+      "strategySumDelta": 0,
+      "evDelta": 0,
+      "bestResponseDelta": 0,
+      "nashConvDelta": 0,
+      "firstDivergence": null
+    },
+    {
+      "fixture": "matching-pennies",
+      "algorithm": "cfr-plus",
+      "iteration": 0,
+      "regretDelta": 0,
+      "strategySumDelta": 0,
+      "evDelta": 0,
+      "bestResponseDelta": 0,
+      "nashConvDelta": 0,
+      "firstDivergence": null
+    },
+    {
+      "fixture": "matching-pennies",
+      "algorithm": "cfr-plus",
+      "iteration": 1,
+      "regretDelta": 0,
+      "strategySumDelta": 0,
+      "evDelta": 0,
+      "bestResponseDelta": 0,
+      "nashConvDelta": 0,
+      "firstDivergence": null
+    },
+    {
+      "fixture": "matching-pennies",
+      "algorithm": "cfr-plus",
+      "iteration": 2,
+      "regretDelta": 0,
+      "strategySumDelta": 0,
+      "evDelta": 0,
+      "bestResponseDelta": 0,
+      "nashConvDelta": 0,
+      "firstDivergence": null
+    },
+    {
+      "fixture": "matching-pennies",
+      "algorithm": "cfr-plus",
+      "iteration": 25,
+      "regretDelta": 0,
+      "strategySumDelta": 0,
+      "evDelta": 0,
+      "bestResponseDelta": 0,
+      "nashConvDelta": 0,
+      "firstDivergence": null
+    },
+    {
+      "fixture": "matching-pennies",
+      "algorithm": "dcfr",
+      "iteration": 0,
+      "regretDelta": 0,
+      "strategySumDelta": 0,
+      "evDelta": 0,
+      "bestResponseDelta": 0,
+      "nashConvDelta": 0,
+      "firstDivergence": null
+    },
+    {
+      "fixture": "matching-pennies",
+      "algorithm": "dcfr",
+      "iteration": 1,
+      "regretDelta": 0,
+      "strategySumDelta": 0,
+      "evDelta": 0,
+      "bestResponseDelta": 0,
+      "nashConvDelta": 0,
+      "firstDivergence": null
+    },
+    {
+      "fixture": "matching-pennies",
+      "algorithm": "dcfr",
+      "iteration": 2,
+      "regretDelta": 0,
+      "strategySumDelta": 0,
+      "evDelta": 0,
+      "bestResponseDelta": 0,
+      "nashConvDelta": 0,
+      "firstDivergence": null
+    },
+    {
+      "fixture": "matching-pennies",
+      "algorithm": "dcfr",
+      "iteration": 25,
+      "regretDelta": 0,
+      "strategySumDelta": 0,
+      "evDelta": 0,
+      "bestResponseDelta": 0,
+      "nashConvDelta": 0,
+      "firstDivergence": null
+    },
+    {
+      "fixture": "rock-paper-scissors",
+      "algorithm": "vanilla-cfr",
+      "iteration": 0,
+      "regretDelta": 0,
+      "strategySumDelta": 0,
+      "evDelta": 0,
+      "bestResponseDelta": 0,
+      "nashConvDelta": 0,
+      "firstDivergence": null
+    },
+    {
+      "fixture": "rock-paper-scissors",
+      "algorithm": "vanilla-cfr",
+      "iteration": 1,
+      "regretDelta": 0,
+      "strategySumDelta": 0,
+      "evDelta": 0,
+      "bestResponseDelta": 0,
+      "nashConvDelta": 0,
+      "firstDivergence": null
+    },
+    {
+      "fixture": "rock-paper-scissors",
+      "algorithm": "vanilla-cfr",
+      "iteration": 2,
+      "regretDelta": 0,
+      "strategySumDelta": 0,
+      "evDelta": 0,
+      "bestResponseDelta": 0,
+      "nashConvDelta": 0,
+      "firstDivergence": null
+    },
+    {
+      "fixture": "rock-paper-scissors",
+      "algorithm": "vanilla-cfr",
+      "iteration": 25,
+      "regretDelta": 0,
+      "strategySumDelta": 0,
+      "evDelta": 0,
+      "bestResponseDelta": 0,
+      "nashConvDelta": 0,
+      "firstDivergence": null
+    },
+    {
+      "fixture": "rock-paper-scissors",
+      "algorithm": "cfr-plus",
+      "iteration": 0,
+      "regretDelta": 0,
+      "strategySumDelta": 0,
+      "evDelta": 0,
+      "bestResponseDelta": 0,
+      "nashConvDelta": 0,
+      "firstDivergence": null
+    },
+    {
+      "fixture": "rock-paper-scissors",
+      "algorithm": "cfr-plus",
+      "iteration": 1,
+      "regretDelta": 0,
+      "strategySumDelta": 0,
+      "evDelta": 0,
+      "bestResponseDelta": 0,
+      "nashConvDelta": 0,
+      "firstDivergence": null
+    },
+    {
+      "fixture": "rock-paper-scissors",
+      "algorithm": "cfr-plus",
+      "iteration": 2,
+      "regretDelta": 0,
+      "strategySumDelta": 0,
+      "evDelta": 0,
+      "bestResponseDelta": 0,
+      "nashConvDelta": 0,
+      "firstDivergence": null
+    },
+    {
+      "fixture": "rock-paper-scissors",
+      "algorithm": "cfr-plus",
+      "iteration": 25,
+      "regretDelta": 0,
+      "strategySumDelta": 0,
+      "evDelta": 0,
+      "bestResponseDelta": 0,
+      "nashConvDelta": 0,
+      "firstDivergence": null
+    },
+    {
+      "fixture": "rock-paper-scissors",
+      "algorithm": "dcfr",
+      "iteration": 0,
+      "regretDelta": 0,
+      "strategySumDelta": 0,
+      "evDelta": 0,
+      "bestResponseDelta": 0,
+      "nashConvDelta": 0,
+      "firstDivergence": null
+    },
+    {
+      "fixture": "rock-paper-scissors",
+      "algorithm": "dcfr",
+      "iteration": 1,
+      "regretDelta": 0,
+      "strategySumDelta": 0,
+      "evDelta": 0,
+      "bestResponseDelta": 0,
+      "nashConvDelta": 0,
+      "firstDivergence": null
+    },
+    {
+      "fixture": "rock-paper-scissors",
+      "algorithm": "dcfr",
+      "iteration": 2,
+      "regretDelta": 0,
+      "strategySumDelta": 0,
+      "evDelta": 0,
+      "bestResponseDelta": 0,
+      "nashConvDelta": 0,
+      "firstDivergence": null
+    },
+    {
+      "fixture": "rock-paper-scissors",
+      "algorithm": "dcfr",
+      "iteration": 25,
+      "regretDelta": 0,
+      "strategySumDelta": 0,
+      "evDelta": 0,
+      "bestResponseDelta": 0,
+      "nashConvDelta": 0,
+      "firstDivergence": null
+    },
+    {
+      "fixture": "sequential-perfect-information",
+      "algorithm": "vanilla-cfr",
+      "iteration": 0,
+      "regretDelta": 0,
+      "strategySumDelta": 0,
+      "evDelta": 0,
+      "bestResponseDelta": 0,
+      "nashConvDelta": 0,
+      "firstDivergence": null
+    },
+    {
+      "fixture": "sequential-perfect-information",
+      "algorithm": "vanilla-cfr",
+      "iteration": 1,
+      "regretDelta": 0,
+      "strategySumDelta": 0,
+      "evDelta": 0,
+      "bestResponseDelta": 0,
+      "nashConvDelta": 0,
+      "firstDivergence": null
+    },
+    {
+      "fixture": "sequential-perfect-information",
+      "algorithm": "vanilla-cfr",
+      "iteration": 2,
+      "regretDelta": 0,
+      "strategySumDelta": 0,
+      "evDelta": 0,
+      "bestResponseDelta": 0,
+      "nashConvDelta": 0,
+      "firstDivergence": null
+    },
+    {
+      "fixture": "sequential-perfect-information",
+      "algorithm": "vanilla-cfr",
+      "iteration": 25,
+      "regretDelta": 0,
+      "strategySumDelta": 0,
+      "evDelta": 0,
+      "bestResponseDelta": 0,
+      "nashConvDelta": 0,
+      "firstDivergence": null
+    },
+    {
+      "fixture": "sequential-perfect-information",
+      "algorithm": "cfr-plus",
+      "iteration": 0,
+      "regretDelta": 0,
+      "strategySumDelta": 0,
+      "evDelta": 0,
+      "bestResponseDelta": 0,
+      "nashConvDelta": 0,
+      "firstDivergence": null
+    },
+    {
+      "fixture": "sequential-perfect-information",
+      "algorithm": "cfr-plus",
+      "iteration": 1,
+      "regretDelta": 0,
+      "strategySumDelta": 0,
+      "evDelta": 0,
+      "bestResponseDelta": 0,
+      "nashConvDelta": 0,
+      "firstDivergence": null
+    },
+    {
+      "fixture": "sequential-perfect-information",
+      "algorithm": "cfr-plus",
+      "iteration": 2,
+      "regretDelta": 0,
+      "strategySumDelta": 0,
+      "evDelta": 0,
+      "bestResponseDelta": 0,
+      "nashConvDelta": 0,
+      "firstDivergence": null
+    },
+    {
+      "fixture": "sequential-perfect-information",
+      "algorithm": "cfr-plus",
+      "iteration": 25,
+      "regretDelta": 0,
+      "strategySumDelta": 0,
+      "evDelta": 0,
+      "bestResponseDelta": 0,
+      "nashConvDelta": 0,
+      "firstDivergence": null
+    },
+    {
+      "fixture": "sequential-perfect-information",
+      "algorithm": "dcfr",
+      "iteration": 0,
+      "regretDelta": 0,
+      "strategySumDelta": 0,
+      "evDelta": 0,
+      "bestResponseDelta": 0,
+      "nashConvDelta": 0,
+      "firstDivergence": null
+    },
+    {
+      "fixture": "sequential-perfect-information",
+      "algorithm": "dcfr",
+      "iteration": 1,
+      "regretDelta": 0,
+      "strategySumDelta": 0,
+      "evDelta": 0,
+      "bestResponseDelta": 0,
+      "nashConvDelta": 0,
+      "firstDivergence": null
+    },
+    {
+      "fixture": "sequential-perfect-information",
+      "algorithm": "dcfr",
+      "iteration": 2,
+      "regretDelta": 0,
+      "strategySumDelta": 0,
+      "evDelta": 0,
+      "bestResponseDelta": 0,
+      "nashConvDelta": 0,
+      "firstDivergence": null
+    },
+    {
+      "fixture": "sequential-perfect-information",
+      "algorithm": "dcfr",
+      "iteration": 25,
+      "regretDelta": 0,
+      "strategySumDelta": 0,
+      "evDelta": 0,
+      "bestResponseDelta": 0,
+      "nashConvDelta": 0,
+      "firstDivergence": null
+    },
+    {
+      "fixture": "hidden-information",
+      "algorithm": "vanilla-cfr",
+      "iteration": 0,
+      "regretDelta": 0,
+      "strategySumDelta": 0,
+      "evDelta": 0,
+      "bestResponseDelta": 0,
+      "nashConvDelta": 0,
+      "firstDivergence": null
+    },
+    {
+      "fixture": "hidden-information",
+      "algorithm": "vanilla-cfr",
+      "iteration": 1,
+      "regretDelta": 0,
+      "strategySumDelta": 0,
+      "evDelta": 0,
+      "bestResponseDelta": 0,
+      "nashConvDelta": 0,
+      "firstDivergence": null
+    },
+    {
+      "fixture": "hidden-information",
+      "algorithm": "vanilla-cfr",
+      "iteration": 2,
+      "regretDelta": 0,
+      "strategySumDelta": 0,
+      "evDelta": 0,
+      "bestResponseDelta": 0,
+      "nashConvDelta": 0,
+      "firstDivergence": null
+    },
+    {
+      "fixture": "hidden-information",
+      "algorithm": "vanilla-cfr",
+      "iteration": 25,
+      "regretDelta": 0,
+      "strategySumDelta": 0,
+      "evDelta": 0,
+      "bestResponseDelta": 0,
+      "nashConvDelta": 0,
+      "firstDivergence": null
+    },
+    {
+      "fixture": "hidden-information",
+      "algorithm": "cfr-plus",
+      "iteration": 0,
+      "regretDelta": 0,
+      "strategySumDelta": 0,
+      "evDelta": 0,
+      "bestResponseDelta": 0,
+      "nashConvDelta": 0,
+      "firstDivergence": null
+    },
+    {
+      "fixture": "hidden-information",
+      "algorithm": "cfr-plus",
+      "iteration": 1,
+      "regretDelta": 0,
+      "strategySumDelta": 0,
+      "evDelta": 0,
+      "bestResponseDelta": 0,
+      "nashConvDelta": 0,
+      "firstDivergence": null
+    },
+    {
+      "fixture": "hidden-information",
+      "algorithm": "cfr-plus",
+      "iteration": 2,
+      "regretDelta": 0,
+      "strategySumDelta": 0,
+      "evDelta": 0,
+      "bestResponseDelta": 0,
+      "nashConvDelta": 0,
+      "firstDivergence": null
+    },
+    {
+      "fixture": "hidden-information",
+      "algorithm": "cfr-plus",
+      "iteration": 25,
+      "regretDelta": 0,
+      "strategySumDelta": 0,
+      "evDelta": 0,
+      "bestResponseDelta": 0,
+      "nashConvDelta": 0,
+      "firstDivergence": null
+    },
+    {
+      "fixture": "hidden-information",
+      "algorithm": "dcfr",
+      "iteration": 0,
+      "regretDelta": 0,
+      "strategySumDelta": 0,
+      "evDelta": 0,
+      "bestResponseDelta": 0,
+      "nashConvDelta": 0,
+      "firstDivergence": null
+    },
+    {
+      "fixture": "hidden-information",
+      "algorithm": "dcfr",
+      "iteration": 1,
+      "regretDelta": 0,
+      "strategySumDelta": 0,
+      "evDelta": 0,
+      "bestResponseDelta": 0,
+      "nashConvDelta": 0,
+      "firstDivergence": null
+    },
+    {
+      "fixture": "hidden-information",
+      "algorithm": "dcfr",
+      "iteration": 2,
+      "regretDelta": 0,
+      "strategySumDelta": 0,
+      "evDelta": 0,
+      "bestResponseDelta": 0,
+      "nashConvDelta": 0,
+      "firstDivergence": null
+    },
+    {
+      "fixture": "hidden-information",
+      "algorithm": "dcfr",
+      "iteration": 25,
+      "regretDelta": 0,
+      "strategySumDelta": 0,
+      "evDelta": 0,
+      "bestResponseDelta": 0,
+      "nashConvDelta": 0,
+      "firstDivergence": null
+    },
+    {
+      "fixture": "nonuniform-chance",
+      "algorithm": "vanilla-cfr",
+      "iteration": 0,
+      "regretDelta": 0,
+      "strategySumDelta": 0,
+      "evDelta": 0,
+      "bestResponseDelta": 0,
+      "nashConvDelta": 0,
+      "firstDivergence": null
+    },
+    {
+      "fixture": "nonuniform-chance",
+      "algorithm": "vanilla-cfr",
+      "iteration": 1,
+      "regretDelta": 0,
+      "strategySumDelta": 0,
+      "evDelta": 0,
+      "bestResponseDelta": 0,
+      "nashConvDelta": 0,
+      "firstDivergence": null
+    },
+    {
+      "fixture": "nonuniform-chance",
+      "algorithm": "vanilla-cfr",
+      "iteration": 2,
+      "regretDelta": 0,
+      "strategySumDelta": 0,
+      "evDelta": 0,
+      "bestResponseDelta": 0,
+      "nashConvDelta": 0,
+      "firstDivergence": null
+    },
+    {
+      "fixture": "nonuniform-chance",
+      "algorithm": "vanilla-cfr",
+      "iteration": 25,
+      "regretDelta": 0,
+      "strategySumDelta": 0,
+      "evDelta": 0,
+      "bestResponseDelta": 0,
+      "nashConvDelta": 0,
+      "firstDivergence": null
+    },
+    {
+      "fixture": "nonuniform-chance",
+      "algorithm": "cfr-plus",
+      "iteration": 0,
+      "regretDelta": 0,
+      "strategySumDelta": 0,
+      "evDelta": 0,
+      "bestResponseDelta": 0,
+      "nashConvDelta": 0,
+      "firstDivergence": null
+    },
+    {
+      "fixture": "nonuniform-chance",
+      "algorithm": "cfr-plus",
+      "iteration": 1,
+      "regretDelta": 0,
+      "strategySumDelta": 0,
+      "evDelta": 0,
+      "bestResponseDelta": 0,
+      "nashConvDelta": 0,
+      "firstDivergence": null
+    },
+    {
+      "fixture": "nonuniform-chance",
+      "algorithm": "cfr-plus",
+      "iteration": 2,
+      "regretDelta": 0,
+      "strategySumDelta": 0,
+      "evDelta": 0,
+      "bestResponseDelta": 0,
+      "nashConvDelta": 0,
+      "firstDivergence": null
+    },
+    {
+      "fixture": "nonuniform-chance",
+      "algorithm": "cfr-plus",
+      "iteration": 25,
+      "regretDelta": 0,
+      "strategySumDelta": 0,
+      "evDelta": 0,
+      "bestResponseDelta": 0,
+      "nashConvDelta": 0,
+      "firstDivergence": null
+    },
+    {
+      "fixture": "nonuniform-chance",
+      "algorithm": "dcfr",
+      "iteration": 0,
+      "regretDelta": 0,
+      "strategySumDelta": 0,
+      "evDelta": 0,
+      "bestResponseDelta": 0,
+      "nashConvDelta": 0,
+      "firstDivergence": null
+    },
+    {
+      "fixture": "nonuniform-chance",
+      "algorithm": "dcfr",
+      "iteration": 1,
+      "regretDelta": 0,
+      "strategySumDelta": 0,
+      "evDelta": 0,
+      "bestResponseDelta": 0,
+      "nashConvDelta": 0,
+      "firstDivergence": null
+    },
+    {
+      "fixture": "nonuniform-chance",
+      "algorithm": "dcfr",
+      "iteration": 2,
+      "regretDelta": 0,
+      "strategySumDelta": 0,
+      "evDelta": 0,
+      "bestResponseDelta": 0,
+      "nashConvDelta": 0,
+      "firstDivergence": null
+    },
+    {
+      "fixture": "nonuniform-chance",
+      "algorithm": "dcfr",
+      "iteration": 25,
+      "regretDelta": 0,
+      "strategySumDelta": 0,
+      "evDelta": 0,
+      "bestResponseDelta": 0,
+      "nashConvDelta": 0,
+      "firstDivergence": null
+    }
+  ],
+  "maximumDeltas": {
+    "regrets": 0,
+    "strategySums": 0,
+    "ev": 0,
+    "bestResponse": 0,
+    "nashConv": 0
+  },
+  "bestResponseAndNashConv": {
+    "independentOracle": "pure-policy-enumeration",
+    "convention": "NashConv=sum(BR_i-u_i); exploitability=NashConv/2"
+  },
+  "propertyTesting": {
+    "generatedGames": 32,
+    "algorithmCases": 96,
+    "seeds": [
+      61300,
+      61301,
+      61302,
+      61303,
+      61304,
+      61305,
+      61306,
+      61307,
+      61308,
+      61309,
+      61310,
+      61311,
+      61312,
+      61313,
+      61314,
+      61315,
+      61316,
+      61317,
+      61318,
+      61319,
+      61320,
+      61321,
+      61322,
+      61323,
+      61324,
+      61325,
+      61326,
+      61327,
+      61328,
+      61329,
+      61330,
+      61331
+    ],
+    "minimizedCounterexamples": [],
+    "comparisons": [
+      {
+        "seed": 61300,
+        "fixture": "property-61300",
+        "algorithm": "vanilla-cfr",
+        "iteration": 3,
+        "regretDelta": 0,
+        "strategySumDelta": 0,
+        "evDelta": 0,
+        "bestResponseDelta": 0,
+        "nashConvDelta": 0,
+        "firstDivergence": null
+      },
+      {
+        "seed": 61300,
+        "fixture": "property-61300",
+        "algorithm": "cfr-plus",
+        "iteration": 3,
+        "regretDelta": 0,
+        "strategySumDelta": 0,
+        "evDelta": 0,
+        "bestResponseDelta": 0,
+        "nashConvDelta": 0,
+        "firstDivergence": null
+      },
+      {
+        "seed": 61300,
+        "fixture": "property-61300",
+        "algorithm": "dcfr",
+        "iteration": 3,
+        "regretDelta": 0,
+        "strategySumDelta": 0,
+        "evDelta": 0,
+        "bestResponseDelta": 0,
+        "nashConvDelta": 0,
+        "firstDivergence": null
+      },
+      {
+        "seed": 61301,
+        "fixture": "property-61301",
+        "algorithm": "vanilla-cfr",
+        "iteration": 3,
+        "regretDelta": 0,
+        "strategySumDelta": 0,
+        "evDelta": 0,
+        "bestResponseDelta": 0,
+        "nashConvDelta": 0,
+        "firstDivergence": null
+      },
+      {
+        "seed": 61301,
+        "fixture": "property-61301",
+        "algorithm": "cfr-plus",
+        "iteration": 3,
+        "regretDelta": 0,
+        "strategySumDelta": 0,
+        "evDelta": 0,
+        "bestResponseDelta": 0,
+        "nashConvDelta": 0,
+        "firstDivergence": null
+      },
+      {
+        "seed": 61301,
+        "fixture": "property-61301",
+        "algorithm": "dcfr",
+        "iteration": 3,
+        "regretDelta": 0,
+        "strategySumDelta": 0,
+        "evDelta": 0,
+        "bestResponseDelta": 0,
+        "nashConvDelta": 0,
+        "firstDivergence": null
+      },
+      {
+        "seed": 61302,
+        "fixture": "property-61302",
+        "algorithm": "vanilla-cfr",
+        "iteration": 3,
+        "regretDelta": 0,
+        "strategySumDelta": 0,
+        "evDelta": 0,
+        "bestResponseDelta": 0,
+        "nashConvDelta": 0,
+        "firstDivergence": null
+      },
+      {
+        "seed": 61302,
+        "fixture": "property-61302",
+        "algorithm": "cfr-plus",
+        "iteration": 3,
+        "regretDelta": 0,
+        "strategySumDelta": 0,
+        "evDelta": 0,
+        "bestResponseDelta": 0,
+        "nashConvDelta": 0,
+        "firstDivergence": null
+      },
+      {
+        "seed": 61302,
+        "fixture": "property-61302",
+        "algorithm": "dcfr",
+        "iteration": 3,
+        "regretDelta": 0,
+        "strategySumDelta": 0,
+        "evDelta": 0,
+        "bestResponseDelta": 0,
+        "nashConvDelta": 0,
+        "firstDivergence": null
+      },
+      {
+        "seed": 61303,
+        "fixture": "property-61303",
+        "algorithm": "vanilla-cfr",
+        "iteration": 3,
+        "regretDelta": 0,
+        "strategySumDelta": 0,
+        "evDelta": 0,
+        "bestResponseDelta": 0,
+        "nashConvDelta": 0,
+        "firstDivergence": null
+      },
+      {
+        "seed": 61303,
+        "fixture": "property-61303",
+        "algorithm": "cfr-plus",
+        "iteration": 3,
+        "regretDelta": 0,
+        "strategySumDelta": 0,
+        "evDelta": 0,
+        "bestResponseDelta": 0,
+        "nashConvDelta": 0,
+        "firstDivergence": null
+      },
+      {
+        "seed": 61303,
+        "fixture": "property-61303",
+        "algorithm": "dcfr",
+        "iteration": 3,
+        "regretDelta": 0,
+        "strategySumDelta": 0,
+        "evDelta": 0,
+        "bestResponseDelta": 0,
+        "nashConvDelta": 0,
+        "firstDivergence": null
+      },
+      {
+        "seed": 61304,
+        "fixture": "property-61304",
+        "algorithm": "vanilla-cfr",
+        "iteration": 3,
+        "regretDelta": 0,
+        "strategySumDelta": 0,
+        "evDelta": 0,
+        "bestResponseDelta": 0,
+        "nashConvDelta": 0,
+        "firstDivergence": null
+      },
+      {
+        "seed": 61304,
+        "fixture": "property-61304",
+        "algorithm": "cfr-plus",
+        "iteration": 3,
+        "regretDelta": 0,
+        "strategySumDelta": 0,
+        "evDelta": 0,
+        "bestResponseDelta": 0,
+        "nashConvDelta": 0,
+        "firstDivergence": null
+      },
+      {
+        "seed": 61304,
+        "fixture": "property-61304",
+        "algorithm": "dcfr",
+        "iteration": 3,
+        "regretDelta": 0,
+        "strategySumDelta": 0,
+        "evDelta": 0,
+        "bestResponseDelta": 0,
+        "nashConvDelta": 0,
+        "firstDivergence": null
+      },
+      {
+        "seed": 61305,
+        "fixture": "property-61305",
+        "algorithm": "vanilla-cfr",
+        "iteration": 3,
+        "regretDelta": 0,
+        "strategySumDelta": 0,
+        "evDelta": 0,
+        "bestResponseDelta": 0,
+        "nashConvDelta": 0,
+        "firstDivergence": null
+      },
+      {
+        "seed": 61305,
+        "fixture": "property-61305",
+        "algorithm": "cfr-plus",
+        "iteration": 3,
+        "regretDelta": 0,
+        "strategySumDelta": 0,
+        "evDelta": 0,
+        "bestResponseDelta": 0,
+        "nashConvDelta": 0,
+        "firstDivergence": null
+      },
+      {
+        "seed": 61305,
+        "fixture": "property-61305",
+        "algorithm": "dcfr",
+        "iteration": 3,
+        "regretDelta": 0,
+        "strategySumDelta": 0,
+        "evDelta": 0,
+        "bestResponseDelta": 0,
+        "nashConvDelta": 0,
+        "firstDivergence": null
+      },
+      {
+        "seed": 61306,
+        "fixture": "property-61306",
+        "algorithm": "vanilla-cfr",
+        "iteration": 3,
+        "regretDelta": 0,
+        "strategySumDelta": 0,
+        "evDelta": 0,
+        "bestResponseDelta": 0,
+        "nashConvDelta": 0,
+        "firstDivergence": null
+      },
+      {
+        "seed": 61306,
+        "fixture": "property-61306",
+        "algorithm": "cfr-plus",
+        "iteration": 3,
+        "regretDelta": 0,
+        "strategySumDelta": 0,
+        "evDelta": 0,
+        "bestResponseDelta": 0,
+        "nashConvDelta": 0,
+        "firstDivergence": null
+      },
+      {
+        "seed": 61306,
+        "fixture": "property-61306",
+        "algorithm": "dcfr",
+        "iteration": 3,
+        "regretDelta": 0,
+        "strategySumDelta": 0,
+        "evDelta": 0,
+        "bestResponseDelta": 0,
+        "nashConvDelta": 0,
+        "firstDivergence": null
+      },
+      {
+        "seed": 61307,
+        "fixture": "property-61307",
+        "algorithm": "vanilla-cfr",
+        "iteration": 3,
+        "regretDelta": 0,
+        "strategySumDelta": 0,
+        "evDelta": 0,
+        "bestResponseDelta": 0,
+        "nashConvDelta": 0,
+        "firstDivergence": null
+      },
+      {
+        "seed": 61307,
+        "fixture": "property-61307",
+        "algorithm": "cfr-plus",
+        "iteration": 3,
+        "regretDelta": 0,
+        "strategySumDelta": 0,
+        "evDelta": 0,
+        "bestResponseDelta": 0,
+        "nashConvDelta": 0,
+        "firstDivergence": null
+      },
+      {
+        "seed": 61307,
+        "fixture": "property-61307",
+        "algorithm": "dcfr",
+        "iteration": 3,
+        "regretDelta": 0,
+        "strategySumDelta": 0,
+        "evDelta": 0,
+        "bestResponseDelta": 0,
+        "nashConvDelta": 0,
+        "firstDivergence": null
+      },
+      {
+        "seed": 61308,
+        "fixture": "property-61308",
+        "algorithm": "vanilla-cfr",
+        "iteration": 3,
+        "regretDelta": 0,
+        "strategySumDelta": 0,
+        "evDelta": 0,
+        "bestResponseDelta": 0,
+        "nashConvDelta": 0,
+        "firstDivergence": null
+      },
+      {
+        "seed": 61308,
+        "fixture": "property-61308",
+        "algorithm": "cfr-plus",
+        "iteration": 3,
+        "regretDelta": 0,
+        "strategySumDelta": 0,
+        "evDelta": 0,
+        "bestResponseDelta": 0,
+        "nashConvDelta": 0,
+        "firstDivergence": null
+      },
+      {
+        "seed": 61308,
+        "fixture": "property-61308",
+        "algorithm": "dcfr",
+        "iteration": 3,
+        "regretDelta": 0,
+        "strategySumDelta": 0,
+        "evDelta": 0,
+        "bestResponseDelta": 0,
+        "nashConvDelta": 0,
+        "firstDivergence": null
+      },
+      {
+        "seed": 61309,
+        "fixture": "property-61309",
+        "algorithm": "vanilla-cfr",
+        "iteration": 3,
+        "regretDelta": 0,
+        "strategySumDelta": 0,
+        "evDelta": 0,
+        "bestResponseDelta": 0,
+        "nashConvDelta": 0,
+        "firstDivergence": null
+      },
+      {
+        "seed": 61309,
+        "fixture": "property-61309",
+        "algorithm": "cfr-plus",
+        "iteration": 3,
+        "regretDelta": 0,
+        "strategySumDelta": 0,
+        "evDelta": 0,
+        "bestResponseDelta": 0,
+        "nashConvDelta": 0,
+        "firstDivergence": null
+      },
+      {
+        "seed": 61309,
+        "fixture": "property-61309",
+        "algorithm": "dcfr",
+        "iteration": 3,
+        "regretDelta": 0,
+        "strategySumDelta": 0,
+        "evDelta": 0,
+        "bestResponseDelta": 0,
+        "nashConvDelta": 0,
+        "firstDivergence": null
+      },
+      {
+        "seed": 61310,
+        "fixture": "property-61310",
+        "algorithm": "vanilla-cfr",
+        "iteration": 3,
+        "regretDelta": 0,
+        "strategySumDelta": 0,
+        "evDelta": 0,
+        "bestResponseDelta": 0,
+        "nashConvDelta": 0,
+        "firstDivergence": null
+      },
+      {
+        "seed": 61310,
+        "fixture": "property-61310",
+        "algorithm": "cfr-plus",
+        "iteration": 3,
+        "regretDelta": 0,
+        "strategySumDelta": 0,
+        "evDelta": 0,
+        "bestResponseDelta": 0,
+        "nashConvDelta": 0,
+        "firstDivergence": null
+      },
+      {
+        "seed": 61310,
+        "fixture": "property-61310",
+        "algorithm": "dcfr",
+        "iteration": 3,
+        "regretDelta": 0,
+        "strategySumDelta": 0,
+        "evDelta": 0,
+        "bestResponseDelta": 0,
+        "nashConvDelta": 0,
+        "firstDivergence": null
+      },
+      {
+        "seed": 61311,
+        "fixture": "property-61311",
+        "algorithm": "vanilla-cfr",
+        "iteration": 3,
+        "regretDelta": 0,
+        "strategySumDelta": 0,
+        "evDelta": 0,
+        "bestResponseDelta": 0,
+        "nashConvDelta": 0,
+        "firstDivergence": null
+      },
+      {
+        "seed": 61311,
+        "fixture": "property-61311",
+        "algorithm": "cfr-plus",
+        "iteration": 3,
+        "regretDelta": 0,
+        "strategySumDelta": 0,
+        "evDelta": 0,
+        "bestResponseDelta": 0,
+        "nashConvDelta": 0,
+        "firstDivergence": null
+      },
+      {
+        "seed": 61311,
+        "fixture": "property-61311",
+        "algorithm": "dcfr",
+        "iteration": 3,
+        "regretDelta": 0,
+        "strategySumDelta": 0,
+        "evDelta": 0,
+        "bestResponseDelta": 0,
+        "nashConvDelta": 0,
+        "firstDivergence": null
+      },
+      {
+        "seed": 61312,
+        "fixture": "property-61312",
+        "algorithm": "vanilla-cfr",
+        "iteration": 3,
+        "regretDelta": 0,
+        "strategySumDelta": 0,
+        "evDelta": 0,
+        "bestResponseDelta": 0,
+        "nashConvDelta": 0,
+        "firstDivergence": null
+      },
+      {
+        "seed": 61312,
+        "fixture": "property-61312",
+        "algorithm": "cfr-plus",
+        "iteration": 3,
+        "regretDelta": 0,
+        "strategySumDelta": 0,
+        "evDelta": 0,
+        "bestResponseDelta": 0,
+        "nashConvDelta": 0,
+        "firstDivergence": null
+      },
+      {
+        "seed": 61312,
+        "fixture": "property-61312",
+        "algorithm": "dcfr",
+        "iteration": 3,
+        "regretDelta": 0,
+        "strategySumDelta": 0,
+        "evDelta": 0,
+        "bestResponseDelta": 0,
+        "nashConvDelta": 0,
+        "firstDivergence": null
+      },
+      {
+        "seed": 61313,
+        "fixture": "property-61313",
+        "algorithm": "vanilla-cfr",
+        "iteration": 3,
+        "regretDelta": 0,
+        "strategySumDelta": 0,
+        "evDelta": 0,
+        "bestResponseDelta": 0,
+        "nashConvDelta": 0,
+        "firstDivergence": null
+      },
+      {
+        "seed": 61313,
+        "fixture": "property-61313",
+        "algorithm": "cfr-plus",
+        "iteration": 3,
+        "regretDelta": 0,
+        "strategySumDelta": 0,
+        "evDelta": 0,
+        "bestResponseDelta": 0,
+        "nashConvDelta": 0,
+        "firstDivergence": null
+      },
+      {
+        "seed": 61313,
+        "fixture": "property-61313",
+        "algorithm": "dcfr",
+        "iteration": 3,
+        "regretDelta": 0,
+        "strategySumDelta": 0,
+        "evDelta": 0,
+        "bestResponseDelta": 0,
+        "nashConvDelta": 0,
+        "firstDivergence": null
+      },
+      {
+        "seed": 61314,
+        "fixture": "property-61314",
+        "algorithm": "vanilla-cfr",
+        "iteration": 3,
+        "regretDelta": 0,
+        "strategySumDelta": 0,
+        "evDelta": 0,
+        "bestResponseDelta": 0,
+        "nashConvDelta": 0,
+        "firstDivergence": null
+      },
+      {
+        "seed": 61314,
+        "fixture": "property-61314",
+        "algorithm": "cfr-plus",
+        "iteration": 3,
+        "regretDelta": 0,
+        "strategySumDelta": 0,
+        "evDelta": 0,
+        "bestResponseDelta": 0,
+        "nashConvDelta": 0,
+        "firstDivergence": null
+      },
+      {
+        "seed": 61314,
+        "fixture": "property-61314",
+        "algorithm": "dcfr",
+        "iteration": 3,
+        "regretDelta": 0,
+        "strategySumDelta": 0,
+        "evDelta": 0,
+        "bestResponseDelta": 0,
+        "nashConvDelta": 0,
+        "firstDivergence": null
+      },
+      {
+        "seed": 61315,
+        "fixture": "property-61315",
+        "algorithm": "vanilla-cfr",
+        "iteration": 3,
+        "regretDelta": 0,
+        "strategySumDelta": 0,
+        "evDelta": 0,
+        "bestResponseDelta": 0,
+        "nashConvDelta": 0,
+        "firstDivergence": null
+      },
+      {
+        "seed": 61315,
+        "fixture": "property-61315",
+        "algorithm": "cfr-plus",
+        "iteration": 3,
+        "regretDelta": 0,
+        "strategySumDelta": 0,
+        "evDelta": 0,
+        "bestResponseDelta": 0,
+        "nashConvDelta": 0,
+        "firstDivergence": null
+      },
+      {
+        "seed": 61315,
+        "fixture": "property-61315",
+        "algorithm": "dcfr",
+        "iteration": 3,
+        "regretDelta": 0,
+        "strategySumDelta": 0,
+        "evDelta": 0,
+        "bestResponseDelta": 0,
+        "nashConvDelta": 0,
+        "firstDivergence": null
+      },
+      {
+        "seed": 61316,
+        "fixture": "property-61316",
+        "algorithm": "vanilla-cfr",
+        "iteration": 3,
+        "regretDelta": 0,
+        "strategySumDelta": 0,
+        "evDelta": 0,
+        "bestResponseDelta": 0,
+        "nashConvDelta": 0,
+        "firstDivergence": null
+      },
+      {
+        "seed": 61316,
+        "fixture": "property-61316",
+        "algorithm": "cfr-plus",
+        "iteration": 3,
+        "regretDelta": 0,
+        "strategySumDelta": 0,
+        "evDelta": 0,
+        "bestResponseDelta": 0,
+        "nashConvDelta": 0,
+        "firstDivergence": null
+      },
+      {
+        "seed": 61316,
+        "fixture": "property-61316",
+        "algorithm": "dcfr",
+        "iteration": 3,
+        "regretDelta": 0,
+        "strategySumDelta": 0,
+        "evDelta": 0,
+        "bestResponseDelta": 0,
+        "nashConvDelta": 0,
+        "firstDivergence": null
+      },
+      {
+        "seed": 61317,
+        "fixture": "property-61317",
+        "algorithm": "vanilla-cfr",
+        "iteration": 3,
+        "regretDelta": 0,
+        "strategySumDelta": 0,
+        "evDelta": 0,
+        "bestResponseDelta": 0,
+        "nashConvDelta": 0,
+        "firstDivergence": null
+      },
+      {
+        "seed": 61317,
+        "fixture": "property-61317",
+        "algorithm": "cfr-plus",
+        "iteration": 3,
+        "regretDelta": 0,
+        "strategySumDelta": 0,
+        "evDelta": 0,
+        "bestResponseDelta": 0,
+        "nashConvDelta": 0,
+        "firstDivergence": null
+      },
+      {
+        "seed": 61317,
+        "fixture": "property-61317",
+        "algorithm": "dcfr",
+        "iteration": 3,
+        "regretDelta": 0,
+        "strategySumDelta": 0,
+        "evDelta": 0,
+        "bestResponseDelta": 0,
+        "nashConvDelta": 0,
+        "firstDivergence": null
+      },
+      {
+        "seed": 61318,
+        "fixture": "property-61318",
+        "algorithm": "vanilla-cfr",
+        "iteration": 3,
+        "regretDelta": 0,
+        "strategySumDelta": 0,
+        "evDelta": 0,
+        "bestResponseDelta": 0,
+        "nashConvDelta": 0,
+        "firstDivergence": null
+      },
+      {
+        "seed": 61318,
+        "fixture": "property-61318",
+        "algorithm": "cfr-plus",
+        "iteration": 3,
+        "regretDelta": 0,
+        "strategySumDelta": 0,
+        "evDelta": 0,
+        "bestResponseDelta": 0,
+        "nashConvDelta": 0,
+        "firstDivergence": null
+      },
+      {
+        "seed": 61318,
+        "fixture": "property-61318",
+        "algorithm": "dcfr",
+        "iteration": 3,
+        "regretDelta": 0,
+        "strategySumDelta": 0,
+        "evDelta": 0,
+        "bestResponseDelta": 0,
+        "nashConvDelta": 0,
+        "firstDivergence": null
+      },
+      {
+        "seed": 61319,
+        "fixture": "property-61319",
+        "algorithm": "vanilla-cfr",
+        "iteration": 3,
+        "regretDelta": 0,
+        "strategySumDelta": 0,
+        "evDelta": 0,
+        "bestResponseDelta": 0,
+        "nashConvDelta": 0,
+        "firstDivergence": null
+      },
+      {
+        "seed": 61319,
+        "fixture": "property-61319",
+        "algorithm": "cfr-plus",
+        "iteration": 3,
+        "regretDelta": 0,
+        "strategySumDelta": 0,
+        "evDelta": 0,
+        "bestResponseDelta": 0,
+        "nashConvDelta": 0,
+        "firstDivergence": null
+      },
+      {
+        "seed": 61319,
+        "fixture": "property-61319",
+        "algorithm": "dcfr",
+        "iteration": 3,
+        "regretDelta": 0,
+        "strategySumDelta": 0,
+        "evDelta": 0,
+        "bestResponseDelta": 0,
+        "nashConvDelta": 0,
+        "firstDivergence": null
+      },
+      {
+        "seed": 61320,
+        "fixture": "property-61320",
+        "algorithm": "vanilla-cfr",
+        "iteration": 3,
+        "regretDelta": 0,
+        "strategySumDelta": 0,
+        "evDelta": 0,
+        "bestResponseDelta": 0,
+        "nashConvDelta": 0,
+        "firstDivergence": null
+      },
+      {
+        "seed": 61320,
+        "fixture": "property-61320",
+        "algorithm": "cfr-plus",
+        "iteration": 3,
+        "regretDelta": 0,
+        "strategySumDelta": 0,
+        "evDelta": 0,
+        "bestResponseDelta": 0,
+        "nashConvDelta": 0,
+        "firstDivergence": null
+      },
+      {
+        "seed": 61320,
+        "fixture": "property-61320",
+        "algorithm": "dcfr",
+        "iteration": 3,
+        "regretDelta": 0,
+        "strategySumDelta": 0,
+        "evDelta": 0,
+        "bestResponseDelta": 0,
+        "nashConvDelta": 0,
+        "firstDivergence": null
+      },
+      {
+        "seed": 61321,
+        "fixture": "property-61321",
+        "algorithm": "vanilla-cfr",
+        "iteration": 3,
+        "regretDelta": 0,
+        "strategySumDelta": 0,
+        "evDelta": 0,
+        "bestResponseDelta": 0,
+        "nashConvDelta": 0,
+        "firstDivergence": null
+      },
+      {
+        "seed": 61321,
+        "fixture": "property-61321",
+        "algorithm": "cfr-plus",
+        "iteration": 3,
+        "regretDelta": 0,
+        "strategySumDelta": 0,
+        "evDelta": 0,
+        "bestResponseDelta": 0,
+        "nashConvDelta": 0,
+        "firstDivergence": null
+      },
+      {
+        "seed": 61321,
+        "fixture": "property-61321",
+        "algorithm": "dcfr",
+        "iteration": 3,
+        "regretDelta": 0,
+        "strategySumDelta": 0,
+        "evDelta": 0,
+        "bestResponseDelta": 0,
+        "nashConvDelta": 0,
+        "firstDivergence": null
+      },
+      {
+        "seed": 61322,
+        "fixture": "property-61322",
+        "algorithm": "vanilla-cfr",
+        "iteration": 3,
+        "regretDelta": 0,
+        "strategySumDelta": 0,
+        "evDelta": 0,
+        "bestResponseDelta": 0,
+        "nashConvDelta": 0,
+        "firstDivergence": null
+      },
+      {
+        "seed": 61322,
+        "fixture": "property-61322",
+        "algorithm": "cfr-plus",
+        "iteration": 3,
+        "regretDelta": 0,
+        "strategySumDelta": 0,
+        "evDelta": 0,
+        "bestResponseDelta": 0,
+        "nashConvDelta": 0,
+        "firstDivergence": null
+      },
+      {
+        "seed": 61322,
+        "fixture": "property-61322",
+        "algorithm": "dcfr",
+        "iteration": 3,
+        "regretDelta": 0,
+        "strategySumDelta": 0,
+        "evDelta": 0,
+        "bestResponseDelta": 0,
+        "nashConvDelta": 0,
+        "firstDivergence": null
+      },
+      {
+        "seed": 61323,
+        "fixture": "property-61323",
+        "algorithm": "vanilla-cfr",
+        "iteration": 3,
+        "regretDelta": 0,
+        "strategySumDelta": 0,
+        "evDelta": 0,
+        "bestResponseDelta": 0,
+        "nashConvDelta": 0,
+        "firstDivergence": null
+      },
+      {
+        "seed": 61323,
+        "fixture": "property-61323",
+        "algorithm": "cfr-plus",
+        "iteration": 3,
+        "regretDelta": 0,
+        "strategySumDelta": 0,
+        "evDelta": 0,
+        "bestResponseDelta": 0,
+        "nashConvDelta": 0,
+        "firstDivergence": null
+      },
+      {
+        "seed": 61323,
+        "fixture": "property-61323",
+        "algorithm": "dcfr",
+        "iteration": 3,
+        "regretDelta": 0,
+        "strategySumDelta": 0,
+        "evDelta": 0,
+        "bestResponseDelta": 0,
+        "nashConvDelta": 0,
+        "firstDivergence": null
+      },
+      {
+        "seed": 61324,
+        "fixture": "property-61324",
+        "algorithm": "vanilla-cfr",
+        "iteration": 3,
+        "regretDelta": 0,
+        "strategySumDelta": 0,
+        "evDelta": 0,
+        "bestResponseDelta": 0,
+        "nashConvDelta": 0,
+        "firstDivergence": null
+      },
+      {
+        "seed": 61324,
+        "fixture": "property-61324",
+        "algorithm": "cfr-plus",
+        "iteration": 3,
+        "regretDelta": 0,
+        "strategySumDelta": 0,
+        "evDelta": 0,
+        "bestResponseDelta": 0,
+        "nashConvDelta": 0,
+        "firstDivergence": null
+      },
+      {
+        "seed": 61324,
+        "fixture": "property-61324",
+        "algorithm": "dcfr",
+        "iteration": 3,
+        "regretDelta": 0,
+        "strategySumDelta": 0,
+        "evDelta": 0,
+        "bestResponseDelta": 0,
+        "nashConvDelta": 0,
+        "firstDivergence": null
+      },
+      {
+        "seed": 61325,
+        "fixture": "property-61325",
+        "algorithm": "vanilla-cfr",
+        "iteration": 3,
+        "regretDelta": 0,
+        "strategySumDelta": 0,
+        "evDelta": 0,
+        "bestResponseDelta": 0,
+        "nashConvDelta": 0,
+        "firstDivergence": null
+      },
+      {
+        "seed": 61325,
+        "fixture": "property-61325",
+        "algorithm": "cfr-plus",
+        "iteration": 3,
+        "regretDelta": 0,
+        "strategySumDelta": 0,
+        "evDelta": 0,
+        "bestResponseDelta": 0,
+        "nashConvDelta": 0,
+        "firstDivergence": null
+      },
+      {
+        "seed": 61325,
+        "fixture": "property-61325",
+        "algorithm": "dcfr",
+        "iteration": 3,
+        "regretDelta": 0,
+        "strategySumDelta": 0,
+        "evDelta": 0,
+        "bestResponseDelta": 0,
+        "nashConvDelta": 0,
+        "firstDivergence": null
+      },
+      {
+        "seed": 61326,
+        "fixture": "property-61326",
+        "algorithm": "vanilla-cfr",
+        "iteration": 3,
+        "regretDelta": 0,
+        "strategySumDelta": 0,
+        "evDelta": 0,
+        "bestResponseDelta": 0,
+        "nashConvDelta": 0,
+        "firstDivergence": null
+      },
+      {
+        "seed": 61326,
+        "fixture": "property-61326",
+        "algorithm": "cfr-plus",
+        "iteration": 3,
+        "regretDelta": 0,
+        "strategySumDelta": 0,
+        "evDelta": 0,
+        "bestResponseDelta": 0,
+        "nashConvDelta": 0,
+        "firstDivergence": null
+      },
+      {
+        "seed": 61326,
+        "fixture": "property-61326",
+        "algorithm": "dcfr",
+        "iteration": 3,
+        "regretDelta": 0,
+        "strategySumDelta": 0,
+        "evDelta": 0,
+        "bestResponseDelta": 0,
+        "nashConvDelta": 0,
+        "firstDivergence": null
+      },
+      {
+        "seed": 61327,
+        "fixture": "property-61327",
+        "algorithm": "vanilla-cfr",
+        "iteration": 3,
+        "regretDelta": 0,
+        "strategySumDelta": 0,
+        "evDelta": 0,
+        "bestResponseDelta": 0,
+        "nashConvDelta": 0,
+        "firstDivergence": null
+      },
+      {
+        "seed": 61327,
+        "fixture": "property-61327",
+        "algorithm": "cfr-plus",
+        "iteration": 3,
+        "regretDelta": 0,
+        "strategySumDelta": 0,
+        "evDelta": 0,
+        "bestResponseDelta": 0,
+        "nashConvDelta": 0,
+        "firstDivergence": null
+      },
+      {
+        "seed": 61327,
+        "fixture": "property-61327",
+        "algorithm": "dcfr",
+        "iteration": 3,
+        "regretDelta": 0,
+        "strategySumDelta": 0,
+        "evDelta": 0,
+        "bestResponseDelta": 0,
+        "nashConvDelta": 0,
+        "firstDivergence": null
+      },
+      {
+        "seed": 61328,
+        "fixture": "property-61328",
+        "algorithm": "vanilla-cfr",
+        "iteration": 3,
+        "regretDelta": 0,
+        "strategySumDelta": 0,
+        "evDelta": 0,
+        "bestResponseDelta": 0,
+        "nashConvDelta": 0,
+        "firstDivergence": null
+      },
+      {
+        "seed": 61328,
+        "fixture": "property-61328",
+        "algorithm": "cfr-plus",
+        "iteration": 3,
+        "regretDelta": 0,
+        "strategySumDelta": 0,
+        "evDelta": 0,
+        "bestResponseDelta": 0,
+        "nashConvDelta": 0,
+        "firstDivergence": null
+      },
+      {
+        "seed": 61328,
+        "fixture": "property-61328",
+        "algorithm": "dcfr",
+        "iteration": 3,
+        "regretDelta": 0,
+        "strategySumDelta": 0,
+        "evDelta": 0,
+        "bestResponseDelta": 0,
+        "nashConvDelta": 0,
+        "firstDivergence": null
+      },
+      {
+        "seed": 61329,
+        "fixture": "property-61329",
+        "algorithm": "vanilla-cfr",
+        "iteration": 3,
+        "regretDelta": 0,
+        "strategySumDelta": 0,
+        "evDelta": 0,
+        "bestResponseDelta": 0,
+        "nashConvDelta": 0,
+        "firstDivergence": null
+      },
+      {
+        "seed": 61329,
+        "fixture": "property-61329",
+        "algorithm": "cfr-plus",
+        "iteration": 3,
+        "regretDelta": 0,
+        "strategySumDelta": 0,
+        "evDelta": 0,
+        "bestResponseDelta": 0,
+        "nashConvDelta": 0,
+        "firstDivergence": null
+      },
+      {
+        "seed": 61329,
+        "fixture": "property-61329",
+        "algorithm": "dcfr",
+        "iteration": 3,
+        "regretDelta": 0,
+        "strategySumDelta": 0,
+        "evDelta": 0,
+        "bestResponseDelta": 0,
+        "nashConvDelta": 0,
+        "firstDivergence": null
+      },
+      {
+        "seed": 61330,
+        "fixture": "property-61330",
+        "algorithm": "vanilla-cfr",
+        "iteration": 3,
+        "regretDelta": 0,
+        "strategySumDelta": 0,
+        "evDelta": 0,
+        "bestResponseDelta": 0,
+        "nashConvDelta": 0,
+        "firstDivergence": null
+      },
+      {
+        "seed": 61330,
+        "fixture": "property-61330",
+        "algorithm": "cfr-plus",
+        "iteration": 3,
+        "regretDelta": 0,
+        "strategySumDelta": 0,
+        "evDelta": 0,
+        "bestResponseDelta": 0,
+        "nashConvDelta": 0,
+        "firstDivergence": null
+      },
+      {
+        "seed": 61330,
+        "fixture": "property-61330",
+        "algorithm": "dcfr",
+        "iteration": 3,
+        "regretDelta": 0,
+        "strategySumDelta": 0,
+        "evDelta": 0,
+        "bestResponseDelta": 0,
+        "nashConvDelta": 0,
+        "firstDivergence": null
+      },
+      {
+        "seed": 61331,
+        "fixture": "property-61331",
+        "algorithm": "vanilla-cfr",
+        "iteration": 3,
+        "regretDelta": 0,
+        "strategySumDelta": 0,
+        "evDelta": 0,
+        "bestResponseDelta": 0,
+        "nashConvDelta": 0,
+        "firstDivergence": null
+      },
+      {
+        "seed": 61331,
+        "fixture": "property-61331",
+        "algorithm": "cfr-plus",
+        "iteration": 3,
+        "regretDelta": 0,
+        "strategySumDelta": 0,
+        "evDelta": 0,
+        "bestResponseDelta": 0,
+        "nashConvDelta": 0,
+        "firstDivergence": null
+      },
+      {
+        "seed": 61331,
+        "fixture": "property-61331",
+        "algorithm": "dcfr",
+        "iteration": 3,
+        "regretDelta": 0,
+        "strategySumDelta": 0,
+        "evDelta": 0,
+        "bestResponseDelta": 0,
+        "nashConvDelta": 0,
+        "firstDivergence": null
+      }
+    ]
+  },
+  "metamorphic": {
+    "actionReversalUtilityDelta": 0,
+    "actionReversalBestResponseDelta": 0,
+    "utilityScaleNashConvDelta": 0
+  },
+  "adversarial": [
+    {
+      "factor": 1e-200,
+      "fixture": "hidden-information-utility-1e-200",
+      "algorithm": "dcfr",
+      "iteration": 4,
+      "regretDelta": 0,
+      "strategySumDelta": 0,
+      "evDelta": 0,
+      "bestResponseDelta": 0,
+      "nashConvDelta": 0,
+      "firstDivergence": null
+    },
+    {
+      "factor": 1e+100,
+      "fixture": "hidden-information-utility-1e+100",
+      "algorithm": "dcfr",
+      "iteration": 4,
+      "regretDelta": 0,
+      "strategySumDelta": 0,
+      "evDelta": 0,
+      "bestResponseDelta": 0,
+      "nashConvDelta": 0,
+      "firstDivergence": null
+    }
+  ],
+  "checkpointV5": [
+    {
+      "algorithm": "vanilla-cfr",
+      "bitExact": true,
+      "uninterruptedHash": "333bbb380229c295efc01a4a2bc1a606ba51d0399a4ef0fde8567c66116bddf5",
+      "resumedHash": "333bbb380229c295efc01a4a2bc1a606ba51d0399a4ef0fde8567c66116bddf5",
+      "checkpointSemanticHash": "b8893f2549bc592a422ca279e25ee174c2070166c5d0d60769d39accbf0d35b2"
+    },
+    {
+      "algorithm": "cfr-plus",
+      "bitExact": true,
+      "uninterruptedHash": "d28967373eeb4758329681e3a2e850d12b0c10b2182d469729f9c61753f874d8",
+      "resumedHash": "d28967373eeb4758329681e3a2e850d12b0c10b2182d469729f9c61753f874d8",
+      "checkpointSemanticHash": "379ae373995f95ba6fa40b4fa4b793c5ec55bdc9fee0b8fa2852a5439e1443e4"
+    },
+    {
+      "algorithm": "dcfr",
+      "bitExact": true,
+      "uninterruptedHash": "4056d32489b315c78dd63f1918c52836be16889449d1587a9a31919bfebe339b",
+      "resumedHash": "4056d32489b315c78dd63f1918c52836be16889449d1587a9a31919bfebe339b",
+      "checkpointSemanticHash": "450daae60e9fe43431335884d18bbca1f2185bf0251f98ae2b2698f038d58c99"
+    }
+  ],
+  "determinism": {
+    "repeatability": "bit-exact",
+    "toleranceOnlyForCrossImplementationFloatingPoint": 1e-12
+  },
+  "convergence": [
+    {
+      "algorithm": "vanilla-cfr",
+      "iterations": 2000,
+      "initialNashConv": 0.25,
+      "finalNashConv": 0.00026518113993151404,
+      "improved": true,
+      "claim": "sanity-only"
+    },
+    {
+      "algorithm": "cfr-plus",
+      "iterations": 2000,
+      "initialNashConv": 0.25,
+      "finalNashConv": 0.00021178573257596423,
+      "improved": true,
+      "claim": "sanity-only"
+    },
+    {
+      "algorithm": "dcfr",
+      "iterations": 2000,
+      "initialNashConv": 0.25,
+      "finalNashConv": 0.00019917728853147132,
+      "improved": true,
+      "claim": "sanity-only"
+    }
+  ],
+  "resourceSafety": {
+    "maximumReferenceNodes": 100000,
+    "maximumPurePolicies": 100000,
+    "failureMode": "explicit-budget-error"
+  },
+  "validationLevels": {
+    "level0": [
+      "invalid-game-rejection",
+      "finite-number-guards"
+    ],
+    "level1": [
+      "regret-matching",
+      "single-step-traces",
+      "analytical-identities"
+    ],
+    "level2": [
+      "production-reference-differential",
+      "independent-best-response",
+      "checkpoint-resume"
+    ],
+    "level3": [
+      "controlled-property-games",
+      "metamorphic-relations",
+      "adversarial-numerics"
+    ],
+    "level4": []
+  },
+  "gates": {
+    "M1": true,
+    "M2": true,
+    "M3": true,
+    "M4": true,
+    "M5": true,
+    "M6": true,
+    "M7": true,
+    "M8": true,
+    "M9": true
+  },
+  "gateD": "FAIL",
+  "verifiedDatasets": 0,
+  "mathematicalCorrections": [
+    {
+      "component": "CompactCfrSolver",
+      "defect": "intra-traversal infoset regret mutation",
+      "correction": "snapshot strategy and batch deltas per updating player traversal"
+    },
+    {
+      "component": "IndexedCfrSolver",
+      "defect": "same live-update semantics",
+      "correction": "snapshot and batch deltas"
+    },
+    {
+      "component": "CfrSolver compiled traversal",
+      "defect": "same live-update semantics",
+      "correction": "per-infoset snapshots and batched maps"
+    }
+  ],
+  "limitations": [
+    "No poker dataset was validated.",
+    "No production poker range is Verified.",
+    "Deep convergence is deferred to Phase 6.14.",
+    "Reference pure-policy BR is intentionally limited to small games.",
+    "Legacy object and indexed traversal engines were audited but not promoted by this phase."
+  ],
+  "reproduction": [
+    "npm run solver:phase6-13",
+    "node --import tsx --test tests/solver-phase6-13.test.mjs",
+    "npm run check",
+    "cargo test --manifest-path solver/native/phase611-compiler/Cargo.toml --release"
+  ],
+  "validation": {
+    "completedAt": "2026-10-09",
+    "check": {
+      "command": "npm run check",
+      "passed": true
+    },
+    "typecheck": {
+      "command": "npm run typecheck",
+      "passed": true
+    },
+    "lint": {
+      "command": "npm run lint",
+      "passed": true
+    },
+    "build": {
+      "command": "npm run build",
+      "passed": true
+    },
+    "typescript": {
+      "command": "node --import tsx --test tests/*.test.mjs",
+      "total": 239,
+      "passed": 239,
+      "failed": 0,
+      "historicalPreserved": 221,
+      "phase613Added": 18
+    },
+    "focal": {
+      "command": "node --import tsx --test tests/solver-phase6-13.test.mjs",
+      "total": 18,
+      "passed": 18,
+      "failed": 0
+    },
+    "rust": {
+      "command": "cargo test --manifest-path solver/native/phase611-compiler/Cargo.toml --release",
+      "total": 3,
+      "passed": 3,
+      "failed": 0
+    }
+  },
+  "artifactHash": "39ab01e3f1e90ee7"
+}

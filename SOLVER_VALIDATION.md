@@ -1,3 +1,22 @@
+# Validação 0.13.0 — Fase 6.13
+
+Escopo aprovado: correção matemática do motor compacto dentro de jogos extensivos finitos, dois jogadores, soma zero e recordação perfeita.
+
+Evidência:
+
+- referência independente de CFR, CFR+ e DCFR;
+- traces e equivalência por iteração;
+- best response por enumeração independente de políticas puras;
+- cinco fixtures analíticas;
+- 32 jogos gerados/96 casos algorítmicos;
+- adversariais numéricos e metamorfismos;
+- Checkpoint V5 bit-exato;
+- deltas máximos de regrets, strategy sums, EV, BR e NashConv: `0`;
+- gates M1–M9: PASS.
+
+Classificação interna: componentes básicos Nível 1, diferencial/BR Nível 2, propriedades/checkpoint Nível 3, nenhum resultado Nível 4. Isso não equivale à classificação `Verified` de datasets.
+
+Gate D histórico: **FAIL**. Datasets `Verified`: **0**. Nenhuma estratégia de poker foi alterada ou aprovada.
 # Preflop Lab Solver — Validation Report 0.12.0
 
 ## Resumo honesto

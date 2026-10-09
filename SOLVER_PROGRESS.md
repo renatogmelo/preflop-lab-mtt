@@ -1,3 +1,10 @@
+# Fase 6.13 — Independent Mathematical Verification (0.13.0)
+
+A camada matemática agora possui referência direta do Provider V2 para CFR, CFR+ e DCFR, independente da topologia compacta e dos avaliadores de produção. A validação diferencial cobre iterações 0/1/2/25, cinco fixtures analíticas e 96 casos gerados. EV, BR, NashConv, exploitability, checkpoint e determinismo foram auditados.
+
+Uma falha real foi corrigida nos motores compacto, indexado e orientado a objetos: updates de um infoset eram visíveis a outros históricos do mesmo infoset durante uma única travessia. O motor agora congela a estratégia, acumula deltas e aplica a atualização ao término da travessia do jogador.
+
+Estado matemático: M1–M9 PASS, maiores deltas zero; 239/239 TypeScript e 3/3 Rust passaram. Estado de produto: sem promoção de poker; Gate D FAIL; Verified 0. Próxima pesquisa: convergência profunda na Fase 6.14.
 # Preflop Lab Solver — Progress
 
 Atualizado em: 2026-10-03  

@@ -219,6 +219,9 @@ export class IndexedCfrSolver<State, Action extends string> implements SolverAlg
     reach1: number,
     chanceReach: number,
     averageWeight: number,
+    strategySnapshot: Float64Array,
+    regretDeltas: Float64Array,
+    strategyDeltas: Float64Array,
   ): number {
     this.nodesVisited += 1;
     const kind = this.indexed.kind[node];
@@ -237,6 +240,9 @@ export class IndexedCfrSolver<State, Action extends string> implements SolverAlg
           reach1,
           chanceReach * probability,
           averageWeight,
+          strategySnapshot,
+          regretDeltas,
+          strategyDeltas,
         );
       }
       return result;
@@ -246,7 +252,8 @@ export class IndexedCfrSolver<State, Action extends string> implements SolverAlg
     const informationSet = this.indexed.informationSets[this.indexed.informationSet[node]];
     const offset = informationSet.offset;
     if (count === 2) {
-      const [strategy0, strategy1] = strategyPair(this.regrets, offset);
+      const strategy0 = strategySnapshot[offset];
+      const strategy1 = strategySnapshot[offset + 1];
       const utility0 = this.traverse(
         this.indexed.edgeChild[firstEdge],
         updatingPlayer,
@@ -254,6 +261,9 @@ export class IndexedCfrSolver<State, Action extends string> implements SolverAlg
         actor === 1 ? reach1 * strategy0 : reach1,
         chanceReach,
         averageWeight,
+        strategySnapshot,
+        regretDeltas,
+        strategyDeltas,
       );
       const utility1 = this.traverse(
         this.indexed.edgeChild[firstEdge + 1],
@@ -262,17 +272,18 @@ export class IndexedCfrSolver<State, Action extends string> implements SolverAlg
         actor === 1 ? reach1 * strategy1 : reach1,
         chanceReach,
         averageWeight,
+        strategySnapshot,
+        regretDeltas,
+        strategyDeltas,
       );
       const nodeUtility = strategy0 * utility0 + strategy1 * utility1;
       if (actor === updatingPlayer) {
         const counterfactualReach = chanceReach * (actor === 0 ? reach1 : reach0);
         const ownReach = chanceReach * (actor === 0 ? reach0 : reach1);
-        const next0 = this.regrets[offset] + counterfactualReach * (utility0 - nodeUtility);
-        const next1 = this.regrets[offset + 1] + counterfactualReach * (utility1 - nodeUtility);
-        this.regrets[offset] = this.configuration.algorithm === "cfr-plus" ? Math.max(0, next0) : next0;
-        this.regrets[offset + 1] = this.configuration.algorithm === "cfr-plus" ? Math.max(0, next1) : next1;
-        this.strategySums[offset] += averageWeight * ownReach * strategy0;
-        this.strategySums[offset + 1] += averageWeight * ownReach * strategy1;
+        regretDeltas[offset] += counterfactualReach * (utility0 - nodeUtility);
+        regretDeltas[offset + 1] += counterfactualReach * (utility1 - nodeUtility);
+        strategyDeltas[offset] += averageWeight * ownReach * strategy0;
+        strategyDeltas[offset + 1] += averageWeight * ownReach * strategy1;
       }
       return nodeUtility;
     }
@@ -281,7 +292,7 @@ export class IndexedCfrSolver<State, Action extends string> implements SolverAlg
     const utilities = new Float64Array(count);
     let nodeUtility = 0;
     for (let index = 0; index < count; index += 1) {
-      const strategy = this.actionProbability(offset, count, index);
+      const strategy = strategySnapshot[offset + index];
       strategies[index] = strategy;
       utilities[index] = this.traverse(
         this.indexed.edgeChild[firstEdge + index],
@@ -290,6 +301,9 @@ export class IndexedCfrSolver<State, Action extends string> implements SolverAlg
         actor === 1 ? reach1 * strategy : reach1,
         chanceReach,
         averageWeight,
+        strategySnapshot,
+        regretDeltas,
+        strategyDeltas,
       );
       nodeUtility += strategy * utilities[index];
     }
@@ -297,9 +311,8 @@ export class IndexedCfrSolver<State, Action extends string> implements SolverAlg
       const counterfactualReach = chanceReach * (actor === 0 ? reach1 : reach0);
       const ownReach = chanceReach * (actor === 0 ? reach0 : reach1);
       for (let index = 0; index < count; index += 1) {
-        const next = this.regrets[offset + index] + counterfactualReach * (utilities[index] - nodeUtility);
-        this.regrets[offset + index] = this.configuration.algorithm === "cfr-plus" ? Math.max(0, next) : next;
-        this.strategySums[offset + index] += averageWeight * ownReach * strategies[index];
+        regretDeltas[offset + index] += counterfactualReach * (utilities[index] - nodeUtility);
+        strategyDeltas[offset + index] += averageWeight * ownReach * strategies[index];
       }
     }
     return nodeUtility;
@@ -321,8 +334,20 @@ export class IndexedCfrSolver<State, Action extends string> implements SolverAlg
     const averageWeight = this.configuration.algorithm === "cfr-plus"
       ? cfrPlusAveragingWeight(nextIteration, this.configuration.cfrPlusAveragingDelay ?? 0)
       : 1;
-    this.traverse(0, 0, 1, 1, 1, averageWeight);
-    this.traverse(0, 1, 1, 1, 1, averageWeight);
+    for (const player of [0, 1] as const) {
+      const strategySnapshot = new Float64Array(this.regrets.length);
+      for (const info of this.indexed.informationSets) {
+        for (let action = 0; action < info.actions.length; action += 1) strategySnapshot[info.offset + action] = this.actionProbability(info.offset, info.actions.length, action);
+      }
+      const regretDeltas = new Float64Array(this.regrets.length);
+      const strategyDeltas = new Float64Array(this.strategySums.length);
+      this.traverse(0, player, 1, 1, 1, averageWeight, strategySnapshot, regretDeltas, strategyDeltas);
+      for (let index = 0; index < this.regrets.length; index += 1) {
+        const next = this.regrets[index] + regretDeltas[index];
+        this.regrets[index] = this.configuration.algorithm === "cfr-plus" ? Math.max(0, next) : next;
+        this.strategySums[index] += strategyDeltas[index];
+      }
+    }
     this.iterationCount = nextIteration;
     for (let index = 0; index < this.regrets.length; index += 1) {
       if (!Number.isFinite(this.regrets[index]) || !Number.isFinite(this.strategySums[index])) {

@@ -8,7 +8,7 @@ import { CompactNashConvEvaluatorV2 } from "./compact-evaluation";
 import { compactStrategyToBehavioral, type CompactIndexedTree, strategyArrayProbability } from "./compact-tree";
 import type { CompactGameProvider } from "./provider";
 
-export const COMPACT_CFR_VERSION = "compact-cfr-v0.9.0";
+export const COMPACT_CFR_VERSION = "compact-cfr-v0.13.0";
 export const COMPACT_CHECKPOINT_SCHEMA = 4;
 
 export type CompactMemorySnapshot = {
@@ -163,12 +163,12 @@ export class CompactCfrSolver {
     return snapshot;
   }
 
-  private actionProbability(informationSet: number, action: number) {
+  private actionProbability(informationSet: number, action: number, regrets = this.regrets) {
     const offset = this.tree.informationSetActionOffset[informationSet];
     const count = this.tree.informationSetActionCount[informationSet];
     let positive = 0;
-    for (let index = 0; index < count; index += 1) positive += Math.max(0, this.regrets[offset + index]);
-    return positive > 1e-15 ? Math.max(0, this.regrets[offset + action]) / positive : 1 / count;
+    for (let index = 0; index < count; index += 1) positive += Math.max(0, regrets[offset + index]);
+    return positive > 1e-15 ? Math.max(0, regrets[offset + action]) / positive : 1 / count;
   }
 
   private discount(nextIteration: number) {
@@ -180,7 +180,17 @@ export class CompactCfrSolver {
     }
   }
 
-  private traverse(node: number, updatingPlayer: Player, reach0: number, reach1: number, chanceReach: number, averageWeight: number): number {
+  private traverse(
+    node: number,
+    updatingPlayer: Player,
+    reach0: number,
+    reach1: number,
+    chanceReach: number,
+    averageWeight: number,
+    strategySnapshot: Float64Array,
+    regretDeltas: Float64Array,
+    strategyDeltas: Float64Array,
+  ): number {
     this.nodesVisited += 1;
     const kind = this.tree.kind[node];
     if (kind === 0) return updatingPlayer === 0 ? this.tree.terminalP0[node] : -this.tree.terminalP0[node];
@@ -191,7 +201,7 @@ export class CompactCfrSolver {
       for (let action = 0; action < count; action += 1) {
         const child = first + action;
         const probability = this.tree.edgeProbability[child];
-        result += probability * this.traverse(child, updatingPlayer, reach0, reach1, chanceReach * probability, averageWeight);
+        result += probability * this.traverse(child, updatingPlayer, reach0, reach1, chanceReach * probability, averageWeight, strategySnapshot, regretDeltas, strategyDeltas);
       }
       return result;
     }
@@ -203,7 +213,7 @@ export class CompactCfrSolver {
     const utilities = new Float64Array(count);
     let nodeUtility = 0;
     for (let action = 0; action < count; action += 1) {
-      const strategy = this.actionProbability(informationSet, action);
+      const strategy = strategySnapshot[offset + action];
       strategies[action] = strategy;
       utilities[action] = this.traverse(
         first + action,
@@ -212,6 +222,9 @@ export class CompactCfrSolver {
         actor === 1 ? reach1 * strategy : reach1,
         chanceReach,
         averageWeight,
+        strategySnapshot,
+        regretDeltas,
+        strategyDeltas,
       );
       nodeUtility += strategy * utilities[action];
     }
@@ -219,9 +232,8 @@ export class CompactCfrSolver {
       const counterfactualReach = chanceReach * (actor === 0 ? reach1 : reach0);
       const ownReach = chanceReach * (actor === 0 ? reach0 : reach1);
       for (let action = 0; action < count; action += 1) {
-        const next = this.regrets[offset + action] + counterfactualReach * (utilities[action] - nodeUtility);
-        this.regrets[offset + action] = this.configuration.algorithm === "cfr-plus" ? Math.max(0, next) : next;
-        this.strategySums[offset + action] += averageWeight * ownReach * strategies[action];
+        regretDeltas[offset + action] += counterfactualReach * (utilities[action] - nodeUtility);
+        strategyDeltas[offset + action] += averageWeight * ownReach * strategies[action];
       }
     }
     return nodeUtility;
@@ -234,8 +246,20 @@ export class CompactCfrSolver {
     const averageWeight = this.configuration.algorithm === "cfr-plus"
       ? cfrPlusAveragingWeight(nextIteration, this.configuration.cfrPlusAveragingDelay ?? 0)
       : 1;
-    this.traverse(this.tree.root, 0, 1, 1, 1, averageWeight);
-    this.traverse(this.tree.root, 1, 1, 1, 1, averageWeight);
+    for (const player of [0, 1] as const) {
+      // Freeze one behavioral profile per player traversal. Regret updates from
+      // multiple histories in the same information set must be accumulated
+      // before they can affect regret matching.
+      const strategySnapshot = this.currentStrategyArray();
+      const regretDeltas = new Float64Array(this.regrets.length);
+      const strategyDeltas = new Float64Array(this.strategySums.length);
+      this.traverse(this.tree.root, player, 1, 1, 1, averageWeight, strategySnapshot, regretDeltas, strategyDeltas);
+      for (let index = 0; index < this.regrets.length; index += 1) {
+        const next = this.regrets[index] + regretDeltas[index];
+        this.regrets[index] = this.configuration.algorithm === "cfr-plus" ? Math.max(0, next) : next;
+        this.strategySums[index] += strategyDeltas[index];
+      }
+    }
     this.iterationCount = nextIteration;
     assertFiniteArray(this.regrets, "Compact regrets");
     assertFiniteArray(this.strategySums, "Compact strategy sums");

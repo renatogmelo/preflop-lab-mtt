@@ -198,6 +198,9 @@ export class CfrSolver<State, Action extends string> implements SolverAlgorithm 
     playerReach: [number, number],
     chanceReach: number,
     averageWeight: number,
+    strategySnapshot: Map<string, number[]>,
+    regretDeltas: Map<string, number[]>,
+    strategyDeltas: Map<string, number[]>,
   ): number {
     this.nodesVisited += 1;
     if (node.kind === "terminal") return node.utilities[updatingPlayer];
@@ -209,6 +212,9 @@ export class CfrSolver<State, Action extends string> implements SolverAlgorithm 
           playerReach,
           chanceReach * outcome.probability,
           averageWeight,
+          strategySnapshot,
+          regretDeltas,
+          strategyDeltas,
         ),
         0,
       );
@@ -216,11 +222,15 @@ export class CfrSolver<State, Action extends string> implements SolverAlgorithm 
 
     const actor = node.player;
     const info = this.infoSet(node.informationSet, node.actions);
-    const strategy = strategyFromRegrets(info.regrets);
+    let strategy = strategySnapshot.get(node.informationSet);
+    if (!strategy) {
+      strategy = strategyFromRegrets(info.regrets);
+      strategySnapshot.set(node.informationSet, strategy);
+    }
     const actionUtilities = node.children.map((child, index) => {
       const nextReach: [number, number] = [...playerReach];
       nextReach[actor] *= strategy[index];
-      return this.traverseCompiled(child, updatingPlayer, nextReach, chanceReach, averageWeight);
+      return this.traverseCompiled(child, updatingPlayer, nextReach, chanceReach, averageWeight, strategySnapshot, regretDeltas, strategyDeltas);
     });
     const nodeUtility = actionUtilities.reduce(
       (sum, utility, index) => sum + strategy[index] * utility,
@@ -230,15 +240,14 @@ export class CfrSolver<State, Action extends string> implements SolverAlgorithm 
     if (actor === updatingPlayer) {
       const counterfactualReach = chanceReach * playerReach[actor === 0 ? 1 : 0];
       const ownReach = chanceReach * playerReach[actor];
-      info.regrets = info.regrets.map((regret, index) => {
-        const next = regret + counterfactualReach * (actionUtilities[index] - nodeUtility);
-        return this.configuration.algorithm === "cfr-plus" ? Math.max(0, next) : next;
+      const regrets = regretDeltas.get(node.informationSet) ?? node.actions.map(() => 0);
+      const averages = strategyDeltas.get(node.informationSet) ?? node.actions.map(() => 0);
+      node.actions.forEach((_, index) => {
+        regrets[index] += counterfactualReach * (actionUtilities[index] - nodeUtility);
+        averages[index] += averageWeight * ownReach * strategy[index];
       });
-      info.strategySum = info.strategySum.map(
-        (sum, index) => sum + averageWeight * ownReach * strategy[index],
-      );
-      assertFinite(info.regrets, `${node.informationSet} regrets`);
-      assertFinite(info.strategySum, `${node.informationSet} strategy sums`);
+      regretDeltas.set(node.informationSet, regrets);
+      strategyDeltas.set(node.informationSet, averages);
     }
     return nodeUtility;
   }
@@ -248,8 +257,22 @@ export class CfrSolver<State, Action extends string> implements SolverAlgorithm 
     const nextIteration = this.iterationCount + 1;
     this.discountDcfr(nextIteration);
     const averageWeight = this.averagingWeight(nextIteration);
-    this.traverseCompiled(this.compiledRoot, 0, [1, 1], 1, averageWeight);
-    this.traverseCompiled(this.compiledRoot, 1, [1, 1], 1, averageWeight);
+    for (const player of [0, 1] as const) {
+      const strategySnapshot = new Map<string, number[]>();
+      const regretDeltas = new Map<string, number[]>();
+      const strategyDeltas = new Map<string, number[]>();
+      this.traverseCompiled(this.compiledRoot, player, [1, 1], 1, averageWeight, strategySnapshot, regretDeltas, strategyDeltas);
+      for (const [key, deltas] of regretDeltas) {
+        const info = this.infosets.get(key)!;
+        info.regrets = info.regrets.map((regret, index) => {
+          const next = regret + deltas[index];
+          return this.configuration.algorithm === "cfr-plus" ? Math.max(0, next) : next;
+        });
+        info.strategySum = info.strategySum.map((sum, index) => sum + strategyDeltas.get(key)![index]);
+        assertFinite(info.regrets, `${key} regrets`);
+        assertFinite(info.strategySum, `${key} strategy sums`);
+      }
+    }
     this.iterationCount = nextIteration;
   }
 

@@ -1,3 +1,17 @@
+# Atualização — Fase 6.13 (0.13.0)
+
+Estado: implementação e experimentos matemáticos concluídos; validação final concluída.
+
+- Concluído: auditoria do baseline `8cd893f` e das fases 6.7–6.12.
+- Concluído: especificação formal com 18 definições e convenções exatas de CFR/CFR+/DCFR.
+- Concluído: engine de referência independente, traces por iteração e oráculo independente de política pura.
+- Concluído: cinco fixtures, 32 seeds/96 casos de propriedade, metamorfismos, adversariais e budgets.
+- Divergência encontrada e corrigida: mutação de regret dentro da mesma travessia em infosets repetidos.
+- Resultado: máximos deltas de regret, strategy sums, EV, BR e NashConv iguais a zero; M1–M9 PASS.
+- Concluído: Checkpoint V5 bit-exato nos três algoritmos.
+- Inalterado: nenhuma estratégia/dataset de poker; `Verified=0`; Gate D `FAIL`.
+- Concluído: typecheck, lint, build, 239/239 testes TypeScript e 3/3 Rust.
+- Próximo passo: commit e push somente no GitHub.
 # Preflop Lab — Progresso
 
 Atualizado em: 2026-10-03
