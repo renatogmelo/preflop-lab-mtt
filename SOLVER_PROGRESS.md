@@ -1,3 +1,10 @@
+# Fase 6.14 — Convergence, Numerical Stability & Long-Run Verification
+
+O Research Solver 0.14.0 possui configuração serializável, processos isolados, scheduler controlado, curvas de convergência, comparação iteration/time-matched, stress numérico, classificação honesta e artefatos de visualização.
+
+Foram executados 52 experimentos: 49 completos por iterações e 3 limitados intencionalmente por 150 ms. Hidden/50k terminou em NashConv `2,9327e-5` Vanilla, `2,5621e-6` CFR+ e `1,9547e-5` DCFR. O maior delta em 713 avaliações independentes foi `2,7756e-17`. Resume V5 foi bit-exato nos três algoritmos.
+
+V1–V9 PASS. As curvas permanecem evidência empírica, não prova. Gate D FAIL; Verified 0; poker inalterado.
 # Fase 6.13 — Independent Mathematical Verification (0.13.0)
 
 A camada matemática agora possui referência direta do Provider V2 para CFR, CFR+ e DCFR, independente da topologia compacta e dos avaliadores de produção. A validação diferencial cobre iterações 0/1/2/25, cinco fixtures analíticas e 96 casos gerados. EV, BR, NashConv, exploitability, checkpoint e determinismo foram auditados.

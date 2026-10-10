@@ -90,6 +90,16 @@ export function nonuniformChanceProvider() {
   });
 }
 
+export function chanceStressProvider(probability: number) {
+  if (!Number.isFinite(probability) || probability < 0 || probability > 1) throw new Error("Chance stress probability must be in [0,1].");
+  return new TableGameProvider(`chance-stress-${probability}`, {
+    root: { kind: "chance", actions: ["left", "right"], probabilities: [probability, 1 - probability], children: ["left", "right"] },
+    left: { kind: "decision", player: 0, informationSet: "chance-stress:p0", observation: "hidden-branch", actions: ["A", "B"], children: ["tla", "tlb"] },
+    right: { kind: "decision", player: 0, informationSet: "chance-stress:p0", observation: "hidden-branch", actions: ["A", "B"], children: ["tra", "trb"] },
+    tla: { kind: "terminal", utility: 1 }, tlb: { kind: "terminal", utility: -1 },
+    tra: { kind: "terminal", utility: -1 }, trb: { kind: "terminal", utility: 1 },
+  });
+}
 function seeded(seed: number) {
   let state = seed >>> 0;
   return () => {

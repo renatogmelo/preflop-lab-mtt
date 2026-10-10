@@ -1,3 +1,17 @@
+# Atualização — Fase 6.14 (0.14.0)
+
+Estado: framework e matriz de convergência concluídos; validação final concluída.
+
+- Concluído: auditoria do baseline `e5cc8e2` e da infraestrutura matemática/resource-safe.
+- Concluído: schema versionado, scheduler isolado, concorrência 1, cancelamento, watchdog e budgets finitos.
+- Concluído: 52 experimentos; 49 iteration-matched completos e 3 time-matched encerrados pelo budget de 150 ms.
+- Concluído: curvas, regrets, estratégia média, diagnósticos, fit empírico, memória e throughput.
+- Concluído: utility `1e-6`–`1e6`, chance `0`–`1`, cinco seeds e três condições de algoritmo.
+- Resultado: 713 cross-checks independentes, delta máximo `2,7756e-17`; Checkpoint V5 bit-exato.
+- Resultado negativo/diagnóstico: oscilações tardias em três séries CFR+; nenhuma divergência ou anomalia numérica.
+- Gates V1–V9: PASS. Gate D: FAIL. Verified: 0.
+- Concluído: typecheck, lint, build, 261/261 testes TypeScript e 3/3 Rust.
+- Próximo passo: commit e push somente no GitHub.
 # Atualização — Fase 6.13 (0.13.0)
 
 Estado: implementação e experimentos matemáticos concluídos; validação final concluída.

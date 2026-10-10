@@ -1,3 +1,12 @@
+# Validação 0.14.0 — Fase 6.14
+
+Escopo: comportamento long-run empírico em jogos extensivos sintéticos finitos, dois jogadores, soma zero e recordação perfeita.
+
+Evidência: 52 processos isolados, curvas até 50.000 iterações, cinco seeds, três algoritmos, duas condições iniciais, comparação justa por iteração/tempo, três famílias irregulares, duas analíticas, stress de utility/chance, 713 cross-checks independentes e resume bit-exato.
+
+Gates V1–V9: PASS. Três execuções `BUDGET LIMITED` são os ensaios time-matched predefinidos, não falhas ocultas. Não houve `NUMERICAL INSTABILITY`.
+
+As conclusões não certificam convergência geral nem estratégia de poker. Gate D histórico: **FAIL**. Datasets `Verified`: **0**.
 # Validação 0.13.0 — Fase 6.13
 
 Escopo aprovado: correção matemática do motor compacto dentro de jogos extensivos finitos, dois jogadores, soma zero e recordação perfeita.
