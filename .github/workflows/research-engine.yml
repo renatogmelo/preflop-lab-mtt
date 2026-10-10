@@ -35,7 +35,7 @@ jobs:
       - run: npm run research:release
       - name: Verify release artifact exists
         shell: pwsh
-        run: if (!(Test-Path solver/artifacts/phase7-0-research-engine-v1.0.0.json)) { exit 1 }
+        run: if (!(Test-Path solver/artifacts/phase7-0-research-engine-v1.0.0.json) -or !(Test-Path solver/artifacts/phase7-1-research-console-v1.0.0.json)) { exit 1 }
 
   rust-regression:
     runs-on: windows-latest

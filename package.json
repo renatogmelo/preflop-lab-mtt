@@ -39,8 +39,12 @@
     "solver:phase6-15": "node --import tsx solver/benchmarks/phase6-15.ts",
     "solver:phase6-15-finalize": "node --import tsx solver/benchmarks/phase6-15-finalize.ts",
     "research": "node --import tsx solver/research/cli.ts",
+    "research:console-api": "node --import tsx solver/research/console/server.ts",
+    "research:console": "node --import tsx solver/research/console/dev.ts",
+    "research:console-release": "node --import tsx solver/research/console/release.ts",
     "research:release": "node --import tsx solver/research/release.ts",
     "test:research": "node --import tsx --test tests/solver-phase7-0.test.mjs",
+    "test:research-console": "node --import tsx --test tests/solver-phase7-1.test.mjs",
     "test:release": "node --import tsx --test tests/solver-phase6-13.test.mjs tests/solver-phase6-14.test.mjs tests/solver-phase6-15.test.mjs tests/solver-phase7-0.test.mjs"
   },
   "dependencies": {

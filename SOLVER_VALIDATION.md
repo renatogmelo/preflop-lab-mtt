@@ -1,3 +1,10 @@
+# Validação 1.0.0 — Fase 7.1 Research Console
+
+Escopo: interface local e adapter HTTP para o Research Engine sintético 1.0.0.
+
+Evidência: SDK real, quatro providers, REST/SSE, Experiment/Status/Event/Result V1, Checkpoint V5, cancel/resume real, export JSON/CSV, checksum, guards de segurança, typecheck, ESLint, build, 9/9 E2E, 310/310 TypeScript, 80/80 release e 3/3 Rust.
+
+Gates U1–U7: PASS. U8/U9: PARTIAL porque o Browser automatizado não iniciou devido à ACL do sandbox; HTTP/HTML/CSS/a11y estático passaram. Gate D histórico: FAIL. Datasets Verified: 0. Nenhuma estratégia de poker foi modificada.
 # Validação 1.0.0 — Fase 7.0
 
 Escopo: fachada estável do Research Engine para jogos extensivos sintéticos finitos, dois jogadores, soma zero, recordação perfeita e chance explícita.

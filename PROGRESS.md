@@ -1,3 +1,14 @@
+# Fase 7.1 — Research Console 1.0.0 (2026-10-10)
+
+Estado: interface, integração local, testes e documentação implementados.
+
+- Console Vinext/React em `/research` com 11 rotas lógicas e 26 componentes visuais.
+- Sidecar local usa SDK 1.0.0 real; REST/SSE, eventos persistidos, Resource Policy e worker isolado preservados.
+- Create/list/run/cancel/checkpoint/resume/result/compare/export/verify funcionais.
+- 9/9 E2E da fase, 310/310 TypeScript, 80/80 release e 3/3 Rust: PASS.
+- U1–U7 PASS; U8/U9 PARTIAL porque Browser visual/navigation ficou NOT TESTED por ACL do sandbox.
+- Gate D FAIL, Verified 0, poker/multiplayer inalterados.
+- Nenhum deploy no Sites; publicação somente no GitHub.
 # Fase 7.0 — Research Engine 1.0.0 (2026-10-10)
 
 Estado: implementação, integração, documentação e validação final concluídas.

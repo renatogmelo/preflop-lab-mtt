@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { type CSSProperties, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   ACTIONS, grade, INITIAL_SPOT, POSITIONS, RANKS, round, SCENARIOS, scenarioIsCompatible, STACKS, strategy,
@@ -198,6 +199,7 @@ export default function Home() {
         <button className={view === "explore" ? "active" : ""} onClick={() => setView("explore")}>Explorar</button>
         <button className={view === "analyze" ? "active" : ""} onClick={() => setView("analyze")}>Analisar <span>{history.length}</span></button>
         <button className={view === "progress" ? "active" : ""} onClick={() => setView("progress")}>Progresso</button>
+        <Link href="/research">Research</Link>
       </nav>
       <div className="top-meta"><form className="global-search" onSubmit={(event) => { event.preventDefault(); if (!searchText.trim()) return; setExploreSearch({ id: Date.now(), text: searchText }); setView("explore"); }}><input value={searchText} onChange={(event) => setSearchText(event.target.value)} placeholder="BTN vs BB 40bb" aria-label="Buscar spot" /><button aria-label="Buscar">⌕</button></form><span className="live-dot" /><small>{persistence === "d1" ? "Cloud" : "Local"}</small></div>
     </header>
