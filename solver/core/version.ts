@@ -1,2 +1,2 @@
 export const SOLVER_NAME = "Preflop Lab Solver";
-export const SOLVER_VERSION = "0.14.0";
+export const SOLVER_VERSION = "0.15.0";

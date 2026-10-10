@@ -1,3 +1,15 @@
+# Fase 6.15 — Reliability e release readiness (2026-10-10)
+
+Estado: implementação, campanhas e validação final concluídas.
+
+- Concluído: state machine, manifesto atômico/checksummed, locks interprocesso e recuperação de stale lock.
+- Concluído: gerações Checkpoint V5, seleção por integridade e fallback bit-exato.
+- Concluído: 18 cenários canônicos, 9 terminações reais e 10/10 recoveries.
+- Concluído: escalas 39.317/104.681/232.333/515.520 nós; ~1,07M negado pelo preflight.
+- Concluído: R1–R9 PASS; Gate D FAIL; Verified 0; nenhuma estratégia de poker alterada.
+- Concluído: typecheck, lint, build, 286/286 testes TypeScript e 3/3 Rust.
+- Concluído: revisão final; pronto para commit e push GitHub.
+
 # Atualização — Fase 6.14 (0.14.0)
 
 Estado: framework e matriz de convergência concluídos; validação final concluída.

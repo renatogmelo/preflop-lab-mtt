@@ -1,3 +1,11 @@
+# Validação 0.15.0 — Fase 6.15
+
+Escopo: confiabilidade operacional do research engine para jogos sintéticos finitos, dois jogadores, soma zero e recordação perfeita.
+
+Evidência: 18 cenários canônicos, 9 terminações reais, 10/10 recuperações, fallback de geração corrompida, delta de estado/matemático zero, writer conflict real, Cache V1/V2, leases, Resource Policy V3, 515.520 nós e reprodutibilidade cross-process bit-exata no ambiente disponível.
+
+R1–R9: PASS. Cross-OS e power-loss durability: NOT TESTED. Gate D histórico: **FAIL**. Datasets Verified: **0**.
+
 # Validação 0.14.0 — Fase 6.14
 
 Escopo: comportamento long-run empírico em jogos extensivos sintéticos finitos, dois jogadores, soma zero e recordação perfeita.

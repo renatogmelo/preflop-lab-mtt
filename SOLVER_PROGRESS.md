@@ -1,3 +1,7 @@
+# Research Solver 0.15.0 — Fase 6.15
+
+O motor agora possui contratos operacionais explícitos para manifesto durável, estados, gerações V5, crash recovery, locks, scheduler recovery, leases e artefatos checksummed. A campanha real terminou com 9/9 recoveries pós-processo e um fallback adicional, todos bit-exatos. Maior topologia materializada: 515.520 nós; pico RSS observado: 699.142.144 B. R1–R9 PASS. Gate D continua FAIL e Verified continua 0.
+
 # Fase 6.14 — Convergence, Numerical Stability & Long-Run Verification
 
 O Research Solver 0.14.0 possui configuração serializável, processos isolados, scheduler controlado, curvas de convergência, comparação iteration/time-matched, stress numérico, classificação honesta e artefatos de visualização.
