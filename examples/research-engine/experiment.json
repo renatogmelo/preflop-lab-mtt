@@ -1,0 +1,35 @@
+{
+  "schemaVersion": "research-experiment-v1",
+  "experimentId": "example-hidden-dcfr",
+  "provider": {
+    "id": "variable-depth-hidden"
+  },
+  "algorithm": {
+    "id": "dcfr",
+    "seed": 7000,
+    "dcfr": {
+      "alpha": 1.5,
+      "beta": 0,
+      "gamma": 2
+    }
+  },
+  "budget": {
+    "iterations": 6,
+    "runtimeMs": 10000,
+    "memoryBytes": 268435456,
+    "tier": "tier0"
+  },
+  "evaluation": {
+    "interval": 2,
+    "exact": true
+  },
+  "checkpoint": {
+    "interval": 3,
+    "retain": 2
+  },
+  "outputDirectory": ".preflop-research/runs",
+  "validation": {
+    "structural": true,
+    "independentEvaluation": true
+  }
+}

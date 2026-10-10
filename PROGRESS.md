@@ -1,3 +1,16 @@
+# Fase 7.0 — Research Engine 1.0.0 (2026-10-10)
+
+Estado: implementação, integração, documentação e validação final concluídas.
+
+- Public API V1 com 14 operações, Provider V3/adaptador V2 e capability negotiation.
+- SDK TypeScript, 12 comandos CLI, schemas versionados, eventos e erros estruturados.
+- Compiler V2/V3, Cache V1/V2, Checkpoint V5 e matemática preservados.
+- Worker isolado, Resource Policy V3, watchdog, cancelamento, checkpoint/resume e artefatos checksummed.
+- Dez exemplos executáveis; CI rápida e campanhas longas separadas.
+- Typecheck, lint, build, 301/301 TypeScript, 80/80 release regression e 3/3 Rust: PASS.
+- S1–S9: PASS. Gate D: FAIL. Verified: 0. Poker/multiplayer não certificados.
+- Artefato: `solver/artifacts/phase7-0-research-engine-v1.0.0.json`; checksum `34111b6e5006759a`.
+- Próximo passo: commit e push somente no GitHub; nenhum deploy no Sites.
 # Fase 6.15 — Reliability e release readiness (2026-10-10)
 
 Estado: implementação, campanhas e validação final concluídas.

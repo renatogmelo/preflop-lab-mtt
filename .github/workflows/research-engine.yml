@@ -1,0 +1,60 @@
+name: Research Engine 1.0
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+    inputs:
+      long_campaign:
+        description: Run the separately gated long research campaigns
+        required: false
+        default: false
+        type: boolean
+
+permissions:
+  contents: read
+
+jobs:
+  release-validation:
+    runs-on: windows-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - run: npm run typecheck
+      - run: npm run lint
+      - run: npm run test:research
+      - run: npm run test:release
+      - run: npm run build
+      - run: npm test
+      - run: npm run research:release
+      - name: Verify release artifact exists
+        shell: pwsh
+        run: if (!(Test-Path solver/artifacts/phase7-0-research-engine-v1.0.0.json)) { exit 1 }
+
+  rust-regression:
+    runs-on: windows-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - run: cargo test --manifest-path solver/native/phase611-compiler/Cargo.toml --release
+
+  long-research-campaigns:
+    if: github.event_name == 'workflow_dispatch' && inputs.long_campaign
+    runs-on: windows-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - run: npm run solver:phase6-14
+      - run: npm run solver:phase6-15

@@ -1,6 +1,6 @@
 {
   "name": "preflop-lab",
-  "version": "0.15.0",
+  "version": "1.0.0",
   "private": true,
   "engines": {
     "node": ">=22.13.0"
@@ -37,7 +37,11 @@
     "solver:phase6-14": "node --import tsx solver/benchmarks/phase6-14.ts",
     "solver:phase6-14-finalize": "node --import tsx solver/benchmarks/phase6-14-finalize.ts",
     "solver:phase6-15": "node --import tsx solver/benchmarks/phase6-15.ts",
-    "solver:phase6-15-finalize": "node --import tsx solver/benchmarks/phase6-15-finalize.ts"
+    "solver:phase6-15-finalize": "node --import tsx solver/benchmarks/phase6-15-finalize.ts",
+    "research": "node --import tsx solver/research/cli.ts",
+    "research:release": "node --import tsx solver/research/release.ts",
+    "test:research": "node --import tsx --test tests/solver-phase7-0.test.mjs",
+    "test:release": "node --import tsx --test tests/solver-phase6-13.test.mjs tests/solver-phase6-14.test.mjs tests/solver-phase6-15.test.mjs tests/solver-phase7-0.test.mjs"
   },
   "dependencies": {
     "drizzle-orm": "0.45.2",
@@ -69,5 +73,12 @@
     "vite": "8.0.13",
     "wrangler": "4.92.0"
   },
-  "type": "module"
+  "type": "module",
+  "bin": {
+    "preflop-research": "./solver/research/cli.ts"
+  },
+  "exports": {
+    ".": "./solver/research/public/index.ts",
+    "./research": "./solver/research/public/index.ts"
+  }
 }

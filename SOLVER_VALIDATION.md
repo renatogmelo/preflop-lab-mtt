@@ -1,3 +1,12 @@
+# Validação 1.0.0 — Fase 7.0
+
+Escopo: fachada estável do Research Engine para jogos extensivos sintéticos finitos, dois jogadores, soma zero, recordação perfeita e chance explícita.
+
+Evidência: API V1 (14 operações), CLI (12 comandos), SDK, Provider V3/V2 adapter, Compiler V2/V3, processo isolado, Resource Policy V3, eventos, cancelamento, Checkpoint V5/resume, artefatos checksummed, dez exemplos, typecheck, lint, build, 301/301 TypeScript, regressão 80/80 e 3/3 Rust.
+
+S1–S9: PASS. Artifact checksum: `34111b6e5006759a`. Package SHA-256: `a348f825607c39feac7c0b7cb4ed45fa18c38ab41a2ce4decb3488bd9a051071`.
+
+Escopo não ampliado: Gate D histórico `FAIL`, datasets Verified `0`, nenhuma estratégia de poker alterada, multiplayer/8-max estratégico não suportado, cross-OS e power-loss `NOT TESTED`.
 # Validação 0.15.0 — Fase 6.15
 
 Escopo: confiabilidade operacional do research engine para jogos sintéticos finitos, dois jogadores, soma zero e recordação perfeita.
